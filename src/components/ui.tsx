@@ -9,9 +9,8 @@ import {
   Sparkles,
   TriangleAlert,
 } from "lucide-react";
-import type { Ev, Severity } from "@/lib/db";
-import { fmtDateTime, todayWib } from "@/lib/util";
-import { DatePicker, EvidenceButton } from "./client";
+import { todayWib } from "@/lib/util";
+import { DatePicker } from "./client";
 
 export function PageHeader({
   title,
@@ -262,14 +261,19 @@ export function Badge({ tone, children }: { tone: Tone; children: ReactNode }) {
   );
 }
 
-const SEV: Record<Severity, [Tone, string]> = {
+export type Severity = "info" | "warning" | "critical" | "INFO" | "WARNING" | "CRITICAL";
+const SEV: Record<string, [Tone, string]> = {
   info: ["info", "Info"],
   warning: ["warn", "Warning"],
   critical: ["crit", "Critical"],
+  INFO: ["info", "Info"],
+  WARNING: ["warn", "Warning"],
+  CRITICAL: ["crit", "Critical"],
 };
-export const SeverityBadge = ({ severity }: { severity: Severity }) => (
-  <Badge tone={SEV[severity][0]}>{SEV[severity][1]}</Badge>
-);
+export const SeverityBadge = ({ severity }: { severity: Severity | string }) => {
+  const [tone, label] = SEV[severity] ?? ["info", String(severity)];
+  return <Badge tone={tone}>{label}</Badge>;
+};
 
 export const OnlineBadge = ({ online }: { online: boolean }) =>
   online ? (
@@ -370,18 +374,3 @@ export function CsvLink({ href }: { href: string }) {
 export const Note = ({ children }: { children: ReactNode }) => (
   <p className="mt-4 text-xs font-semibold text-muted">{children}</p>
 );
-
-// Snapshot (zoo-vision AI engine) + recorded clip (MediaMTX) of an event, when the event has them and the
-// dashboard is configured to reach them (AI_ENGINE_URL / MEDIAMTX_PLAYBACK_URL).
-export function Evidence({ e }: { e: Ev }) {
-  const { snapshot, recordingPath } = e.data;
-  const snapshotUrl =
-    typeof snapshot === "string" && process.env.AI_ENGINE_URL
-      ? `/api/ai/snapshots/${snapshot.split("/").map(encodeURIComponent).join("/")}`
-      : undefined;
-  const clipUrl =
-    typeof recordingPath === "string" && process.env.MEDIAMTX_PLAYBACK_URL
-      ? `/api/clip?${new URLSearchParams({ path: recordingPath, ts: String(e.ts) })}`
-      : undefined;
-  return <EvidenceButton snapshot={snapshotUrl} clip={clipUrl} title={`${e.cameraName} · ${fmtDateTime(e.ts)} WIB`} />;
-}

@@ -15,7 +15,6 @@ import {
   Sun,
   X,
 } from "lucide-react";
-import { AutoRefresh } from "./client";
 import { NAV_SECTIONS, visibleNav, type Role } from "./nav";
 import { useMe } from "@/auth/AuthProvider";
 import { useAuthLogout } from "@/api/generated/auth/auth";
@@ -313,7 +312,6 @@ export function CommandCenterShell({
 
           {/* Right: Controls (Sync, Theme, User, Logout) */}
           <div className="flex items-center gap-2 sm:gap-2.5">
-            <AutoRefresh />
 
             {/* Theme Toggle Button */}
             <div className="flex items-center rounded-full border border-line bg-surface-2 p-0.5 text-[11px] font-bold">
