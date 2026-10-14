@@ -54,6 +54,17 @@ export function onUnauthenticated(handler: () => void): () => void {
   };
 }
 
+// Also called by the live socket when the session has ended.
+export function notifyUnauthenticated(): void {
+  for (const fn of unauthenticatedHandlers) {
+    try {
+      fn();
+    } catch (e) {
+      console.error('Error in unauthenticated handler:', e);
+    }
+  }
+}
+
 http.interceptors.response.use(
   (response) => {
     setDown(false);
@@ -72,13 +83,7 @@ http.interceptors.response.use(
     }
 
     if (status === 401) {
-      for (const fn of unauthenticatedHandlers) {
-        try {
-          fn();
-        } catch (e) {
-          console.error('Error in unauthenticated handler:', e);
-        }
-      }
+      notifyUnauthenticated();
     }
 
     if (data && typeof data === 'object' && typeof data.code === 'string') {

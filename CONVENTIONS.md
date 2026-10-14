@@ -25,7 +25,7 @@ Dokumen ini mendefinisikan aturan dan konvensi pengembangan frontend pada proyek
   - **Catatan Penting**: Otorisasi UI hanyalah proteksi tampilan sisi klien. Keputusan otorisasi final mutlak ditentukan oleh backend API (HTTP 403 `ROLE_REQUIRED`).
 
 ## 4. Telemetri Real-time (Live Data)
-- **Data live hanya melalui `useLive` dan `useStatus`**:
+- **Data live hanya melalui `@/live`: `useStatus`, `useLiveEvents`, `useAuditNotices`** (satu koneksi dari `LiveProvider`):
   - Disediakan dari modul `@/live`.
   - Komunikasi real-time terpusat melalui satu koneksi WebSocket Socket.IO (`/ws`).
   - Perubahan data (`data.changed`) memicu invalidasi query TanStack Query secara terkoordinasi.
@@ -47,7 +47,7 @@ Dokumen ini mendefinisikan aturan dan konvensi pengembangan frontend pada proyek
    ```bash
    npm run contract:pull <tag>
    ```
-2. Baca berkas catatan perubahan: `src/contract/CHANGELOG.md` dan pastikan tidak ada breaking change tak tertangani.
+2. Baca berkas catatan perubahan: bagian *Changelog* di `src/contract/fe-contract.md` dan pastikan tidak ada breaking change tak tertangani.
 3. Selalu lakukan commit bersama untuk direktori `src/contract/` dan `src/api/generated/` dalam satu commit yang sama.
 4. Pastikan `npm run contract:check` lolos pada pipeline CI.
 

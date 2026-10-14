@@ -18,6 +18,8 @@ import {
 import { NAV_SECTIONS, visibleNav, type Role } from "./nav";
 import { useMe } from "@/auth/AuthProvider";
 import { useAuthLogout } from "@/api/generated/auth/auth";
+import { BackendBanner } from "./BackendBanner";
+import { LivePausedBadge } from "./LivePausedBadge";
 
 export function CommandCenterShell({
   children,
@@ -302,12 +304,7 @@ export function CommandCenterShell({
               </span>
             </div>
 
-            <div className="hidden md:flex items-center gap-2 rounded-full border border-lime/30 bg-lime/10 px-3 py-1 text-[11px] font-black text-forest dark:text-lime">
-              <span className="size-2 rounded-full bg-lime camera-pulse" />
-              <span>4/4 Kamera AI Online</span>
-              <span className="text-muted/60">·</span>
-              <span>100% Health</span>
-            </div>
+            {path !== "/login" && <LivePausedBadge />}
           </div>
 
           {/* Right: Controls (Sync, Theme, User, Logout) */}
@@ -371,6 +368,7 @@ export function CommandCenterShell({
 
         {/* Main Work Area */}
         <main className="flex-1 px-4 py-5 sm:px-6 lg:px-8 max-w-[1700px] w-full mx-auto">
+          <BackendBanner />
           {children}
         </main>
 
