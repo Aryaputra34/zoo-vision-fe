@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Nunito } from "next/font/google";
 import { CommandCenterShell } from "@/components/CommandCenterShell";
+import { Providers } from "@/app/providers";
 import { authEnabled } from "@/lib/session";
 import "./globals.css";
 
@@ -41,9 +42,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="min-h-full bg-bg font-sans text-ink selection:bg-lime selection:text-forest transition-colors duration-200">
-        <CommandCenterShell showLogout={authEnabled()}>
-          {children}
-        </CommandCenterShell>
+        <Providers>
+          <CommandCenterShell showLogout={authEnabled()}>
+            {children}
+          </CommandCenterShell>
+        </Providers>
       </body>
     </html>
   );

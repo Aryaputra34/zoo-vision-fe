@@ -14,4 +14,6 @@ jobs:
       # PageProps / RouteContext are global types Next.js generates into .next/types
       - run: npx next typegen
       - run: npx tsc --noEmit
+      - run: npm test
+      - run: npm run contract:check
       - run: npm run build
