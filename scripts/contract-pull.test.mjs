@@ -8,7 +8,11 @@ import { execSync } from 'node:child_process';
 test('a path pull writes CONTRACT_VERSION local:<path>@<commit>, and contract:check then fails', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'zoo-vision-dummy-'));
   const versionFile = path.resolve('src/contract/CONTRACT_VERSION');
-  const originalVersion = fs.existsSync(versionFile) ? fs.readFileSync(versionFile, 'utf-8') : null;
+  // The pull writes into the real src/contract: keep every file to put it back afterwards.
+  const contractDir = path.resolve('src/contract');
+  const saved = new Map(
+    fs.readdirSync(contractDir).map((f) => [f, fs.readFileSync(path.join(contractDir, f))]),
+  );
 
   try {
     fs.mkdirSync(path.join(tmpDir, 'apps/api'), { recursive: true });
@@ -50,8 +54,6 @@ test('a path pull writes CONTRACT_VERSION local:<path>@<commit>, and contract:ch
     assert.strictEqual(checkFailed, true, 'contract:check should have failed on local: version');
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
-    if (originalVersion !== null) {
-      fs.writeFileSync(versionFile, originalVersion, 'utf-8');
-    }
+    for (const [f, content] of saved) fs.writeFileSync(path.join(contractDir, f), content);
   }
 });
