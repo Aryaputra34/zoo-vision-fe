@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono, Nunito } from "next/font/google";
 import { CommandCenterShell } from "@/components/CommandCenterShell";
 import { Providers } from "@/app/providers";
-import { authEnabled } from "@/lib/session";
+import { AuthProvider } from "@/auth/AuthProvider";
 import "./globals.css";
 
 // Nunito: rounded friendly typography matching Gotham Rounded / Mikado used on tamansafari.com
@@ -43,12 +43,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-full bg-bg font-sans text-ink selection:bg-lime selection:text-forest transition-colors duration-200">
         <Providers>
-          <CommandCenterShell showLogout={authEnabled()}>
-            {children}
-          </CommandCenterShell>
+          <AuthProvider>
+            <CommandCenterShell>
+              {children}
+            </CommandCenterShell>
+          </AuthProvider>
         </Providers>
       </body>
     </html>
   );
 }
-

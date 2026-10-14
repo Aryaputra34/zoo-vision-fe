@@ -3,61 +3,35 @@
 import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import {
-  Car,
-  Cctv,
   ChevronLeft,
   ChevronRight,
-  CodeXml,
   Cpu,
-  LayoutDashboard,
   LogOut,
   Menu,
   Moon,
-  ScrollText,
-  Store,
   Sun,
-  Ticket,
-  Utensils,
   X,
 } from "lucide-react";
 import { AutoRefresh } from "./client";
-
-export const NAV_SECTIONS = [
-  {
-    title: "Pusat Kendali",
-    items: [
-      { href: "/", label: "Ringkasan", sub: "Command Center", Icon: LayoutDashboard },
-      { href: "/live", label: "Live Sensor CCTV", sub: "4 AI Cameras", Icon: Cctv, badge: "Live" },
-      { href: "/events", label: "Log Kejadian AI", sub: "Audit & CSV", Icon: ScrollText },
-    ],
-  },
-  {
-    title: "Zona Operasional",
-    items: [
-      { href: "/vehicles", label: "Gerbang Safari", sub: "Vehicle Corridor", Icon: Car },
-      { href: "/cashier", label: "Loket & Retail", sub: "Ticket Presence", Icon: Store },
-      { href: "/restaurant", label: "Safari Dining", sub: "Dining & Tables", Icon: Utensils },
-      { href: "/rides", label: "Wahana Kuda", sub: "Pony Arena", Icon: Ticket },
-    ],
-  },
-  {
-    title: "Sistem & Integrasi",
-    items: [
-      { href: "/api-docs", label: "OpenAPI / Swagger", sub: "Edge AI API", Icon: CodeXml },
-    ],
-  },
-];
+import { NAV_SECTIONS, visibleNav, type Role } from "./nav";
+import { useMe } from "@/auth/AuthProvider";
+import { useAuthLogout } from "@/api/generated/auth/auth";
 
 export function CommandCenterShell({
   children,
-  showLogout = false,
 }: {
   children: ReactNode;
   showLogout?: boolean;
 }) {
   const path = usePathname();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { me } = useMe();
+  const logoutMutation = useAuthLogout();
+
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">(() => {
@@ -76,11 +50,24 @@ export function CommandCenterShell({
     localStorage.setItem("tamansafari_theme", newTheme);
   };
 
+  const handleLogout = async () => {
+    try {
+      await logoutMutation.mutateAsync();
+    } catch {
+      // ignore
+    }
+    queryClient.clear();
+    router.replace("/login");
+  };
+
+  const currentRole = (me?.role as Role) || "USER";
+  const sections = visibleNav(NAV_SECTIONS, currentRole);
+
   // Find active label for the breadcrumb in top bar
-  const allItems = NAV_SECTIONS.flatMap((s) => s.items);
+  const allItems = sections.flatMap((s) => s.items);
   const currentItem = allItems.find((item) =>
     item.href === "/" ? path === "/" : path.startsWith(item.href)
-  ) ?? allItems[0];
+  ) ?? allItems[0] ?? { label: "Command Center" };
 
   return (
     <div className="flex min-h-screen bg-bg text-ink selection:bg-lime selection:text-forest transition-colors duration-200">
@@ -98,43 +85,43 @@ export function CommandCenterShell({
       ─────────────────────────────────────────────────────────────── */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 flex flex-col border-r border-white/10 bg-forest-dark text-white transition-all duration-300 ease-in-out lg:static ${
-          mobileOpen ? "translate-x-0 w-64 shadow-2xl" : "-translate-x-full lg:translate-x-0"
-        } ${collapsed ? "lg:w-20" : "lg:w-68"}`}
+          collapsed ? "lg:w-20" : "lg:w-72"
+        } ${mobileOpen ? "translate-x-0 w-72" : "-translate-x-full lg:translate-x-0"}`}
       >
-        {/* Brand Header */}
+        {/* Brand / Logo Header */}
         <div className="flex h-16 shrink-0 items-center justify-between border-b border-white/10 px-4">
           <Link
             href="/"
-            onClick={() => setMobileOpen(false)}
-            className="group flex items-center gap-3 overflow-hidden"
+            className="flex items-center gap-3 overflow-hidden"
+            title="Taman Safari Indonesia · AI Command Center"
           >
-            <div className="relative flex size-10 shrink-0 items-center justify-center rounded-2xl bg-white/10 p-1.5 shadow-inner ring-1 ring-lime/40 backdrop-blur-sm transition-transform group-hover:scale-105">
+            <div className="relative grid size-10 shrink-0 place-items-center rounded-2xl bg-white p-1.5 shadow-md shadow-black/20">
               <Image
                 src="/logo_safari.svg"
-                alt="Taman Safari Logo"
-                width={36}
-                height={36}
-                className="size-full object-contain"
+                alt="Logo Taman Safari"
+                width={32}
+                height={32}
+                className="size-8 object-contain"
                 priority
               />
             </div>
             {!collapsed && (
-              <div className="min-w-0 transition-opacity duration-300">
-                <div className="text-[10px] font-black tracking-[0.2em] text-lime uppercase">
-                  Taman Safari
-                </div>
-                <div className="truncate text-base font-black tracking-tight text-white">
-                  AI Command <span className="text-lime font-bold">NOC</span>
-                </div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-sm font-black tracking-tight text-white truncate">
+                  TAMAN SAFARI
+                </span>
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-lime truncate">
+                  AI Command Center
+                </span>
               </div>
             )}
           </Link>
 
-          {/* Mobile close button */}
+          {/* Close drawer on mobile */}
           <button
             type="button"
             onClick={() => setMobileOpen(false)}
-            className="flex size-8 items-center justify-center rounded-xl bg-white/10 text-white lg:hidden"
+            className="flex size-9 items-center justify-center rounded-xl text-white/70 hover:bg-white/10 hover:text-white lg:hidden"
             aria-label="Tutup Menu"
           >
             <X className="size-4.5" />
@@ -159,7 +146,7 @@ export function CommandCenterShell({
           aria-label="Pusat Kendali"
           className="flex-1 overflow-y-auto px-3 py-4 space-y-6 [scrollbar-width:thin]"
         >
-          {NAV_SECTIONS.map((sec) => (
+          {sections.map((sec) => (
             <div key={sec.title}>
               {!collapsed && (
                 <div className="mb-2 px-3 text-[10px] font-black uppercase tracking-widest text-lime/70">
@@ -167,20 +154,16 @@ export function CommandCenterShell({
                 </div>
               )}
               <div className="space-y-1">
-                {sec.items.map(({ href, label, sub, Icon, badge }) => {
+                {sec.items.map(({ href, label, sub, Icon, external }) => {
                   const active = href === "/" ? path === "/" : path.startsWith(href);
-                  return (
-                    <Link
-                      key={href}
-                      href={href}
-                      onClick={() => setMobileOpen(false)}
-                      title={collapsed ? `${label} (${sub})` : undefined}
-                      className={`group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-xs font-bold transition-all ${
-                        active
-                          ? "bg-lime text-forest font-black shadow-md shadow-lime/20"
-                          : "text-white/80 hover:bg-white/10 hover:text-white"
-                      }`}
-                    >
+                  const className = `group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-xs font-bold transition-all ${
+                    active
+                      ? "bg-lime text-forest font-black shadow-md shadow-lime/20"
+                      : "text-white/80 hover:bg-white/10 hover:text-white"
+                  }`;
+
+                  const content = (
+                    <>
                       <Icon
                         className={`size-4.5 shrink-0 transition-transform group-hover:scale-110 ${
                           active ? "text-forest" : "text-lime"
@@ -190,27 +173,45 @@ export function CommandCenterShell({
                         <div className="flex flex-1 items-center justify-between min-w-0">
                           <div className="truncate">
                             <div>{label}</div>
-                            <div
-                              className={`text-[10px] font-semibold truncate ${
-                                active ? "text-forest/75" : "text-white/50"
-                              }`}
-                            >
-                              {sub}
-                            </div>
+                            {sub && (
+                              <div
+                                className={`text-[10px] font-semibold truncate ${
+                                  active ? "text-forest/75" : "text-white/50"
+                                }`}
+                              >
+                                {sub}
+                              </div>
+                            )}
                           </div>
-                          {badge && (
-                            <span
-                              className={`ml-1.5 rounded-full px-2 py-0.5 text-[9px] font-extrabold ${
-                                active
-                                  ? "bg-forest/20 text-forest"
-                                  : "bg-lime/20 text-lime"
-                              }`}
-                            >
-                              {badge}
-                            </span>
-                          )}
                         </div>
                       )}
+                    </>
+                  );
+
+                  if (external) {
+                    return (
+                      <a
+                        key={href}
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={collapsed ? `${label} (${sub})` : undefined}
+                        className={className}
+                      >
+                        {content}
+                      </a>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      key={href}
+                      href={href}
+                      onClick={() => setMobileOpen(false)}
+                      title={collapsed ? `${label} (${sub})` : undefined}
+                      className={className}
+                    >
+                      {content}
                     </Link>
                   );
                 })}
@@ -239,8 +240,8 @@ export function CommandCenterShell({
                 <span className="font-mono text-white/90">MP4 Clip (:9996)</span>
               </div>
               <div className="flex justify-between">
-                <span>Database:</span>
-                <span className="font-mono text-white/90">SQLite WAL</span>
+                <span>API Session:</span>
+                <span className="font-mono text-white/90">{me ? `${me.name} (${currentRole})` : "Session Ready"}</span>
               </div>
             </div>
           </div>
@@ -276,7 +277,7 @@ export function CommandCenterShell({
       </aside>
 
       {/* ─────────────────────────────────────────────────────────────
-          MAIN CONTENT WRAPPER: Top Bar + Content + Status Footer
+          MAIN CONTENT AREA with Top Telemetry Header
       ─────────────────────────────────────────────────────────────── */}
       <div className="flex flex-1 flex-col min-w-0">
         {/* Compact Top Telemetry Header */}
@@ -310,7 +311,7 @@ export function CommandCenterShell({
             </div>
           </div>
 
-          {/* Right: Controls (Sync, Theme, Logout) */}
+          {/* Right: Controls (Sync, Theme, User, Logout) */}
           <div className="flex items-center gap-2 sm:gap-2.5">
             <AutoRefresh />
 
@@ -344,16 +345,28 @@ export function CommandCenterShell({
               </button>
             </div>
 
+            {/* User display */}
+            {path !== "/login" && me && (
+              <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-line text-[11px]">
+                <span className="font-black text-forest">{me.name}</span>
+                <span className="rounded-full bg-lime/20 px-2 py-0.5 text-[9px] font-extrabold text-forest uppercase">
+                  {me.role}
+                </span>
+              </div>
+            )}
+
             {/* Logout (if authenticated) */}
-            {showLogout && path !== "/login" && (
-              <a
-                href="/logout"
-                className="flex items-center gap-1 rounded-full border border-line bg-surface-2 px-2.5 py-1 text-[11px] font-black text-muted hover:text-forest transition-colors"
+            {path !== "/login" && (
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={logoutMutation.isPending}
+                className="flex items-center gap-1 rounded-full border border-line bg-surface-2 px-2.5 py-1 text-[11px] font-black text-muted hover:text-forest transition-colors cursor-pointer"
                 title="Keluar"
               >
                 <LogOut className="size-3" />
                 <span className="hidden sm:inline">Keluar</span>
-              </a>
+              </button>
             )}
           </div>
         </header>
