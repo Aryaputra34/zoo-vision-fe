@@ -344,6 +344,654 @@
         ]
       }
     },
+    "/api/v1/system-log/audit": {
+      "get": {
+        "operationId": "systemLogAudit",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.",
+            "schema": {
+              "example": "2026-10-14T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, exclusive",
+            "schema": {
+              "example": "2026-10-15T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "actor",
+            "required": false,
+            "in": "query",
+            "description": "Part of the actor name, any case",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "entity",
+            "required": false,
+            "in": "query",
+            "description": "The entity, exactly",
+            "schema": {
+              "example": "camera",
+              "type": "string"
+            }
+          },
+          {
+            "name": "action",
+            "required": false,
+            "in": "query",
+            "description": "The action, exactly",
+            "schema": {
+              "example": "camera_config.save",
+              "type": "string"
+            }
+          },
+          {
+            "name": "auditCamera",
+            "required": false,
+            "in": "query",
+            "description": "Only rows about audit cameras (true), or only the others",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "The `nextCursor` of the previous page",
+            "schema": {
+              "pattern": "^\\d{1,18}$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 500,
+              "default": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPageDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid (VALIDATION_FAILED, SETTINGS_INVALID, ...)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No valid session or token (UNAUTHENTICATED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is too low (FORBIDDEN, ROLE_REQUIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "SystemLog"
+        ]
+      }
+    },
+    "/api/v1/system-log/logins": {
+      "get": {
+        "operationId": "systemLogLogins",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.",
+            "schema": {
+              "example": "2026-10-14T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, exclusive",
+            "schema": {
+              "example": "2026-10-15T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "username",
+            "required": false,
+            "in": "query",
+            "description": "Part of the username as typed, any case",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "result",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "SUCCESS",
+                "WRONG_PASSWORD",
+                "DISABLED",
+                "LOCKED",
+                "RATE_LIMITED",
+                "LOGOUT"
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "The `nextCursor` of the previous page",
+            "schema": {
+              "pattern": "^\\d{1,18}$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 500,
+              "default": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginPageDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid (VALIDATION_FAILED, SETTINGS_INVALID, ...)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No valid session or token (UNAUTHENTICATED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is too low (FORBIDDEN, ROLE_REQUIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "SystemLog"
+        ]
+      }
+    },
+    "/api/v1/system-log/system-events": {
+      "get": {
+        "operationId": "systemLogSystemEvents",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.",
+            "schema": {
+              "example": "2026-10-14T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, exclusive",
+            "schema": {
+              "example": "2026-10-15T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "types",
+            "required": false,
+            "in": "query",
+            "description": "System event types, comma separated",
+            "schema": {
+              "example": "engine_started,config_rejected",
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "The `nextCursor` of the previous page",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 500,
+              "default": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemEventsPageDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid (VALIDATION_FAILED, SETTINGS_INVALID, ...)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No valid session or token (UNAUTHENTICATED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is too low (FORBIDDEN, ROLE_REQUIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "SystemLog"
+        ]
+      }
+    },
+    "/api/v1/system-log/audit.csv": {
+      "get": {
+        "operationId": "systemLogAuditCsv",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.",
+            "schema": {
+              "example": "2026-10-14T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, exclusive",
+            "schema": {
+              "example": "2026-10-15T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "actor",
+            "required": false,
+            "in": "query",
+            "description": "Part of the actor name, any case",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "entity",
+            "required": false,
+            "in": "query",
+            "description": "The entity, exactly",
+            "schema": {
+              "example": "camera",
+              "type": "string"
+            }
+          },
+          {
+            "name": "action",
+            "required": false,
+            "in": "query",
+            "description": "The action, exactly",
+            "schema": {
+              "example": "camera_config.save",
+              "type": "string"
+            }
+          },
+          {
+            "name": "auditCamera",
+            "required": false,
+            "in": "query",
+            "description": "Only rows about audit cameras (true), or only the others",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A UTF-8 CSV (with a BOM), local times in the site time zone",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid (VALIDATION_FAILED, SETTINGS_INVALID, ...)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No valid session or token (UNAUTHENTICATED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is too low (FORBIDDEN, ROLE_REQUIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "SystemLog"
+        ]
+      }
+    },
+    "/api/v1/system-log/logins.csv": {
+      "get": {
+        "operationId": "systemLogLoginsCsv",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.",
+            "schema": {
+              "example": "2026-10-14T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, exclusive",
+            "schema": {
+              "example": "2026-10-15T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "username",
+            "required": false,
+            "in": "query",
+            "description": "Part of the username as typed, any case",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "result",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "SUCCESS",
+                "WRONG_PASSWORD",
+                "DISABLED",
+                "LOCKED",
+                "RATE_LIMITED",
+                "LOGOUT"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A UTF-8 CSV (with a BOM), local times in the site time zone",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid (VALIDATION_FAILED, SETTINGS_INVALID, ...)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No valid session or token (UNAUTHENTICATED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is too low (FORBIDDEN, ROLE_REQUIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "SystemLog"
+        ]
+      }
+    },
+    "/api/v1/system-log/system-events.csv": {
+      "get": {
+        "operationId": "systemLogSystemEventsCsv",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.",
+            "schema": {
+              "example": "2026-10-14T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, exclusive",
+            "schema": {
+              "example": "2026-10-15T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "types",
+            "required": false,
+            "in": "query",
+            "description": "System event types, comma separated",
+            "schema": {
+              "example": "engine_started,config_rejected",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A UTF-8 CSV (with a BOM), local times in the site time zone",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid (VALIDATION_FAILED, SETTINGS_INVALID, ...)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No valid session or token (UNAUTHENTICATED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is too low (FORBIDDEN, ROLE_REQUIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "SystemLog"
+        ]
+      }
+    },
     "/api/v1/users": {
       "get": {
         "operationId": "usersList",
@@ -1633,6 +2281,149 @@
         ]
       }
     },
+    "/media/snapshots/{path}": {
+      "get": {
+        "operationId": "mediaSnapshot",
+        "parameters": [
+          {
+            "name": "path",
+            "required": true,
+            "in": "path",
+            "description": "`<camera>/<date>/<event>.jpg`. Use the `snapshotUrl` of an event as it is: it is built for the browser",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The JPEG the engine wrote for the event",
+            "content": {
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid (VALIDATION_FAILED, SETTINGS_INVALID, ...)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No valid session or token (UNAUTHENTICATED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is too low (FORBIDDEN, ROLE_REQUIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No such resource (NOT_FOUND)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Media"
+        ]
+      }
+    },
+    "/media/clips/{eventId}": {
+      "get": {
+        "operationId": "mediaClip",
+        "parameters": [
+          {
+            "name": "eventId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The MP4 around the event; 404 RECORDING_NOT_AVAILABLE when there is none",
+            "content": {
+              "video/mp4": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid (VALIDATION_FAILED, SETTINGS_INVALID, ...)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No valid session or token (UNAUTHENTICATED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is too low (FORBIDDEN, ROLE_REQUIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No such resource (NOT_FOUND)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Media"
+        ]
+      }
+    },
     "/api/v1/models": {
       "get": {
         "operationId": "modelsList",
@@ -2107,6 +2898,1053 @@
         ]
       }
     },
+    "/api/v1/reports/events/stats": {
+      "get": {
+        "operationId": "reportsEventStats",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.",
+            "schema": {
+              "example": "2026-10-14T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, exclusive",
+            "schema": {
+              "example": "2026-10-15T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "cameraIds",
+            "required": false,
+            "in": "query",
+            "description": "Camera ids, comma separated, at most 50",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "useCase",
+            "required": false,
+            "in": "query",
+            "description": "One use case id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bucket",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Bucket"
+            }
+          },
+          {
+            "name": "types",
+            "required": false,
+            "in": "query",
+            "description": "Event types, comma separated. Needed with `data.<field>` and `max`",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "groupBy",
+            "required": false,
+            "in": "query",
+            "description": "Comma separated: `camera`, `type`, `severity` and at most two `data.<field>` that a requested type declares as a string or enum",
+            "schema": {
+              "example": "camera,data.direction",
+              "type": "string"
+            }
+          },
+          {
+            "name": "max",
+            "required": false,
+            "in": "query",
+            "description": "A `data` field a requested type declares as a number: its largest value per bucket",
+            "schema": {
+              "example": "waitingSec",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventStatsDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid (VALIDATION_FAILED, SETTINGS_INVALID, ...)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No valid session or token (UNAUTHENTICATED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is too low (FORBIDDEN, ROLE_REQUIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Reports"
+        ]
+      }
+    },
+    "/api/v1/reports/intervals/stats": {
+      "get": {
+        "operationId": "reportsIntervalStats",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.",
+            "schema": {
+              "example": "2026-10-14T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, exclusive",
+            "schema": {
+              "example": "2026-10-15T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "cameraIds",
+            "required": false,
+            "in": "query",
+            "description": "Camera ids, comma separated, at most 50",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "useCase",
+            "required": false,
+            "in": "query",
+            "description": "One use case id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bucket",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Bucket"
+            }
+          },
+          {
+            "name": "kind",
+            "required": true,
+            "in": "query",
+            "description": "The interval kind",
+            "schema": {
+              "example": "desk_unattended",
+              "type": "string"
+            }
+          },
+          {
+            "name": "groupBy",
+            "required": false,
+            "in": "query",
+            "description": "`camera`, or `subject` (a table id; rows then carry `cameraId` too, because an id is only unique within its camera)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "camera",
+                "subject"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntervalStatsDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid (VALIDATION_FAILED, SETTINGS_INVALID, ...)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No valid session or token (UNAUTHENTICATED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is too low (FORBIDDEN, ROLE_REQUIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Reports"
+        ]
+      }
+    },
+    "/api/v1/reports/metrics/series": {
+      "get": {
+        "operationId": "reportsMetricSeries",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.",
+            "schema": {
+              "example": "2026-10-14T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, exclusive",
+            "schema": {
+              "example": "2026-10-15T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "cameraIds",
+            "required": false,
+            "in": "query",
+            "description": "Camera ids, comma separated, at most 50",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "useCase",
+            "required": false,
+            "in": "query",
+            "description": "One use case id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bucket",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Bucket"
+            }
+          },
+          {
+            "name": "name",
+            "required": true,
+            "in": "query",
+            "description": "The metric name",
+            "schema": {
+              "example": "occupancy",
+              "type": "string"
+            }
+          },
+          {
+            "name": "agg",
+            "required": false,
+            "in": "query",
+            "description": "The aggregate per bucket. Give this or `above`, not both",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "avg",
+                "max",
+                "min"
+              ]
+            }
+          },
+          {
+            "name": "above",
+            "required": false,
+            "in": "query",
+            "description": "Instead of an aggregate: the minutes per bucket with a value at or above this",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetricSeriesDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid (VALIDATION_FAILED, SETTINGS_INVALID, ...)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No valid session or token (UNAUTHENTICATED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is too low (FORBIDDEN, ROLE_REQUIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Reports"
+        ]
+      }
+    },
+    "/api/v1/events": {
+      "get": {
+        "operationId": "eventsList",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.",
+            "schema": {
+              "example": "2026-10-14T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, exclusive",
+            "schema": {
+              "example": "2026-10-15T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "cameraIds",
+            "required": false,
+            "in": "query",
+            "description": "Camera ids, comma separated, at most 50",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "useCase",
+            "required": false,
+            "in": "query",
+            "description": "One use case id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "types",
+            "required": false,
+            "in": "query",
+            "description": "Event types, comma separated. Needed with `where`",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "severity",
+            "required": false,
+            "in": "query",
+            "description": "Severities, comma separated: info, warning, critical",
+            "schema": {
+              "example": "warning,critical",
+              "type": "string"
+            }
+          },
+          {
+            "name": "where",
+            "required": false,
+            "in": "query",
+            "description": "At most two `data.<field>:<value>` equality filters, comma separated, on string or enum fields the requested types declare. A value can not contain a comma",
+            "schema": {
+              "example": "data.direction:ENTRY,data.vehicleType:bus",
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "The `nextCursor` of the previous page; opaque",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 500,
+              "default": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventPageDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid (VALIDATION_FAILED, SETTINGS_INVALID, ...)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No valid session or token (UNAUTHENTICATED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is too low (FORBIDDEN, ROLE_REQUIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Events"
+        ]
+      }
+    },
+    "/api/v1/intervals": {
+      "get": {
+        "operationId": "intervalsList",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.",
+            "schema": {
+              "example": "2026-10-14T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, exclusive",
+            "schema": {
+              "example": "2026-10-15T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "cameraIds",
+            "required": false,
+            "in": "query",
+            "description": "Camera ids, comma separated, at most 50",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "useCase",
+            "required": false,
+            "in": "query",
+            "description": "One use case id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "kind",
+            "required": false,
+            "in": "query",
+            "description": "One interval kind",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "The `nextCursor` of the previous page; opaque",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 500,
+              "default": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntervalPageDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid (VALIDATION_FAILED, SETTINGS_INVALID, ...)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No valid session or token (UNAUTHENTICATED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is too low (FORBIDDEN, ROLE_REQUIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Intervals"
+        ]
+      }
+    },
+    "/api/v1/exports/events.csv": {
+      "get": {
+        "operationId": "exportsEvents",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.",
+            "schema": {
+              "example": "2026-10-14T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, exclusive",
+            "schema": {
+              "example": "2026-10-15T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "cameraIds",
+            "required": false,
+            "in": "query",
+            "description": "Camera ids, comma separated, at most 50",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "useCase",
+            "required": false,
+            "in": "query",
+            "description": "One use case id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "types",
+            "required": false,
+            "in": "query",
+            "description": "Event types, comma separated. Needed with `where`",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "severity",
+            "required": false,
+            "in": "query",
+            "description": "Severities, comma separated: info, warning, critical",
+            "schema": {
+              "example": "warning,critical",
+              "type": "string"
+            }
+          },
+          {
+            "name": "where",
+            "required": false,
+            "in": "query",
+            "description": "At most two `data.<field>:<value>` equality filters, comma separated, on string or enum fields the requested types declare. A value can not contain a comma",
+            "schema": {
+              "example": "data.direction:ENTRY,data.vehicleType:bus",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A UTF-8 CSV (with a BOM), local times in the site time zone",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid (VALIDATION_FAILED, SETTINGS_INVALID, ...)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No valid session or token (UNAUTHENTICATED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is too low (FORBIDDEN, ROLE_REQUIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Exports"
+        ]
+      }
+    },
+    "/api/v1/exports/intervals.csv": {
+      "get": {
+        "operationId": "exportsIntervals",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.",
+            "schema": {
+              "example": "2026-10-14T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, exclusive",
+            "schema": {
+              "example": "2026-10-15T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "cameraIds",
+            "required": false,
+            "in": "query",
+            "description": "Camera ids, comma separated, at most 50",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "useCase",
+            "required": false,
+            "in": "query",
+            "description": "One use case id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "kind",
+            "required": false,
+            "in": "query",
+            "description": "One interval kind",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A UTF-8 CSV (with a BOM), local times in the site time zone",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid (VALIDATION_FAILED, SETTINGS_INVALID, ...)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No valid session or token (UNAUTHENTICATED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is too low (FORBIDDEN, ROLE_REQUIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Exports"
+        ]
+      }
+    },
+    "/api/v1/exports/metrics.csv": {
+      "get": {
+        "operationId": "exportsMetrics",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.",
+            "schema": {
+              "example": "2026-10-14T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, exclusive",
+            "schema": {
+              "example": "2026-10-15T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "cameraIds",
+            "required": false,
+            "in": "query",
+            "description": "Camera ids, comma separated, at most 50",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "useCase",
+            "required": false,
+            "in": "query",
+            "description": "One use case id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A UTF-8 CSV (with a BOM), local times in the site time zone",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid (VALIDATION_FAILED, SETTINGS_INVALID, ...)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No valid session or token (UNAUTHENTICATED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is too low (FORBIDDEN, ROLE_REQUIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Exports"
+        ]
+      }
+    },
+    "/api/v1/exports/summary.csv": {
+      "get": {
+        "operationId": "exportsSummary",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.",
+            "schema": {
+              "example": "2026-10-14T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "ISO 8601 with an offset, exclusive",
+            "schema": {
+              "example": "2026-10-15T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "cameraIds",
+            "required": false,
+            "in": "query",
+            "description": "Camera ids, comma separated, at most 50",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "useCase",
+            "required": false,
+            "in": "query",
+            "description": "One use case id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bucket",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "hour",
+                "day"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A UTF-8 CSV (with a BOM), local times in the site time zone",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is invalid (VALIDATION_FAILED, SETTINGS_INVALID, ...)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No valid session or token (UNAUTHENTICATED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The role is too low (FORBIDDEN, ROLE_REQUIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Exports"
+        ]
+      }
+    },
     "/api/v1/usecases": {
       "get": {
         "operationId": "usecasesList",
@@ -2271,6 +4109,257 @@
         "required": [
           "currentPassword",
           "newPassword"
+        ]
+      },
+      "AuditRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "A number as a string (64-bit)"
+          },
+          "time": {
+            "type": "string",
+            "description": "UTC"
+          },
+          "actorType": {
+            "type": "string",
+            "description": "user or token"
+          },
+          "entityId": {
+            "type": "string",
+            "nullable": true
+          },
+          "before": {
+            "type": "object",
+            "nullable": true,
+            "description": "What the entity was, secrets redacted"
+          },
+          "after": {
+            "type": "object",
+            "nullable": true,
+            "description": "What it became, secrets redacted"
+          },
+          "ip": {
+            "type": "string",
+            "nullable": true
+          },
+          "auditCamera": {
+            "type": "boolean",
+            "description": "A change to a camera with auditCamera set"
+          },
+          "actorName": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "entity": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "time",
+          "actorType",
+          "entityId",
+          "before",
+          "after",
+          "ip",
+          "auditCamera",
+          "actorName",
+          "action",
+          "entity"
+        ]
+      },
+      "AuditPageDto": {
+        "type": "object",
+        "properties": {
+          "rows": {
+            "description": "Newest first",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditRowDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "rows",
+          "nextCursor"
+        ]
+      },
+      "LoginResult": {
+        "type": "string",
+        "enum": [
+          "SUCCESS",
+          "WRONG_PASSWORD",
+          "DISABLED",
+          "LOCKED",
+          "RATE_LIMITED",
+          "LOGOUT"
+        ]
+      },
+      "LoginRowDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "A number as a string (64-bit)"
+          },
+          "time": {
+            "type": "string",
+            "description": "UTC"
+          },
+          "username": {
+            "type": "string",
+            "description": "As typed at the login"
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LoginResult"
+              }
+            ]
+          },
+          "ip": {
+            "type": "string",
+            "nullable": true,
+            "description": "The client address"
+          },
+          "userAgent": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "time",
+          "username",
+          "userId",
+          "result",
+          "ip",
+          "userAgent"
+        ]
+      },
+      "LoginPageDto": {
+        "type": "object",
+        "properties": {
+          "rows": {
+            "description": "Newest first",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoginRowDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "rows",
+          "nextCursor"
+        ]
+      },
+      "Severity": {
+        "type": "string",
+        "enum": [
+          "info",
+          "warning",
+          "critical"
+        ]
+      },
+      "EventRowDto": {
+        "type": "object",
+        "properties": {
+          "time": {
+            "type": "string",
+            "description": "UTC"
+          },
+          "cameraId": {
+            "type": "string",
+            "nullable": true
+          },
+          "cameraName": {
+            "type": "string",
+            "nullable": true
+          },
+          "severity": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Severity"
+              }
+            ]
+          },
+          "configVersion": {
+            "type": "number",
+            "nullable": true
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "The event's `data` (see its type's schema in /usecases)"
+          },
+          "snapshotUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "A /media/snapshots URL; null without a snapshot"
+          },
+          "clipUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "A /media/clips URL; null when the camera has no recording path or recording is off. The clip itself can still be gone"
+          },
+          "id": {
+            "type": "string"
+          },
+          "useCase": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "time",
+          "cameraId",
+          "cameraName",
+          "severity",
+          "configVersion",
+          "data",
+          "snapshotUrl",
+          "clipUrl",
+          "id",
+          "useCase",
+          "type"
+        ]
+      },
+      "SystemEventsPageDto": {
+        "type": "object",
+        "properties": {
+          "rows": {
+            "description": "Newest first",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EventRowDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "rows",
+          "nextCursor"
         ]
       },
       "UserDto": {
@@ -3353,6 +5442,279 @@
         "required": [
           "source",
           "target"
+        ]
+      },
+      "Bucket": {
+        "type": "string",
+        "enum": [
+          "5m",
+          "15m",
+          "hour",
+          "day"
+        ]
+      },
+      "EventStatsRowDto": {
+        "type": "object",
+        "properties": {
+          "bucketStart": {
+            "type": "string",
+            "description": "UTC, the start of the bucket in the site time zone"
+          },
+          "group": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "nullable": true
+            },
+            "description": "One key per `groupBy` item, spelled as requested (`camera`, `data.direction`); null where the event has no value. `{}` without `groupBy`."
+          },
+          "max": {
+            "type": "number",
+            "nullable": true,
+            "description": "Only with `max`"
+          },
+          "count": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "bucketStart",
+          "group",
+          "count"
+        ]
+      },
+      "EventStatsDto": {
+        "type": "object",
+        "properties": {
+          "bucket": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Bucket"
+              }
+            ]
+          },
+          "rows": {
+            "description": "Non-empty buckets only, ordered by bucketStart and then the group values",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EventStatsRowDto"
+            }
+          }
+        },
+        "required": [
+          "bucket",
+          "rows"
+        ]
+      },
+      "IntervalStatsRowDto": {
+        "type": "object",
+        "properties": {
+          "bucketStart": {
+            "type": "string",
+            "description": "UTC, the start of the bucket in the site time zone"
+          },
+          "cameraId": {
+            "type": "string",
+            "description": "With groupBy camera or subject"
+          },
+          "subjectId": {
+            "type": "string",
+            "nullable": true,
+            "description": "With groupBy subject; null for intervals without a subject"
+          },
+          "count": {
+            "type": "number",
+            "description": "Intervals that start in the bucket"
+          },
+          "totalSec": {
+            "type": "number",
+            "description": "Seconds inside the bucket and the range: an interval crossing an edge is split. An open interval counts up to now, or `to` if earlier"
+          },
+          "avgSec": {
+            "type": "number",
+            "nullable": true,
+            "description": "Mean whole duration of the intervals that start in the bucket; null when none does"
+          },
+          "maxSec": {
+            "type": "number",
+            "nullable": true,
+            "description": "Longest whole duration of those; null when none starts here"
+          }
+        },
+        "required": [
+          "bucketStart",
+          "count",
+          "totalSec",
+          "avgSec",
+          "maxSec"
+        ]
+      },
+      "IntervalStatsDto": {
+        "type": "object",
+        "properties": {
+          "bucket": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Bucket"
+              }
+            ]
+          },
+          "rows": {
+            "description": "Non-empty buckets only, ordered by bucketStart, then camera, then subject",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IntervalStatsRowDto"
+            }
+          }
+        },
+        "required": [
+          "bucket",
+          "rows"
+        ]
+      },
+      "MetricSeriesRowDto": {
+        "type": "object",
+        "properties": {
+          "bucketStart": {
+            "type": "string",
+            "description": "UTC, the start of the bucket in the site time zone"
+          },
+          "value": {
+            "type": "number",
+            "description": "The aggregate, or with `above` the number of minutes"
+          },
+          "cameraId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "bucketStart",
+          "value",
+          "cameraId"
+        ]
+      },
+      "MetricSeriesDto": {
+        "type": "object",
+        "properties": {
+          "bucket": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Bucket"
+              }
+            ]
+          },
+          "rows": {
+            "description": "Buckets with a value only, ordered by bucketStart, then camera",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetricSeriesRowDto"
+            }
+          }
+        },
+        "required": [
+          "bucket",
+          "rows"
+        ]
+      },
+      "EventPageDto": {
+        "type": "object",
+        "properties": {
+          "rows": {
+            "description": "Newest first",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EventRowDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true,
+            "description": "Pass as `cursor` for the next page; null on the last"
+          }
+        },
+        "required": [
+          "rows",
+          "nextCursor"
+        ]
+      },
+      "IntervalRowDto": {
+        "type": "object",
+        "properties": {
+          "subjectId": {
+            "type": "string",
+            "nullable": true
+          },
+          "start": {
+            "type": "string",
+            "description": "UTC"
+          },
+          "end": {
+            "type": "string",
+            "nullable": true,
+            "description": "null while open"
+          },
+          "endReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "durationSec": {
+            "type": "number",
+            "nullable": true,
+            "description": "null while open"
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "cameraId": {
+            "type": "string"
+          },
+          "cameraName": {
+            "type": "string"
+          },
+          "useCase": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "subjectId",
+          "start",
+          "end",
+          "endReason",
+          "durationSec",
+          "data",
+          "id",
+          "cameraId",
+          "cameraName",
+          "useCase",
+          "kind"
+        ]
+      },
+      "IntervalPageDto": {
+        "type": "object",
+        "properties": {
+          "rows": {
+            "description": "Newest start first",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IntervalRowDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true,
+            "description": "Pass as `cursor` for the next page; null on the last"
+          }
+        },
+        "required": [
+          "rows",
+          "nextCursor"
         ]
       },
       "UseCaseEventDto": {

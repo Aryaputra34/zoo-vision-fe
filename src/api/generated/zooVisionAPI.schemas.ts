@@ -52,6 +52,141 @@ export interface ChangePasswordDto {
   newPassword: string;
 }
 
+/**
+ * What the entity was, secrets redacted
+ * @nullable
+ */
+export type AuditRowDtoBefore = { [key: string]: unknown } | null;
+
+/**
+ * What it became, secrets redacted
+ * @nullable
+ */
+export type AuditRowDtoAfter = { [key: string]: unknown } | null;
+
+export interface AuditRowDto {
+  /** A number as a string (64-bit) */
+  id: string;
+  /** UTC */
+  time: string;
+  /** user or token */
+  actorType: string;
+  /** @nullable */
+  entityId: string | null;
+  /**
+   * What the entity was, secrets redacted
+   * @nullable
+   */
+  before: AuditRowDtoBefore;
+  /**
+   * What it became, secrets redacted
+   * @nullable
+   */
+  after: AuditRowDtoAfter;
+  /** @nullable */
+  ip: string | null;
+  /** A change to a camera with auditCamera set */
+  auditCamera: boolean;
+  actorName: string;
+  action: string;
+  entity: string;
+}
+
+export interface AuditPageDto {
+  /** Newest first */
+  rows: AuditRowDto[];
+  /** @nullable */
+  nextCursor: string | null;
+}
+
+export type LoginResult = typeof LoginResult[keyof typeof LoginResult];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const LoginResult = {
+  SUCCESS: 'SUCCESS',
+  WRONG_PASSWORD: 'WRONG_PASSWORD',
+  DISABLED: 'DISABLED',
+  LOCKED: 'LOCKED',
+  RATE_LIMITED: 'RATE_LIMITED',
+  LOGOUT: 'LOGOUT',
+} as const;
+
+export interface LoginRowDto {
+  /** A number as a string (64-bit) */
+  id: string;
+  /** UTC */
+  time: string;
+  /** As typed at the login */
+  username: string;
+  /** @nullable */
+  userId: string | null;
+  result: LoginResult;
+  /**
+   * The client address
+   * @nullable
+   */
+  ip: string | null;
+  /** @nullable */
+  userAgent: string | null;
+}
+
+export interface LoginPageDto {
+  /** Newest first */
+  rows: LoginRowDto[];
+  /** @nullable */
+  nextCursor: string | null;
+}
+
+export type Severity = typeof Severity[keyof typeof Severity];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const Severity = {
+  info: 'info',
+  warning: 'warning',
+  critical: 'critical',
+} as const;
+
+/**
+ * The event's `data` (see its type's schema in /usecases)
+ */
+export type EventRowDtoData = { [key: string]: unknown };
+
+export interface EventRowDto {
+  /** UTC */
+  time: string;
+  /** @nullable */
+  cameraId: string | null;
+  /** @nullable */
+  cameraName: string | null;
+  severity: Severity;
+  /** @nullable */
+  configVersion: number | null;
+  /** The event's `data` (see its type's schema in /usecases) */
+  data: EventRowDtoData;
+  /**
+   * A /media/snapshots URL; null without a snapshot
+   * @nullable
+   */
+  snapshotUrl: string | null;
+  /**
+   * A /media/clips URL; null when the camera has no recording path or recording is off. The clip itself can still be gone
+   * @nullable
+   */
+  clipUrl: string | null;
+  id: string;
+  useCase: string;
+  type: string;
+}
+
+export interface SystemEventsPageDto {
+  /** Newest first */
+  rows: EventRowDto[];
+  /** @nullable */
+  nextCursor: string | null;
+}
+
 export interface UserDto {
   id: string;
   username: string;
@@ -584,6 +719,134 @@ export interface ConvertResultDto {
   target: ModelViewDto;
 }
 
+export type Bucket = typeof Bucket[keyof typeof Bucket];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const Bucket = {
+  '5m': '5m',
+  '15m': '15m',
+  hour: 'hour',
+  day: 'day',
+} as const;
+
+/**
+ * One key per `groupBy` item, spelled as requested (`camera`, `data.direction`); null where the event has no value. `{}` without `groupBy`.
+ */
+export type EventStatsRowDtoGroup = {[key: string]: string | null};
+
+export interface EventStatsRowDto {
+  /** UTC, the start of the bucket in the site time zone */
+  bucketStart: string;
+  /** One key per `groupBy` item, spelled as requested (`camera`, `data.direction`); null where the event has no value. `{}` without `groupBy`. */
+  group: EventStatsRowDtoGroup;
+  /**
+   * Only with `max`
+   * @nullable
+   */
+  max?: number | null;
+  count: number;
+}
+
+export interface EventStatsDto {
+  bucket: Bucket;
+  /** Non-empty buckets only, ordered by bucketStart and then the group values */
+  rows: EventStatsRowDto[];
+}
+
+export interface IntervalStatsRowDto {
+  /** UTC, the start of the bucket in the site time zone */
+  bucketStart: string;
+  /** With groupBy camera or subject */
+  cameraId?: string;
+  /**
+   * With groupBy subject; null for intervals without a subject
+   * @nullable
+   */
+  subjectId?: string | null;
+  /** Intervals that start in the bucket */
+  count: number;
+  /** Seconds inside the bucket and the range: an interval crossing an edge is split. An open interval counts up to now, or `to` if earlier */
+  totalSec: number;
+  /**
+   * Mean whole duration of the intervals that start in the bucket; null when none does
+   * @nullable
+   */
+  avgSec: number | null;
+  /**
+   * Longest whole duration of those; null when none starts here
+   * @nullable
+   */
+  maxSec: number | null;
+}
+
+export interface IntervalStatsDto {
+  bucket: Bucket;
+  /** Non-empty buckets only, ordered by bucketStart, then camera, then subject */
+  rows: IntervalStatsRowDto[];
+}
+
+export interface MetricSeriesRowDto {
+  /** UTC, the start of the bucket in the site time zone */
+  bucketStart: string;
+  /** The aggregate, or with `above` the number of minutes */
+  value: number;
+  cameraId: string;
+}
+
+export interface MetricSeriesDto {
+  bucket: Bucket;
+  /** Buckets with a value only, ordered by bucketStart, then camera */
+  rows: MetricSeriesRowDto[];
+}
+
+export interface EventPageDto {
+  /** Newest first */
+  rows: EventRowDto[];
+  /**
+   * Pass as `cursor` for the next page; null on the last
+   * @nullable
+   */
+  nextCursor: string | null;
+}
+
+export type IntervalRowDtoData = { [key: string]: unknown };
+
+export interface IntervalRowDto {
+  /** @nullable */
+  subjectId: string | null;
+  /** UTC */
+  start: string;
+  /**
+   * null while open
+   * @nullable
+   */
+  end: string | null;
+  /** @nullable */
+  endReason: string | null;
+  /**
+   * null while open
+   * @nullable
+   */
+  durationSec: number | null;
+  data: IntervalRowDtoData;
+  id: string;
+  cameraId: string;
+  cameraName: string;
+  useCase: string;
+  kind: string;
+}
+
+export interface IntervalPageDto {
+  /** Newest start first */
+  rows: IntervalRowDto[];
+  /**
+   * Pass as `cursor` for the next page; null on the last
+   * @nullable
+   */
+  nextCursor: string | null;
+}
+
 /**
  * A JSON Schema (draft 2020-12)
  */
@@ -707,10 +970,484 @@ export type HealthCheck503 = {
   details?: HealthCheck503Details;
 };
 
+export type SystemLogAuditParams = {
+/**
+ * ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.
+ */
+from: string;
+/**
+ * ISO 8601 with an offset, exclusive
+ */
+to: string;
+/**
+ * Part of the actor name, any case
+ */
+actor?: string;
+/**
+ * The entity, exactly
+ */
+entity?: string;
+/**
+ * The action, exactly
+ */
+action?: string;
+/**
+ * Only rows about audit cameras (true), or only the others
+ */
+auditCamera?: SystemLogAuditAuditCamera;
+/**
+ * The `nextCursor` of the previous page
+ * @pattern ^\d{1,18}$
+ */
+cursor?: string;
+/**
+ * @minimum 1
+ * @maximum 500
+ */
+limit?: number;
+};
+
+export type SystemLogAuditAuditCamera = typeof SystemLogAuditAuditCamera[keyof typeof SystemLogAuditAuditCamera];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SystemLogAuditAuditCamera = {
+  true: 'true',
+  false: 'false',
+} as const;
+
+export type SystemLogLoginsParams = {
+/**
+ * ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.
+ */
+from: string;
+/**
+ * ISO 8601 with an offset, exclusive
+ */
+to: string;
+/**
+ * Part of the username as typed, any case
+ */
+username?: string;
+result?: SystemLogLoginsResult;
+/**
+ * The `nextCursor` of the previous page
+ * @pattern ^\d{1,18}$
+ */
+cursor?: string;
+/**
+ * @minimum 1
+ * @maximum 500
+ */
+limit?: number;
+};
+
+export type SystemLogLoginsResult = typeof SystemLogLoginsResult[keyof typeof SystemLogLoginsResult];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SystemLogLoginsResult = {
+  SUCCESS: 'SUCCESS',
+  WRONG_PASSWORD: 'WRONG_PASSWORD',
+  DISABLED: 'DISABLED',
+  LOCKED: 'LOCKED',
+  RATE_LIMITED: 'RATE_LIMITED',
+  LOGOUT: 'LOGOUT',
+} as const;
+
+export type SystemLogSystemEventsParams = {
+/**
+ * ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.
+ */
+from: string;
+/**
+ * ISO 8601 with an offset, exclusive
+ */
+to: string;
+/**
+ * System event types, comma separated
+ */
+types?: string;
+/**
+ * The `nextCursor` of the previous page
+ */
+cursor?: string;
+/**
+ * @minimum 1
+ * @maximum 500
+ */
+limit?: number;
+};
+
+export type SystemLogAuditCsvParams = {
+/**
+ * ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.
+ */
+from: string;
+/**
+ * ISO 8601 with an offset, exclusive
+ */
+to: string;
+/**
+ * Part of the actor name, any case
+ */
+actor?: string;
+/**
+ * The entity, exactly
+ */
+entity?: string;
+/**
+ * The action, exactly
+ */
+action?: string;
+/**
+ * Only rows about audit cameras (true), or only the others
+ */
+auditCamera?: SystemLogAuditCsvAuditCamera;
+};
+
+export type SystemLogAuditCsvAuditCamera = typeof SystemLogAuditCsvAuditCamera[keyof typeof SystemLogAuditCsvAuditCamera];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SystemLogAuditCsvAuditCamera = {
+  true: 'true',
+  false: 'false',
+} as const;
+
+export type SystemLogLoginsCsvParams = {
+/**
+ * ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.
+ */
+from: string;
+/**
+ * ISO 8601 with an offset, exclusive
+ */
+to: string;
+/**
+ * Part of the username as typed, any case
+ */
+username?: string;
+result?: SystemLogLoginsCsvResult;
+};
+
+export type SystemLogLoginsCsvResult = typeof SystemLogLoginsCsvResult[keyof typeof SystemLogLoginsCsvResult];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const SystemLogLoginsCsvResult = {
+  SUCCESS: 'SUCCESS',
+  WRONG_PASSWORD: 'WRONG_PASSWORD',
+  DISABLED: 'DISABLED',
+  LOCKED: 'LOCKED',
+  RATE_LIMITED: 'RATE_LIMITED',
+  LOGOUT: 'LOGOUT',
+} as const;
+
+export type SystemLogSystemEventsCsvParams = {
+/**
+ * ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.
+ */
+from: string;
+/**
+ * ISO 8601 with an offset, exclusive
+ */
+to: string;
+/**
+ * System event types, comma separated
+ */
+types?: string;
+};
+
 export type ModelsUploadBody = {
   file: Blob;
   name?: string;
   version?: string;
   notes?: string;
 };
+
+export type ReportsEventStatsParams = {
+/**
+ * ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.
+ */
+from: string;
+/**
+ * ISO 8601 with an offset, exclusive
+ */
+to: string;
+/**
+ * Camera ids, comma separated, at most 50
+ */
+cameraIds?: string;
+/**
+ * One use case id
+ */
+useCase?: string;
+bucket: Bucket;
+/**
+ * Event types, comma separated. Needed with `data.<field>` and `max`
+ */
+types?: string;
+/**
+ * Comma separated: `camera`, `type`, `severity` and at most two `data.<field>` that a requested type declares as a string or enum
+ */
+groupBy?: string;
+/**
+ * A `data` field a requested type declares as a number: its largest value per bucket
+ */
+max?: string;
+};
+
+export type ReportsIntervalStatsParams = {
+/**
+ * ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.
+ */
+from: string;
+/**
+ * ISO 8601 with an offset, exclusive
+ */
+to: string;
+/**
+ * Camera ids, comma separated, at most 50
+ */
+cameraIds?: string;
+/**
+ * One use case id
+ */
+useCase?: string;
+bucket: Bucket;
+/**
+ * The interval kind
+ */
+kind: string;
+/**
+ * `camera`, or `subject` (a table id; rows then carry `cameraId` too, because an id is only unique within its camera)
+ */
+groupBy?: ReportsIntervalStatsGroupBy;
+};
+
+export type ReportsIntervalStatsGroupBy = typeof ReportsIntervalStatsGroupBy[keyof typeof ReportsIntervalStatsGroupBy];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ReportsIntervalStatsGroupBy = {
+  camera: 'camera',
+  subject: 'subject',
+} as const;
+
+export type ReportsMetricSeriesParams = {
+/**
+ * ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.
+ */
+from: string;
+/**
+ * ISO 8601 with an offset, exclusive
+ */
+to: string;
+/**
+ * Camera ids, comma separated, at most 50
+ */
+cameraIds?: string;
+/**
+ * One use case id
+ */
+useCase?: string;
+bucket: Bucket;
+/**
+ * The metric name
+ */
+name: string;
+/**
+ * The aggregate per bucket. Give this or `above`, not both
+ */
+agg?: ReportsMetricSeriesAgg;
+/**
+ * Instead of an aggregate: the minutes per bucket with a value at or above this
+ */
+above?: number;
+};
+
+export type ReportsMetricSeriesAgg = typeof ReportsMetricSeriesAgg[keyof typeof ReportsMetricSeriesAgg];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ReportsMetricSeriesAgg = {
+  avg: 'avg',
+  max: 'max',
+  min: 'min',
+} as const;
+
+export type EventsListParams = {
+/**
+ * ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.
+ */
+from: string;
+/**
+ * ISO 8601 with an offset, exclusive
+ */
+to: string;
+/**
+ * Camera ids, comma separated, at most 50
+ */
+cameraIds?: string;
+/**
+ * One use case id
+ */
+useCase?: string;
+/**
+ * Event types, comma separated. Needed with `where`
+ */
+types?: string;
+/**
+ * Severities, comma separated: info, warning, critical
+ */
+severity?: string;
+/**
+ * At most two `data.<field>:<value>` equality filters, comma separated, on string or enum fields the requested types declare. A value can not contain a comma
+ */
+where?: string;
+/**
+ * The `nextCursor` of the previous page; opaque
+ */
+cursor?: string;
+/**
+ * @minimum 1
+ * @maximum 500
+ */
+limit?: number;
+};
+
+export type IntervalsListParams = {
+/**
+ * ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.
+ */
+from: string;
+/**
+ * ISO 8601 with an offset, exclusive
+ */
+to: string;
+/**
+ * Camera ids, comma separated, at most 50
+ */
+cameraIds?: string;
+/**
+ * One use case id
+ */
+useCase?: string;
+/**
+ * One interval kind
+ */
+kind?: string;
+/**
+ * The `nextCursor` of the previous page; opaque
+ */
+cursor?: string;
+/**
+ * @minimum 1
+ * @maximum 500
+ */
+limit?: number;
+};
+
+export type ExportsEventsParams = {
+/**
+ * ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.
+ */
+from: string;
+/**
+ * ISO 8601 with an offset, exclusive
+ */
+to: string;
+/**
+ * Camera ids, comma separated, at most 50
+ */
+cameraIds?: string;
+/**
+ * One use case id
+ */
+useCase?: string;
+/**
+ * Event types, comma separated. Needed with `where`
+ */
+types?: string;
+/**
+ * Severities, comma separated: info, warning, critical
+ */
+severity?: string;
+/**
+ * At most two `data.<field>:<value>` equality filters, comma separated, on string or enum fields the requested types declare. A value can not contain a comma
+ */
+where?: string;
+};
+
+export type ExportsIntervalsParams = {
+/**
+ * ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.
+ */
+from: string;
+/**
+ * ISO 8601 with an offset, exclusive
+ */
+to: string;
+/**
+ * Camera ids, comma separated, at most 50
+ */
+cameraIds?: string;
+/**
+ * One use case id
+ */
+useCase?: string;
+/**
+ * One interval kind
+ */
+kind?: string;
+};
+
+export type ExportsMetricsParams = {
+/**
+ * ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.
+ */
+from: string;
+/**
+ * ISO 8601 with an offset, exclusive
+ */
+to: string;
+/**
+ * Camera ids, comma separated, at most 50
+ */
+cameraIds?: string;
+/**
+ * One use case id
+ */
+useCase?: string;
+};
+
+export type ExportsSummaryParams = {
+/**
+ * ISO 8601 with an offset, inclusive. Encode `+` as `%2B` in a URL.
+ */
+from: string;
+/**
+ * ISO 8601 with an offset, exclusive
+ */
+to: string;
+/**
+ * Camera ids, comma separated, at most 50
+ */
+cameraIds?: string;
+/**
+ * One use case id
+ */
+useCase?: string;
+bucket: ExportsSummaryBucket;
+};
+
+export type ExportsSummaryBucket = typeof ExportsSummaryBucket[keyof typeof ExportsSummaryBucket];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ExportsSummaryBucket = {
+  hour: 'hour',
+  day: 'day',
+} as const;
 
