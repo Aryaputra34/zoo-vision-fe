@@ -1,5 +1,7 @@
-import { Rebuilding } from "@/components/Rebuilding";
+import { RidesPage } from "@/usecases/horse_riding/RidesPage";
+import { isDateParam, todayLocal } from "@/lib/time";
 
-export default function RidesPage() {
-  return <Rebuilding title="Wahana Tunggang Kuda (Pony Rides)" task="F5" />;
+export default async function Page(props: PageProps<"/rides">) {
+  const { date } = await props.searchParams;
+  return <RidesPage date={isDateParam(date) ? date : todayLocal()} />;
 }

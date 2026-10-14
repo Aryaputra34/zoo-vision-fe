@@ -3,7 +3,6 @@ import Image from "next/image";
 import {
   CircleCheck,
   CircleDot,
-  Download,
   Info,
   OctagonAlert,
   Sparkles,
@@ -358,18 +357,6 @@ export const Mono = ({ children }: { children: ReactNode }) => (
     {children}
   </span>
 );
-
-export function CsvLink({ href }: { href: string }) {
-  return (
-    <a
-      href={href}
-      className="inline-flex h-9 items-center gap-1.5 rounded-full border border-lime/40 bg-surface px-4 text-xs font-extrabold text-forest shadow-sm hover:border-lime hover:bg-lime/10 transition-colors"
-    >
-      <Download aria-hidden className="size-3.5 text-forest" />
-      Export CSV
-    </a>
-  );
-}
 
 export const Note = ({ children }: { children: ReactNode }) => (
   <p className="mt-4 text-xs font-semibold text-muted">{children}</p>
