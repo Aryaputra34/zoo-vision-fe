@@ -71,6 +71,11 @@ http.interceptors.response.use(
     return response;
   },
   (error) => {
+    // TanStack aborts requests when a page unmounts or the cache is cleared: that says nothing about the server.
+    if (axios.isCancel(error)) {
+      throw error;
+    }
+
     if (!error.response) {
       setDown(true);
       throw new ApiError(error.message || 'Network Error', 0, 'NETWORK');
@@ -78,7 +83,8 @@ http.interceptors.response.use(
 
     const { status, data, statusText } = error.response;
 
-    if (status === 503) {
+    // Behind Caddy a stopped or restarting API is a 502/504 from Caddy, not a network error.
+    if (status === 502 || status === 503 || status === 504) {
       setDown(true);
     }
 
@@ -91,7 +97,9 @@ http.interceptors.response.use(
       throw new ApiError(message, status, data.code, data.errors);
     }
 
-    const message = typeof data === 'string' ? data : (data?.message || statusText || `Error ${status}`);
+    // A proxy's body is empty or an HTML page: never show it.
+    const text = typeof data === 'string' && data.trim() && !data.trimStart().startsWith('<') ? data : undefined;
+    const message = text ?? data?.message ?? (statusText || `Server menjawab ${status}`);
     throw new ApiError(message, status, 'UNKNOWN');
   }
 );

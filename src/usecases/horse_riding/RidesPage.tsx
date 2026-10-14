@@ -8,7 +8,8 @@ import { Card, Mono, Note, PageHeader, Table, Tile, Tiles } from "@/components/u
 import { HourlyBars } from "@/components/client";
 import { CsvLink } from "@/components/CsvLink";
 import { EvidenceButton } from "@/components/EvidenceButton";
-import { fmtLocalTime, localDayRange, localDaysRange, todayLocal } from "@/lib/time";
+import { fmtLocalTime, localDayRange, localDaysRange } from "@/lib/time";
+import { useToday } from "@/lib/useToday";
 import { fmtNum } from "@/lib/util";
 import { DIRECTION, ridesView } from "./rides-view";
 
@@ -17,8 +18,11 @@ const LIST_LIMIT = 200;
 
 // The reference page for the use-case reports: numbers from /reports, rows from /events, evidence from the
 // row URLs, CSV from /exports. data.changed refetches all three (src/live), so there is no polling here.
-export function RidesPage({ date }: { date: string }) {
-  const isToday = date === todayLocal();
+// Without a date it follows today, across midnight.
+export function RidesPage({ date: picked }: { date?: string }) {
+  const today = useToday();
+  const date = picked ?? today;
+  const isToday = date === today;
   const day = localDayRange(date);
   const days14 = localDaysRange(date, 14);
 
@@ -86,7 +90,7 @@ export function RidesPage({ date }: { date: string }) {
             rows={(view?.days ?? []).map((r) => [
               <Link
                 key="d"
-                href={r.date === todayLocal() ? "/rides" : `/rides?date=${r.date}`}
+                href={r.date === today ? "/rides" : `/rides?date=${r.date}`}
                 className={`font-bold transition-colors hover:text-lime-dark hover:underline ${r.date === date ? "font-extrabold text-forest" : "text-ink-2"}`}
               >
                 {r.date}

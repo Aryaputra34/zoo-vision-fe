@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { http, apiFetch, ApiError, onUnauthenticated, backendHealth } from './http';
-import { InternalAxiosRequestConfig, AxiosResponse, AxiosError, AxiosHeaders } from 'axios';
+import { InternalAxiosRequestConfig, AxiosResponse, AxiosError, AxiosHeaders, CanceledError } from 'axios';
 
 describe('http and ApiError handling', () => {
   beforeEach(() => {
@@ -119,5 +119,46 @@ describe('http and ApiError handling', () => {
 
     expect(handler).toHaveBeenCalledTimes(1);
     unsubscribe();
+  });
+
+  const ok = async (config: InternalAxiosRequestConfig): Promise<AxiosResponse> => ({
+    status: 200,
+    statusText: 'OK',
+    headers: new AxiosHeaders(),
+    config,
+    data: { ok: true },
+  });
+  const failWith = (status: number, statusText: string, data: unknown) =>
+    async (config: InternalAxiosRequestConfig): Promise<AxiosResponse> => {
+      throw new AxiosError(statusText, String(status), config, null, { status, statusText, headers: {}, config, data });
+    };
+
+  it('a request cancelled by TanStack (page left, client cleared) does not mark the backend down', async () => {
+    http.defaults.adapter = ok;
+    await apiFetch({ url: '/reset' });
+    expect(backendHealth.down()).toBe(false);
+
+    http.defaults.adapter = async (config: InternalAxiosRequestConfig): Promise<AxiosResponse> => {
+      throw new CanceledError(undefined, undefined, config);
+    };
+    await expect(apiFetch({ url: '/cancelled' })).rejects.toBeTruthy();
+    expect(backendHealth.down()).toBe(false);
+  });
+
+  it('a 502 or 504 from Caddy (the API is stopped) marks the backend down, with a readable message', async () => {
+    http.defaults.adapter = ok;
+    await apiFetch({ url: '/reset' });
+
+    http.defaults.adapter = failWith(502, 'Bad Gateway', '');
+    const empty = (await apiFetch({ url: '/x' }).catch((e: unknown) => e)) as ApiError;
+    expect(backendHealth.down()).toBe(true);
+    expect(empty.message).not.toBe('');
+
+    http.defaults.adapter = ok;
+    await apiFetch({ url: '/reset' });
+    http.defaults.adapter = failWith(504, 'Gateway Timeout', '<html><body>Gateway Timeout</body></html>');
+    const html = (await apiFetch({ url: '/x' }).catch((e: unknown) => e)) as ApiError;
+    expect(backendHealth.down()).toBe(true);
+    expect(html.message).not.toContain('<');
   });
 });

@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
-import { onUnauthenticated } from '@/api/http';
+import { ApiError, onUnauthenticated } from '@/api/http';
 import { useAuthMe } from '@/api/generated/auth/auth';
 import type { ActorDto } from '@/api/generated/zooVisionAPI.schemas';
 
@@ -26,10 +26,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const isLoginPage = pathname === '/login';
 
+  // Only a 4xx answers "who am I". Anything else (API restarting, Postgres blip) is retried until it answers:
+  // the live socket and the role-aware menu wait for `me`.
   const { data: me, isLoading, refetch } = useAuthMe({
     query: {
       enabled: !isLoginPage,
-      retry: false,
+      retry: (_count, error) => {
+        const e = error as unknown;
+        return !(e instanceof ApiError && e.statusCode >= 400 && e.statusCode < 500);
+      },
+      retryDelay: (attempt) => Math.min(1_000 * 2 ** attempt, 30_000),
     },
   });
 
