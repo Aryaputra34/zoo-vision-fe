@@ -100,7 +100,7 @@ The contract details are in `src/contract/fe-contract.md` after the pull. The ba
 - [ ] **Step 1: Branch and pull**
 
 ```bash
-git checkout phase-3-web-on-api && git pull && git checkout -b phase-4a-video
+git checkout phase-4a-video          # already cut from phase-3-web-on-api; it holds this plan
 npm run contract:pull contract-v0.5
 ```
 Expected: `src/contract/CONTRACT_VERSION` is `contract-v0.5`; `web.d.ts` has `BoxesMessage`; the generated cameras
