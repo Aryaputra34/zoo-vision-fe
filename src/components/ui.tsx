@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { type ReactNode, Suspense } from "react";
 import Image from "next/image";
 import {
   CircleCheck,
@@ -43,7 +43,11 @@ export function PageHeader({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {children}
-          {date && <DatePicker date={date} today={todayWib()} />}
+          {date && (
+            <Suspense fallback={null}>
+              <DatePicker date={date} today={todayWib()} />
+            </Suspense>
+          )}
         </div>
       </div>
     </header>

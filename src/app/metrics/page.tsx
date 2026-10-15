@@ -1,5 +1,5 @@
-import { Rebuilding } from "@/components/Rebuilding";
+import { MetricsExplorerPage } from "@/features/explorer/MetricsExplorerPage";
 
-export default function MetricsPage() {
-  return <Rebuilding title="Analitik Metrik" task="T6" />;
+export default function MetricsRoute() {
+  return <MetricsExplorerPage />;
 }

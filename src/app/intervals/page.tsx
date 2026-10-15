@@ -1,5 +1,5 @@
-import { Rebuilding } from "@/components/Rebuilding";
+import { IntervalsExplorerPage } from "@/features/explorer/IntervalsExplorerPage";
 
-export default function IntervalsPage() {
-  return <Rebuilding title="Analitik Interval" task="T6" />;
+export default function IntervalsRoute() {
+  return <IntervalsExplorerPage />;
 }

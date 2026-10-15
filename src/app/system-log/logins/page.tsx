@@ -1,10 +1,5 @@
-import { RequireRole } from "@/auth/RequireRole";
-import { Rebuilding } from "@/components/Rebuilding";
+import { LoginsPage } from "@/features/system-log/LoginsPage";
 
-export default function LoginsHistoryPage() {
-  return (
-    <RequireRole min="MANAGER">
-      <Rebuilding title="Riwayat Login" task="T8" />
-    </RequireRole>
-  );
+export default function LoginsRoute() {
+  return <LoginsPage />;
 }

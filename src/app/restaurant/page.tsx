@@ -1,5 +1,10 @@
-import { Rebuilding } from "@/components/Rebuilding";
+import { RestaurantPage } from "@/usecases/restaurant/RestaurantPage";
 
-export default function RestaurantPage() {
-  return <Rebuilding title="Restoran" task="T5" />;
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string }>;
+}) {
+  const { date } = await searchParams;
+  return <RestaurantPage date={date} />;
 }

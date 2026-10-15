@@ -1,10 +1,5 @@
-import { RequireRole } from "@/auth/RequireRole";
-import { Rebuilding } from "@/components/Rebuilding";
+import { SystemEventsPage } from "@/features/system-log/SystemEventsPage";
 
-export default function SystemEventsPage() {
-  return (
-    <RequireRole min="MANAGER">
-      <Rebuilding title="Kejadian Sistem" task="T8" />
-    </RequireRole>
-  );
+export default function SystemEventsRoute() {
+  return <SystemEventsPage />;
 }

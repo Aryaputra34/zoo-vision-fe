@@ -1,10 +1,5 @@
-import { RequireRole } from "@/auth/RequireRole";
-import { Rebuilding } from "@/components/Rebuilding";
+import { ApiTokensPage } from "@/features/api-tokens/ApiTokensPage";
 
 export default function ApiTokensConfigPage() {
-  return (
-    <RequireRole min="SUPERADMIN">
-      <Rebuilding title="Token API" task="T4" />
-    </RequireRole>
-  );
+  return <ApiTokensPage />;
 }

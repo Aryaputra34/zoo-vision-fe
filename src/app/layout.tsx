@@ -4,6 +4,7 @@ import { CommandCenterShell } from "@/components/CommandCenterShell";
 import { Providers } from "@/app/providers";
 import { AuthProvider } from "@/auth/AuthProvider";
 import { LiveProvider } from "@/live/LiveProvider";
+import { AuditNoticeToaster } from "@/features/system-log/AuditNoticeToaster";
 import "./globals.css";
 
 // Nunito: rounded friendly typography matching Gotham Rounded / Mikado used on tamansafari.com
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <CommandCenterShell>
                 {children}
               </CommandCenterShell>
+              <AuditNoticeToaster />
             </LiveProvider>
           </AuthProvider>
         </Providers>

@@ -1,5 +1,10 @@
-import { Rebuilding } from "@/components/Rebuilding";
+import { CashierPage } from "@/usecases/cashier_presence/CashierPage";
 
-export default function CashierPage() {
-  return <Rebuilding title="Loket Kasir" task="T5" />;
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string }>;
+}) {
+  const { date } = await searchParams;
+  return <CashierPage date={date} />;
 }

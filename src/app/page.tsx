@@ -1,5 +1,10 @@
-import { Rebuilding } from "@/components/Rebuilding";
+import { OverviewPage } from "@/usecases/overview/OverviewPage";
 
-export default function OverviewPage() {
-  return <Rebuilding title="Pusat Kendali (Ringkasan)" task="T5" />;
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string }>;
+}) {
+  const { date } = await searchParams;
+  return <OverviewPage date={date} />;
 }

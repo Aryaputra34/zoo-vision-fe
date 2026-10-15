@@ -1,5 +1,5 @@
-import { Rebuilding } from "@/components/Rebuilding";
+import { EventsExplorerPage } from "@/features/explorer/EventsExplorerPage";
 
-export default function EventsPage() {
-  return <Rebuilding title="Log Kejadian" task="T6" />;
+export default function EventsRoute() {
+  return <EventsExplorerPage />;
 }

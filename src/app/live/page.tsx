@@ -1,5 +1,5 @@
-import { Rebuilding } from "@/components/Rebuilding";
+import { LivePage } from "@/features/live/LivePage";
 
-export default function LivePage() {
-  return <Rebuilding title="Live Kamera" task="T7" />;
+export default function LiveRoute() {
+  return <LivePage />;
 }

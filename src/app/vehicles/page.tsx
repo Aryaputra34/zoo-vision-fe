@@ -1,5 +1,10 @@
-import { Rebuilding } from "@/components/Rebuilding";
+import { VehiclesPage } from "@/usecases/vehicle_gate/VehiclesPage";
 
-export default function VehiclesPage() {
-  return <Rebuilding title="Gerbang Kendaraan" task="T5" />;
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string }>;
+}) {
+  const { date } = await searchParams;
+  return <VehiclesPage date={date} />;
 }

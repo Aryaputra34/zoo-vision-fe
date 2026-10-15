@@ -1,10 +1,5 @@
-import { RequireRole } from "@/auth/RequireRole";
-import { Rebuilding } from "@/components/Rebuilding";
+import { AuditLogPage } from "@/features/system-log/AuditLogPage";
 
-export default function AuditLogPage() {
-  return (
-    <RequireRole min="MANAGER">
-      <Rebuilding title="Audit Log" task="T8" />
-    </RequireRole>
-  );
+export default function AuditRoute() {
+  return <AuditLogPage />;
 }
