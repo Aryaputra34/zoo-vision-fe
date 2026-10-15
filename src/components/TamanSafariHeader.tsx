@@ -10,14 +10,12 @@ import {
   MapPin,
   Menu,
   Moon,
-  Search,
   Sparkles,
   Sun,
   X,
   Radio,
 } from "lucide-react";
 import { DESTINATIONS, NAV } from "./nav";
-import { AutoRefresh } from "./client";
 
 export function TamanSafariHeader({ showLogout = false }: { showLogout?: boolean }) {
   const path = usePathname();
@@ -70,7 +68,6 @@ export function TamanSafariHeader({ showLogout = false }: { showLogout?: boolean
 
           {/* Right: Live Sync, Theme Toggle, Language */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <AutoRefresh />
 
             {/* Light / Dark Mode Toggle */}
             <div className="flex items-center rounded-full border border-white/15 bg-white/5 p-0.5 text-[11px] font-bold">
