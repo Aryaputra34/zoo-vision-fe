@@ -8,6 +8,7 @@ import { useCameraConfigActive } from '@/api/generated/camera-config/camera-conf
 import { useMe } from '@/auth/AuthProvider';
 import { WhepPlayer } from '@/video/WhepPlayer';
 import { BoxOverlay } from '@/video/BoxOverlay';
+import { StreamPanel } from '@/features/cameras/StreamPanel';
 
 export interface CameraViewProps {
   camera: CameraViewDto;
@@ -184,6 +185,10 @@ export function CameraView({
             </div>
           )}
 
+          {/* MANAGER & SUPERADMIN: StreamPanel (Task V4) */}
+          {isManagerOrAbove && (
+            <StreamPanel cameraId={camera.id} />
+          )}
         </div>
       </div>
     </div>
