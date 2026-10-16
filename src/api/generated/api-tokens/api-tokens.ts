@@ -56,7 +56,7 @@ export const apiTokensCreate = (
   
 
 
-export const getApiTokensCreateMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody,
+export const getApiTokensCreateMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof apiTokensCreate>>, TError,{data: CreateApiTokenDto}, TContext>, request?: SecondParameter<typeof apiFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof apiTokensCreate>>, TError,{data: CreateApiTokenDto}, TContext> => {
 
@@ -83,12 +83,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ApiTokensCreateMutationResult = NonNullable<Awaited<ReturnType<typeof apiTokensCreate>>>
     export type ApiTokensCreateMutationBody = CreateApiTokenDto
-    export type ApiTokensCreateMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody
+    export type ApiTokensCreateMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
     /**
  * @summary The only response that ever carries the raw token.
  */
-export const useApiTokensCreate = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody,
+export const useApiTokensCreate = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof apiTokensCreate>>, TError,{data: CreateApiTokenDto}, TContext>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof apiTokensCreate>>,
@@ -123,7 +123,7 @@ export const getApiTokensListQueryKey = () => {
     }
 
     
-export const getApiTokensListQueryOptions = <TData = Awaited<ReturnType<typeof apiTokensList>>, TError = ApiErrorBody | ApiErrorBody>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiTokensList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getApiTokensListQueryOptions = <TData = Awaited<ReturnType<typeof apiTokensList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiTokensList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -142,10 +142,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type ApiTokensListQueryResult = NonNullable<Awaited<ReturnType<typeof apiTokensList>>>
-export type ApiTokensListQueryError = ApiErrorBody | ApiErrorBody
+export type ApiTokensListQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useApiTokensList<TData = Awaited<ReturnType<typeof apiTokensList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useApiTokensList<TData = Awaited<ReturnType<typeof apiTokensList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiTokensList>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof apiTokensList>>,
@@ -155,7 +155,7 @@ export function useApiTokensList<TData = Awaited<ReturnType<typeof apiTokensList
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useApiTokensList<TData = Awaited<ReturnType<typeof apiTokensList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useApiTokensList<TData = Awaited<ReturnType<typeof apiTokensList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiTokensList>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof apiTokensList>>,
@@ -165,12 +165,12 @@ export function useApiTokensList<TData = Awaited<ReturnType<typeof apiTokensList
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useApiTokensList<TData = Awaited<ReturnType<typeof apiTokensList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useApiTokensList<TData = Awaited<ReturnType<typeof apiTokensList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiTokensList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useApiTokensList<TData = Awaited<ReturnType<typeof apiTokensList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useApiTokensList<TData = Awaited<ReturnType<typeof apiTokensList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiTokensList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -199,7 +199,7 @@ export const apiTokensRevoke = (
   
 
 
-export const getApiTokensRevokeMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
+export const getApiTokensRevokeMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof apiTokensRevoke>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof apiTokensRevoke>>, TError,{id: string}, TContext> => {
 
@@ -226,9 +226,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ApiTokensRevokeMutationResult = NonNullable<Awaited<ReturnType<typeof apiTokensRevoke>>>
     
-    export type ApiTokensRevokeMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
+    export type ApiTokensRevokeMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
-    export const useApiTokensRevoke = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
+    export const useApiTokensRevoke = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof apiTokensRevoke>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof apiTokensRevoke>>,

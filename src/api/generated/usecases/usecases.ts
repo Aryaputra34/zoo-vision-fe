@@ -53,7 +53,7 @@ export const getUsecasesListQueryKey = () => {
     }
 
     
-export const getUsecasesListQueryOptions = <TData = Awaited<ReturnType<typeof usecasesList>>, TError = ApiErrorBody | ApiErrorBody>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof usecasesList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getUsecasesListQueryOptions = <TData = Awaited<ReturnType<typeof usecasesList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof usecasesList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -72,10 +72,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type UsecasesListQueryResult = NonNullable<Awaited<ReturnType<typeof usecasesList>>>
-export type UsecasesListQueryError = ApiErrorBody | ApiErrorBody
+export type UsecasesListQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useUsecasesList<TData = Awaited<ReturnType<typeof usecasesList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useUsecasesList<TData = Awaited<ReturnType<typeof usecasesList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof usecasesList>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof usecasesList>>,
@@ -85,7 +85,7 @@ export function useUsecasesList<TData = Awaited<ReturnType<typeof usecasesList>>
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUsecasesList<TData = Awaited<ReturnType<typeof usecasesList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useUsecasesList<TData = Awaited<ReturnType<typeof usecasesList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof usecasesList>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof usecasesList>>,
@@ -95,12 +95,12 @@ export function useUsecasesList<TData = Awaited<ReturnType<typeof usecasesList>>
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUsecasesList<TData = Awaited<ReturnType<typeof usecasesList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useUsecasesList<TData = Awaited<ReturnType<typeof usecasesList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof usecasesList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useUsecasesList<TData = Awaited<ReturnType<typeof usecasesList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useUsecasesList<TData = Awaited<ReturnType<typeof usecasesList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof usecasesList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {

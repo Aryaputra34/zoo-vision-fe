@@ -54,7 +54,7 @@ export const getCameraStatusListQueryKey = () => {
     }
 
     
-export const getCameraStatusListQueryOptions = <TData = Awaited<ReturnType<typeof cameraStatusList>>, TError = ApiErrorBody | ApiErrorBody>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cameraStatusList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getCameraStatusListQueryOptions = <TData = Awaited<ReturnType<typeof cameraStatusList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cameraStatusList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -73,10 +73,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type CameraStatusListQueryResult = NonNullable<Awaited<ReturnType<typeof cameraStatusList>>>
-export type CameraStatusListQueryError = ApiErrorBody | ApiErrorBody
+export type CameraStatusListQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useCameraStatusList<TData = Awaited<ReturnType<typeof cameraStatusList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useCameraStatusList<TData = Awaited<ReturnType<typeof cameraStatusList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof cameraStatusList>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof cameraStatusList>>,
@@ -86,7 +86,7 @@ export function useCameraStatusList<TData = Awaited<ReturnType<typeof cameraStat
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCameraStatusList<TData = Awaited<ReturnType<typeof cameraStatusList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useCameraStatusList<TData = Awaited<ReturnType<typeof cameraStatusList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cameraStatusList>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof cameraStatusList>>,
@@ -96,12 +96,12 @@ export function useCameraStatusList<TData = Awaited<ReturnType<typeof cameraStat
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCameraStatusList<TData = Awaited<ReturnType<typeof cameraStatusList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useCameraStatusList<TData = Awaited<ReturnType<typeof cameraStatusList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cameraStatusList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useCameraStatusList<TData = Awaited<ReturnType<typeof cameraStatusList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useCameraStatusList<TData = Awaited<ReturnType<typeof cameraStatusList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cameraStatusList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -139,7 +139,7 @@ export const getCameraStatusGetQueryKey = (id?: string,) => {
     }
 
     
-export const getCameraStatusGetQueryOptions = <TData = Awaited<ReturnType<typeof cameraStatusGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cameraStatusGet>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getCameraStatusGetQueryOptions = <TData = Awaited<ReturnType<typeof cameraStatusGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cameraStatusGet>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -158,10 +158,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type CameraStatusGetQueryResult = NonNullable<Awaited<ReturnType<typeof cameraStatusGet>>>
-export type CameraStatusGetQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
+export type CameraStatusGetQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useCameraStatusGet<TData = Awaited<ReturnType<typeof cameraStatusGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useCameraStatusGet<TData = Awaited<ReturnType<typeof cameraStatusGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof cameraStatusGet>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof cameraStatusGet>>,
@@ -171,7 +171,7 @@ export function useCameraStatusGet<TData = Awaited<ReturnType<typeof cameraStatu
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCameraStatusGet<TData = Awaited<ReturnType<typeof cameraStatusGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useCameraStatusGet<TData = Awaited<ReturnType<typeof cameraStatusGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cameraStatusGet>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof cameraStatusGet>>,
@@ -181,12 +181,12 @@ export function useCameraStatusGet<TData = Awaited<ReturnType<typeof cameraStatu
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCameraStatusGet<TData = Awaited<ReturnType<typeof cameraStatusGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useCameraStatusGet<TData = Awaited<ReturnType<typeof cameraStatusGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cameraStatusGet>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useCameraStatusGet<TData = Awaited<ReturnType<typeof cameraStatusGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useCameraStatusGet<TData = Awaited<ReturnType<typeof cameraStatusGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cameraStatusGet>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -225,7 +225,7 @@ export const getCameraStatusFrameQueryKey = (id?: string,) => {
     }
 
     
-export const getCameraStatusFrameQueryOptions = <TData = Awaited<ReturnType<typeof cameraStatusFrame>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cameraStatusFrame>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getCameraStatusFrameQueryOptions = <TData = Awaited<ReturnType<typeof cameraStatusFrame>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cameraStatusFrame>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -244,10 +244,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type CameraStatusFrameQueryResult = NonNullable<Awaited<ReturnType<typeof cameraStatusFrame>>>
-export type CameraStatusFrameQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
+export type CameraStatusFrameQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useCameraStatusFrame<TData = Awaited<ReturnType<typeof cameraStatusFrame>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useCameraStatusFrame<TData = Awaited<ReturnType<typeof cameraStatusFrame>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof cameraStatusFrame>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof cameraStatusFrame>>,
@@ -257,7 +257,7 @@ export function useCameraStatusFrame<TData = Awaited<ReturnType<typeof cameraSta
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCameraStatusFrame<TData = Awaited<ReturnType<typeof cameraStatusFrame>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useCameraStatusFrame<TData = Awaited<ReturnType<typeof cameraStatusFrame>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cameraStatusFrame>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof cameraStatusFrame>>,
@@ -267,12 +267,12 @@ export function useCameraStatusFrame<TData = Awaited<ReturnType<typeof cameraSta
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCameraStatusFrame<TData = Awaited<ReturnType<typeof cameraStatusFrame>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useCameraStatusFrame<TData = Awaited<ReturnType<typeof cameraStatusFrame>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cameraStatusFrame>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useCameraStatusFrame<TData = Awaited<ReturnType<typeof cameraStatusFrame>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useCameraStatusFrame<TData = Awaited<ReturnType<typeof cameraStatusFrame>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof cameraStatusFrame>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {

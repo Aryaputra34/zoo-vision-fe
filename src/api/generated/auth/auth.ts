@@ -57,7 +57,7 @@ export const authLogin = (
   
 
 
-export const getAuthLoginMutationOptions = <TError = ApiErrorBody,
+export const getAuthLoginMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof authLogin>>, TError,{data: LoginDto}, TContext>, request?: SecondParameter<typeof apiFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof authLogin>>, TError,{data: LoginDto}, TContext> => {
 
@@ -84,12 +84,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type AuthLoginMutationResult = NonNullable<Awaited<ReturnType<typeof authLogin>>>
     export type AuthLoginMutationBody = LoginDto
-    export type AuthLoginMutationError = ApiErrorBody
+    export type AuthLoginMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
     /**
  * @summary The credentials are checked by LocalAuthGuard (LocalStrategy), which leaves the result on req.user.
  */
-export const useAuthLogin = <TError = ApiErrorBody,
+export const useAuthLogin = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof authLogin>>, TError,{data: LoginDto}, TContext>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof authLogin>>,
@@ -116,7 +116,7 @@ export const useAuthLogin = <TError = ApiErrorBody,
   
 
 
-export const getAuthLogoutMutationOptions = <TError = ApiErrorBody | ApiErrorBody,
+export const getAuthLogoutMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof authLogout>>, TError,void, TContext>, request?: SecondParameter<typeof apiFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof authLogout>>, TError,void, TContext> => {
 
@@ -143,9 +143,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type AuthLogoutMutationResult = NonNullable<Awaited<ReturnType<typeof authLogout>>>
     
-    export type AuthLogoutMutationError = ApiErrorBody | ApiErrorBody
+    export type AuthLogoutMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody
 
-    export const useAuthLogout = <TError = ApiErrorBody | ApiErrorBody,
+    export const useAuthLogout = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof authLogout>>, TError,void, TContext>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof authLogout>>,
@@ -158,7 +158,100 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
       return useMutation(mutationOptions, queryClient);
     }
-    export const authMe = (
+    /**
+ * @summary Caddy's forward_auth asks this before it lets a WHEP call through to MediaMTX: 204 with a
+session or an API token, 401 (the global guard) without. No body.
+ */
+export const authCheck = (
+    
+ options?: SecondParameter<typeof apiFetch>,signal?: AbortSignal
+) => {
+      
+      
+      return apiFetch<void>(
+      {url: `/api/v1/auth/check`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+
+
+export const getAuthCheckQueryKey = () => {
+    return [
+    `/api/v1/auth/check`
+    ] as const;
+    }
+
+    
+export const getAuthCheckQueryOptions = <TData = Awaited<ReturnType<typeof authCheck>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof authCheck>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAuthCheckQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof authCheck>>> = ({ signal }) => authCheck(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof authCheck>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type AuthCheckQueryResult = NonNullable<Awaited<ReturnType<typeof authCheck>>>
+export type AuthCheckQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody
+
+
+export function useAuthCheck<TData = Awaited<ReturnType<typeof authCheck>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof authCheck>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof authCheck>>,
+          TError,
+          Awaited<ReturnType<typeof authCheck>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAuthCheck<TData = Awaited<ReturnType<typeof authCheck>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof authCheck>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof authCheck>>,
+          TError,
+          Awaited<ReturnType<typeof authCheck>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAuthCheck<TData = Awaited<ReturnType<typeof authCheck>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof authCheck>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Caddy's forward_auth asks this before it lets a WHEP call through to MediaMTX: 204 with a
+session or an API token, 401 (the global guard) without. No body.
+ */
+
+export function useAuthCheck<TData = Awaited<ReturnType<typeof authCheck>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof authCheck>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getAuthCheckQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const authMe = (
     
  options?: SecondParameter<typeof apiFetch>,signal?: AbortSignal
 ) => {
@@ -180,7 +273,7 @@ export const getAuthMeQueryKey = () => {
     }
 
     
-export const getAuthMeQueryOptions = <TData = Awaited<ReturnType<typeof authMe>>, TError = ApiErrorBody | ApiErrorBody>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof authMe>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getAuthMeQueryOptions = <TData = Awaited<ReturnType<typeof authMe>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof authMe>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -199,10 +292,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type AuthMeQueryResult = NonNullable<Awaited<ReturnType<typeof authMe>>>
-export type AuthMeQueryError = ApiErrorBody | ApiErrorBody
+export type AuthMeQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useAuthMe<TData = Awaited<ReturnType<typeof authMe>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useAuthMe<TData = Awaited<ReturnType<typeof authMe>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof authMe>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof authMe>>,
@@ -212,7 +305,7 @@ export function useAuthMe<TData = Awaited<ReturnType<typeof authMe>>, TError = A
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useAuthMe<TData = Awaited<ReturnType<typeof authMe>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useAuthMe<TData = Awaited<ReturnType<typeof authMe>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof authMe>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof authMe>>,
@@ -222,12 +315,12 @@ export function useAuthMe<TData = Awaited<ReturnType<typeof authMe>>, TError = A
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useAuthMe<TData = Awaited<ReturnType<typeof authMe>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useAuthMe<TData = Awaited<ReturnType<typeof authMe>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof authMe>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useAuthMe<TData = Awaited<ReturnType<typeof authMe>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useAuthMe<TData = Awaited<ReturnType<typeof authMe>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof authMe>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -261,7 +354,7 @@ export const authChangePassword = (
   
 
 
-export const getAuthChangePasswordMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody,
+export const getAuthChangePasswordMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof authChangePassword>>, TError,{data: ChangePasswordDto}, TContext>, request?: SecondParameter<typeof apiFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof authChangePassword>>, TError,{data: ChangePasswordDto}, TContext> => {
 
@@ -288,12 +381,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type AuthChangePasswordMutationResult = NonNullable<Awaited<ReturnType<typeof authChangePassword>>>
     export type AuthChangePasswordMutationBody = ChangePasswordDto
-    export type AuthChangePasswordMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody
+    export type AuthChangePasswordMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
     /**
  * @summary Session users only; an API token cannot change a password. Other sessions end, this one stays.
  */
-export const useAuthChangePassword = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody,
+export const useAuthChangePassword = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof authChangePassword>>, TError,{data: ChangePasswordDto}, TContext>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof authChangePassword>>,

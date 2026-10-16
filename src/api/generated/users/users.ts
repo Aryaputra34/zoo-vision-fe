@@ -59,7 +59,7 @@ export const getUsersListQueryKey = () => {
     }
 
     
-export const getUsersListQueryOptions = <TData = Awaited<ReturnType<typeof usersList>>, TError = ApiErrorBody | ApiErrorBody>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof usersList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getUsersListQueryOptions = <TData = Awaited<ReturnType<typeof usersList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof usersList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -78,10 +78,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type UsersListQueryResult = NonNullable<Awaited<ReturnType<typeof usersList>>>
-export type UsersListQueryError = ApiErrorBody | ApiErrorBody
+export type UsersListQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useUsersList<TData = Awaited<ReturnType<typeof usersList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useUsersList<TData = Awaited<ReturnType<typeof usersList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof usersList>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof usersList>>,
@@ -91,7 +91,7 @@ export function useUsersList<TData = Awaited<ReturnType<typeof usersList>>, TErr
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUsersList<TData = Awaited<ReturnType<typeof usersList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useUsersList<TData = Awaited<ReturnType<typeof usersList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof usersList>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof usersList>>,
@@ -101,12 +101,12 @@ export function useUsersList<TData = Awaited<ReturnType<typeof usersList>>, TErr
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUsersList<TData = Awaited<ReturnType<typeof usersList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useUsersList<TData = Awaited<ReturnType<typeof usersList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof usersList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useUsersList<TData = Awaited<ReturnType<typeof usersList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useUsersList<TData = Awaited<ReturnType<typeof usersList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof usersList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -138,7 +138,7 @@ export const usersCreate = (
   
 
 
-export const getUsersCreateMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
+export const getUsersCreateMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof usersCreate>>, TError,{data: CreateUserDto}, TContext>, request?: SecondParameter<typeof apiFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof usersCreate>>, TError,{data: CreateUserDto}, TContext> => {
 
@@ -165,9 +165,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type UsersCreateMutationResult = NonNullable<Awaited<ReturnType<typeof usersCreate>>>
     export type UsersCreateMutationBody = CreateUserDto
-    export type UsersCreateMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
+    export type UsersCreateMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
-    export const useUsersCreate = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
+    export const useUsersCreate = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof usersCreate>>, TError,{data: CreateUserDto}, TContext>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof usersCreate>>,
@@ -196,7 +196,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   
 
 
-export const getUsersUpdateMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
+export const getUsersUpdateMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof usersUpdate>>, TError,{id: string;data: UpdateUserDto}, TContext>, request?: SecondParameter<typeof apiFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof usersUpdate>>, TError,{id: string;data: UpdateUserDto}, TContext> => {
 
@@ -223,9 +223,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type UsersUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof usersUpdate>>>
     export type UsersUpdateMutationBody = UpdateUserDto
-    export type UsersUpdateMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
+    export type UsersUpdateMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
-    export const useUsersUpdate = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
+    export const useUsersUpdate = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof usersUpdate>>, TError,{id: string;data: UpdateUserDto}, TContext>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof usersUpdate>>,

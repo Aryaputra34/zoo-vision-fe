@@ -53,7 +53,7 @@ export const getMediaSnapshotQueryKey = (path?: string,) => {
     }
 
     
-export const getMediaSnapshotQueryOptions = <TData = Awaited<ReturnType<typeof mediaSnapshot>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(path: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaSnapshot>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getMediaSnapshotQueryOptions = <TData = Awaited<ReturnType<typeof mediaSnapshot>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(path: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaSnapshot>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -72,10 +72,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type MediaSnapshotQueryResult = NonNullable<Awaited<ReturnType<typeof mediaSnapshot>>>
-export type MediaSnapshotQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
+export type MediaSnapshotQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useMediaSnapshot<TData = Awaited<ReturnType<typeof mediaSnapshot>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useMediaSnapshot<TData = Awaited<ReturnType<typeof mediaSnapshot>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  path: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaSnapshot>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof mediaSnapshot>>,
@@ -85,7 +85,7 @@ export function useMediaSnapshot<TData = Awaited<ReturnType<typeof mediaSnapshot
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useMediaSnapshot<TData = Awaited<ReturnType<typeof mediaSnapshot>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useMediaSnapshot<TData = Awaited<ReturnType<typeof mediaSnapshot>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  path: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaSnapshot>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof mediaSnapshot>>,
@@ -95,12 +95,12 @@ export function useMediaSnapshot<TData = Awaited<ReturnType<typeof mediaSnapshot
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useMediaSnapshot<TData = Awaited<ReturnType<typeof mediaSnapshot>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useMediaSnapshot<TData = Awaited<ReturnType<typeof mediaSnapshot>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  path: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaSnapshot>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useMediaSnapshot<TData = Awaited<ReturnType<typeof mediaSnapshot>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useMediaSnapshot<TData = Awaited<ReturnType<typeof mediaSnapshot>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  path: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaSnapshot>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -139,7 +139,7 @@ export const getMediaClipQueryKey = (eventId?: string,) => {
     }
 
     
-export const getMediaClipQueryOptions = <TData = Awaited<ReturnType<typeof mediaClip>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(eventId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaClip>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getMediaClipQueryOptions = <TData = Awaited<ReturnType<typeof mediaClip>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(eventId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaClip>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -158,10 +158,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type MediaClipQueryResult = NonNullable<Awaited<ReturnType<typeof mediaClip>>>
-export type MediaClipQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
+export type MediaClipQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useMediaClip<TData = Awaited<ReturnType<typeof mediaClip>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useMediaClip<TData = Awaited<ReturnType<typeof mediaClip>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  eventId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaClip>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof mediaClip>>,
@@ -171,7 +171,7 @@ export function useMediaClip<TData = Awaited<ReturnType<typeof mediaClip>>, TErr
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useMediaClip<TData = Awaited<ReturnType<typeof mediaClip>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useMediaClip<TData = Awaited<ReturnType<typeof mediaClip>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  eventId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaClip>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof mediaClip>>,
@@ -181,17 +181,103 @@ export function useMediaClip<TData = Awaited<ReturnType<typeof mediaClip>>, TErr
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useMediaClip<TData = Awaited<ReturnType<typeof mediaClip>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useMediaClip<TData = Awaited<ReturnType<typeof mediaClip>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  eventId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaClip>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useMediaClip<TData = Awaited<ReturnType<typeof mediaClip>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useMediaClip<TData = Awaited<ReturnType<typeof mediaClip>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  eventId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaClip>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getMediaClipQueryOptions(eventId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const mediaDebug = (
+    id: string,
+ options?: SecondParameter<typeof apiFetch>,signal?: AbortSignal
+) => {
+      
+      
+      return apiFetch<Blob>(
+      {url: `/media/debug/${id}`, method: 'GET',
+        responseType: 'blob', signal
+    },
+      options);
+    }
+  
+
+
+
+export const getMediaDebugQueryKey = (id?: string,) => {
+    return [
+    `/media/debug/${id}`
+    ] as const;
+    }
+
+    
+export const getMediaDebugQueryOptions = <TData = Awaited<ReturnType<typeof mediaDebug>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaDebug>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getMediaDebugQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof mediaDebug>>> = ({ signal }) => mediaDebug(id, requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof mediaDebug>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type MediaDebugQueryResult = NonNullable<Awaited<ReturnType<typeof mediaDebug>>>
+export type MediaDebugQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
+
+
+export function useMediaDebug<TData = Awaited<ReturnType<typeof mediaDebug>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaDebug>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mediaDebug>>,
+          TError,
+          Awaited<ReturnType<typeof mediaDebug>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useMediaDebug<TData = Awaited<ReturnType<typeof mediaDebug>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaDebug>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mediaDebug>>,
+          TError,
+          Awaited<ReturnType<typeof mediaDebug>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useMediaDebug<TData = Awaited<ReturnType<typeof mediaDebug>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaDebug>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useMediaDebug<TData = Awaited<ReturnType<typeof mediaDebug>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof mediaDebug>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getMediaDebugQueryOptions(id,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

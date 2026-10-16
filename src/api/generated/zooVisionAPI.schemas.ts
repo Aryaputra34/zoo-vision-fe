@@ -26,6 +26,49 @@ export interface LoginUserDto {
   name: string;
 }
 
+export type ErrorCode = typeof ErrorCode[keyof typeof ErrorCode];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ErrorCode = {
+  BAD_REQUEST: 'BAD_REQUEST',
+  VALIDATION_FAILED: 'VALIDATION_FAILED',
+  SETTINGS_INVALID: 'SETTINGS_INVALID',
+  FIELD_NOT_ALLOWED: 'FIELD_NOT_ALLOWED',
+  RANGE_TOO_LONG: 'RANGE_TOO_LONG',
+  UNAUTHENTICATED: 'UNAUTHENTICATED',
+  FORBIDDEN: 'FORBIDDEN',
+  ROLE_REQUIRED: 'ROLE_REQUIRED',
+  FORBIDDEN_ORIGIN: 'FORBIDDEN_ORIGIN',
+  NOT_FOUND: 'NOT_FOUND',
+  RECORDING_NOT_AVAILABLE: 'RECORDING_NOT_AVAILABLE',
+  CONFLICT: 'CONFLICT',
+  STALE_VERSION: 'STALE_VERSION',
+  USERNAME_TAKEN: 'USERNAME_TAKEN',
+  CAMERA_ID_TAKEN: 'CAMERA_ID_TAKEN',
+  WRONG_PASSWORD: 'WRONG_PASSWORD',
+  LAST_SUPERADMIN: 'LAST_SUPERADMIN',
+  CAMERA_HAS_DATA: 'CAMERA_HAS_DATA',
+  MODEL_IN_USE: 'MODEL_IN_USE',
+  ACCOUNT_LOCKED: 'ACCOUNT_LOCKED',
+  TOO_LARGE: 'TOO_LARGE',
+  RATE_LIMITED: 'RATE_LIMITED',
+  UNAVAILABLE: 'UNAVAILABLE',
+  INTERNAL: 'INTERNAL',
+} as const;
+
+export interface FieldError {
+  path: string;
+  message: string;
+}
+
+export interface ApiErrorBody {
+  statusCode: number;
+  code: ErrorCode;
+  message: string;
+  errors?: FieldError[];
+}
+
 export type ActorDtoType = typeof ActorDtoType[keyof typeof ActorDtoType];
 
 
@@ -212,47 +255,6 @@ export interface CreateUserDto {
   role: Role;
 }
 
-export type ErrorCode = typeof ErrorCode[keyof typeof ErrorCode];
-
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ErrorCode = {
-  BAD_REQUEST: 'BAD_REQUEST',
-  VALIDATION_FAILED: 'VALIDATION_FAILED',
-  SETTINGS_INVALID: 'SETTINGS_INVALID',
-  FIELD_NOT_ALLOWED: 'FIELD_NOT_ALLOWED',
-  RANGE_TOO_LONG: 'RANGE_TOO_LONG',
-  UNAUTHENTICATED: 'UNAUTHENTICATED',
-  FORBIDDEN: 'FORBIDDEN',
-  ROLE_REQUIRED: 'ROLE_REQUIRED',
-  FORBIDDEN_ORIGIN: 'FORBIDDEN_ORIGIN',
-  NOT_FOUND: 'NOT_FOUND',
-  RECORDING_NOT_AVAILABLE: 'RECORDING_NOT_AVAILABLE',
-  CONFLICT: 'CONFLICT',
-  STALE_VERSION: 'STALE_VERSION',
-  USERNAME_TAKEN: 'USERNAME_TAKEN',
-  LAST_SUPERADMIN: 'LAST_SUPERADMIN',
-  CAMERA_HAS_DATA: 'CAMERA_HAS_DATA',
-  MODEL_IN_USE: 'MODEL_IN_USE',
-  ACCOUNT_LOCKED: 'ACCOUNT_LOCKED',
-  TOO_LARGE: 'TOO_LARGE',
-  RATE_LIMITED: 'RATE_LIMITED',
-  UNAVAILABLE: 'UNAVAILABLE',
-  INTERNAL: 'INTERNAL',
-} as const;
-
-export interface FieldError {
-  path: string;
-  message: string;
-}
-
-export interface ApiErrorBody {
-  statusCode: number;
-  code: ErrorCode;
-  message: string;
-  errors?: FieldError[];
-}
-
 export interface UpdateUserDto {
   /**
    * @minLength 1
@@ -301,6 +303,13 @@ export interface ApiTokenDto {
   revokedAt: string | null;
 }
 
+export interface LiveUrlsDto {
+  /** WHEP URL of the main stream, behind Caddy and a session. */
+  main: string;
+  /** @nullable */
+  sub: string | null;
+}
+
 export type SourceType = typeof SourceType[keyof typeof SourceType];
 
 
@@ -330,9 +339,23 @@ export interface CameraRecordingDto {
   clipAfterSec: number;
 }
 
+/**
+ * Null for FILE or disabled cameras, and when the API has no MediaMTX configured (demo profile). The frontend never builds MediaMTX paths itself.
+ * @nullable
+ */
+export type CameraViewDtoLiveUrls = LiveUrlsDto | null;
+
 export interface CameraViewDto {
+  /**
+   * Null for FILE or disabled cameras, and when the API has no MediaMTX configured (demo profile). The frontend never builds MediaMTX paths itself.
+   * @nullable
+   */
+  liveUrls: CameraViewDtoLiveUrls;
   sourceType?: SourceType;
-  /** @nullable */
+  /**
+   * The MediaMTX path being recorded (zv_<id>, or zv_<id>_sub), derived from the recording settings. Null for FILE cameras or with recording off.
+   * @nullable
+   */
   recordingPath?: string | null;
   inferenceStream?: StreamChoice;
   /** @nullable */
@@ -353,6 +376,63 @@ export interface CameraViewDto {
   createdAt?: string;
   updatedAt?: string;
   mainStreamUrl?: string;
+}
+
+/**
+ * H265_BROWSER: a browser may not play this stream
+ * @nullable
+ */
+export type StreamPathInfoDtoCodecWarning = typeof StreamPathInfoDtoCodecWarning[keyof typeof StreamPathInfoDtoCodecWarning] | null;
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const StreamPathInfoDtoCodecWarning = {
+  H265_BROWSER: 'H265_BROWSER',
+} as const;
+
+export interface StreamPathInfoDto {
+  name: string;
+  stream: StreamChoice;
+  /** MediaMTX has the stream and is receiving it */
+  ready: boolean;
+  /** This path is the one being recorded */
+  recorded: boolean;
+  codecs: string[];
+  /**
+   * H265_BROWSER: a browser may not play this stream
+   * @nullable
+   */
+  codecWarning: StreamPathInfoDtoCodecWarning;
+  /**
+   * Measured from two readings 1-120 s apart; null until there are two
+   * @nullable
+   */
+  bitrateBps: number | null;
+  /**
+   * Only on the recorded path: bitrate x 86400 x retention days (7 when the camera has none)
+   * @nullable
+   */
+  estimatedBytes: number | null;
+}
+
+export interface DiskInfoDto {
+  freeBytes: number;
+  totalBytes: number;
+}
+
+/**
+ * The recordings volume; null when it cannot be read
+ * @nullable
+ */
+export type StreamInfoDtoDisk = DiskInfoDto | null;
+
+export interface StreamInfoDto {
+  paths: StreamPathInfoDto[];
+  /**
+   * The recordings volume; null when it cannot be read
+   * @nullable
+   */
+  disk: StreamInfoDtoDisk;
 }
 
 export interface RecordingDto {
@@ -396,6 +476,8 @@ export interface CreateCameraDto {
    */
   subStreamUrl?: string | null;
   /**
+   * Ignored: the recorded MediaMTX path is derived from the recording settings.
+   * @deprecated
    * @minLength 1
    * @maxLength 500
    * @nullable
@@ -454,6 +536,8 @@ export interface UpdateCameraDto {
    */
   subStreamUrl?: string | null;
   /**
+   * Ignored: the recorded MediaMTX path is derived from the recording settings.
+   * @deprecated
    * @minLength 1
    * @maxLength 500
    * @nullable

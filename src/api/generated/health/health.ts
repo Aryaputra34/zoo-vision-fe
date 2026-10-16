@@ -20,6 +20,7 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  ApiErrorBody,
   HealthCheck200,
   HealthCheck503
 } from '../zooVisionAPI.schemas';
@@ -56,7 +57,7 @@ export const getHealthCheckQueryKey = () => {
     }
 
     
-export const getHealthCheckQueryOptions = <TData = Awaited<ReturnType<typeof healthCheck>>, TError = HealthCheck503>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getHealthCheckQueryOptions = <TData = Awaited<ReturnType<typeof healthCheck>>, TError = HealthCheck503 | ApiErrorBody>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -75,10 +76,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type HealthCheckQueryResult = NonNullable<Awaited<ReturnType<typeof healthCheck>>>
-export type HealthCheckQueryError = HealthCheck503
+export type HealthCheckQueryError = HealthCheck503 | ApiErrorBody
 
 
-export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, TError = HealthCheck503>(
+export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, TError = HealthCheck503 | ApiErrorBody>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof healthCheck>>,
@@ -88,7 +89,7 @@ export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, 
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, TError = HealthCheck503>(
+export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, TError = HealthCheck503 | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof healthCheck>>,
@@ -98,7 +99,7 @@ export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, 
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, TError = HealthCheck503>(
+export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, TError = HealthCheck503 | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -106,7 +107,7 @@ export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, 
  * @summary 503 keeps terminus's per-dependency map next to the standard error fields.
  */
 
-export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, TError = HealthCheck503>(
+export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, TError = HealthCheck503 | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
