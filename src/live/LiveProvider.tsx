@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { notifyUnauthenticated } from '@/api/http';
 import { getAuthMeQueryKey } from '@/api/generated/auth/auth';
@@ -93,13 +93,14 @@ function ackLogger(what: string) {
 }
 
 type LiveContextValue = {
+  socket: LiveSocket | null;
   status: StatusStore | null;
   onEvent: (fn: (e: EventCreated) => void) => () => void;
   onAudit: (fn: (n: AuditNotice) => void) => () => void;
 };
 
 const noop = () => () => {};
-const LiveContext = createContext<LiveContextValue>({ status: null, onEvent: noop, onAudit: noop });
+const LiveContext = createContext<LiveContextValue>({ socket: null, status: null, onEvent: noop, onAudit: noop });
 
 export function useLiveContext(): LiveContextValue {
   return useContext(LiveContext);
@@ -111,12 +112,29 @@ export function LiveProvider({ children }: { children: ReactNode }): ReactNode {
   const loggedIn = !!me;
   const queryClient = useQueryClient();
   const [status] = useState(() => new StatusStore());
+  const [socketStore] = useState(() => {
+    let current: LiveSocket | null = null;
+    const listeners = new Set<() => void>();
+    return {
+      get: () => current,
+      set: (s: LiveSocket | null) => {
+        current = s;
+        listeners.forEach((l) => l());
+      },
+      subscribe: (l: () => void) => {
+        listeners.add(l);
+        return () => listeners.delete(l);
+      },
+    };
+  });
+  const socketInstance = useSyncExternalStore(socketStore.subscribe, socketStore.get, () => null);
   const eventFns = useRef(new Set<(e: EventCreated) => void>());
   const auditFns = useRef(new Set<(n: AuditNotice) => void>());
 
   useEffect(() => {
     if (!loggedIn) return;
     const socket = createSocket();
+    socketStore.set(socket);
     const store = status;
     store.attach(socket);
     let connectedBefore = false;
@@ -177,11 +195,13 @@ export function LiveProvider({ children }: { children: ReactNode }): ReactNode {
       store.detach();
       socket.removeAllListeners();
       socket.disconnect();
+      socketStore.set(null);
     };
-  }, [loggedIn, queryClient, status]);
+  }, [loggedIn, queryClient, status, socketStore]);
 
   const value = useMemo<LiveContextValue>(
     () => ({
+      socket: socketInstance,
       status,
       onEvent: (fn) => {
         eventFns.current.add(fn);
@@ -192,7 +212,7 @@ export function LiveProvider({ children }: { children: ReactNode }): ReactNode {
         return () => auditFns.current.delete(fn);
       },
     }),
-    [status],
+    [socketInstance, status],
   );
 
   return <LiveContext.Provider value={value}>{children}</LiveContext.Provider>;
