@@ -106,6 +106,7 @@ export function LivePage() {
       {/* Camera Full View Modal */}
       {activeCamera && (
         <CameraView
+          key={activeCamera.id}
           camera={activeCamera}
           status={liveStatus[activeCamera.id]}
           usecaseLabel={usecasesMap.get(activeCamera.useCase)}

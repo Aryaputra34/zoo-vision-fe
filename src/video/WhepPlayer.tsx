@@ -6,8 +6,9 @@ import { MediaMTXWebRTCReader } from './reader';
 export interface WhepPlayerProps {
   url: string;
   fallbackUrl?: string | null;
-  playoutDelaySec?: number;
   onVideo?: (v: HTMLVideoElement) => void;
+  /** The first frame of an attempt is playing. */
+  onPlaying?: () => void;
   onReader?: (r: MediaMTXWebRTCReader | null) => void;
   onFail?: () => void;
   className?: string;
@@ -16,24 +17,24 @@ export interface WhepPlayerProps {
 export function WhepPlayer({
   url,
   fallbackUrl,
-  playoutDelaySec,
   onVideo,
+  onPlaying,
   onReader,
   onFail,
   className,
 }: WhepPlayerProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const onVideoRef = useRef(onVideo);
+  const onPlayingRef = useRef(onPlaying);
   const onReaderRef = useRef(onReader);
   const onFailRef = useRef(onFail);
-  const playoutDelayRef = useRef(playoutDelaySec);
 
   useEffect(() => {
     onVideoRef.current = onVideo;
+    onPlayingRef.current = onPlaying;
     onReaderRef.current = onReader;
     onFailRef.current = onFail;
-    playoutDelayRef.current = playoutDelaySec;
-  }, [onVideo, onReader, onFail, playoutDelaySec]);
+  }, [onVideo, onPlaying, onReader, onFail]);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -78,6 +79,7 @@ export function WhepPlayer({
           clearTimeout(timeoutId);
           timeoutId = null;
         }
+        onPlayingRef.current?.();
       }
     };
 
@@ -125,25 +127,6 @@ export function WhepPlayer({
           url: candidateUrl,
           onTrack: (evt: RTCTrackEvent) => {
             if (closed) return;
-            const delaySec = playoutDelayRef.current;
-            const receiver = evt.receiver as
-              | (RTCRtpReceiver & {
-                  playoutDelayHint?: number;
-                  jitterBufferTarget?: number;
-                })
-              | undefined;
-            if (receiver && typeof delaySec === 'number' && delaySec >= 0) {
-              try {
-                if ('playoutDelayHint' in receiver) {
-                  receiver.playoutDelayHint = delaySec;
-                }
-                if ('jitterBufferTarget' in receiver) {
-                  receiver.jitterBufferTarget = delaySec * 1000;
-                }
-              } catch {
-                // Ignore if unsupported by browser
-              }
-            }
             if (videoRef.current && evt.streams && evt.streams[0]) {
               videoRef.current.srcObject = evt.streams[0];
               videoRef.current.play().catch(() => {

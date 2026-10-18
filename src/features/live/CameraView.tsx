@@ -1,14 +1,13 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Bug, Sliders, X } from 'lucide-react';
 import type { CameraViewDto } from '@/api/generated/zooVisionAPI.schemas';
 import type { CameraStatus } from '@/contract/web';
 import { useCameraConfigActive } from '@/api/generated/camera-config/camera-config';
 import { useMe } from '@/auth/AuthProvider';
-import { WhepPlayer } from '@/video/WhepPlayer';
+import { LiveVideo } from '@/video/LiveVideo';
 import { BoxOverlay } from '@/video/BoxOverlay';
-import type { MediaMTXWebRTCReader } from '@/video/reader';
 import { StreamPanel } from '@/features/cameras/StreamPanel';
 
 export interface CameraViewProps {
@@ -30,12 +29,6 @@ export function CameraView({
 
   const [isDebug, setIsDebug] = useState(false);
   const [extraDelayMs, setExtraDelayMs] = useState(0);
-  const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
-  const [stillEl, setStillEl] = useState<HTMLImageElement | null>(null);
-  const [reader, setReader] = useState<MediaMTXWebRTCReader | null>(null);
-  const [playerFailed, setPlayerFailed] = useState(false);
-  const [frameTick, setFrameTick] = useState(0);
-  const [stillError, setStillError] = useState(false);
 
   const activeConfig = useCameraConfigActive(camera.id, {
     query: {
@@ -47,15 +40,6 @@ export function CameraView({
   const primaryUrl = camera.liveUrls?.main ?? camera.liveUrls?.sub ?? null;
   const fallbackUrl = camera.liveUrls?.main ? (camera.liveUrls?.sub ?? null) : null;
   const isOnline = status !== undefined && status !== null;
-  const useStill = !primaryUrl || playerFailed;
-
-  useEffect(() => {
-    if (!useStill || isDebug) return;
-    const interval = setInterval(() => {
-      setFrameTick((t) => t + 1);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [useStill, isDebug]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
@@ -127,58 +111,22 @@ export function CameraView({
               className="size-full object-contain"
             />
           ) : (
-            <div className="relative size-full flex items-center justify-center">
-              {!useStill && primaryUrl ? (
-                <>
-                  <WhepPlayer
-                    url={primaryUrl}
-                    fallbackUrl={fallbackUrl}
-                    onVideo={setVideoEl}
-                    onReader={setReader}
-                    onFail={() => setPlayerFailed(true)}
-                    className="size-full object-contain"
-                  />
-                  {videoEl && (
-                    <BoxOverlay
-                      video={videoEl}
-                      cameraId={camera.id}
-                      settings={activeConfig.data?.settings}
-                      extraDelayMs={extraDelayMs}
-                      reader={reader}
-                    />
-                  )}
-                </>
-              ) : !stillError ? (
-                <>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    ref={setStillEl}
-                    src={`/api/v1/cameras/${camera.id}/frame?t=${frameTick}`}
-                    alt={`Snapshot Kamera ${camera.name}`}
-                    onError={() => setStillError(true)}
-                    onLoad={() => setStillError(false)}
-                    className="size-full object-contain"
-                  />
-                  {stillEl && (
-                    <BoxOverlay
-                      video={stillEl}
-                      cameraId={camera.id}
-                      settings={activeConfig.data?.settings}
-                      extraDelayMs={extraDelayMs}
-                      reader={null}
-                    />
-                  )}
-                </>
-              ) : (
-                <div className="flex flex-col items-center justify-center p-8 text-center text-zinc-500">
-                  <span className="text-xs font-bold text-zinc-400">
-                    {playerFailed
-                      ? 'Gagal memuat video WebRTC WHEP.'
-                      : 'URL live video tidak tersedia.'}
-                  </span>
-                </div>
+            <LiveVideo
+              cameraId={camera.id}
+              alt={`Snapshot Kamera ${camera.name}`}
+              url={primaryUrl}
+              fallbackUrl={fallbackUrl}
+              emptyText={isOnline ? 'Menunggu frame...' : 'Kamera offline'}
+              overlay={(video, reader) => (
+                <BoxOverlay
+                  video={video}
+                  cameraId={camera.id}
+                  settings={activeConfig.data?.settings}
+                  extraDelayMs={extraDelayMs}
+                  reader={reader}
+                />
               )}
-            </div>
+            />
           )}
         </div>
 

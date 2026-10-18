@@ -1,6 +1,7 @@
 // Source: https://raw.githubusercontent.com/bluenviron/mediamtx/v1.21.1/internal/servers/webrtc/reader.js
 // MediaMTX v1.21.1 (MIT License - Copyright (c) 2019-2024 MediaMTX authors)
-// Vendored for zoo-vision-fe. Exports MediaMTXWebRTCReader and exposes peerConnection getter.
+// Vendored for zoo-vision-fe. Changes from upstream: exports MediaMTXWebRTCReader, exposes a peerConnection getter,
+// resolves the session URL against the page (our WHEP URLs are relative), and close() deletes the WHEP session.
 "use strict";
 
 /**
@@ -68,6 +69,12 @@ class MediaMTXWebRTCReader {
 
     if (this.#restartTimeout !== null) {
       clearTimeout(this.#restartTimeout);
+    }
+
+    // zoo-vision-fe: end the session at once instead of leaving MediaMTX to time it out
+    if (this.#sessionUrl !== null) {
+      fetch(this.#sessionUrl, { method: "DELETE", keepalive: true }).catch(() => {});
+      this.#sessionUrl = null;
     }
   }
 

@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Cctv, Maximize2 } from 'lucide-react';
+import React from 'react';
+import { Maximize2 } from 'lucide-react';
 import type { CameraViewDto } from '@/api/generated/zooVisionAPI.schemas';
 import type { CameraStatus } from '@/contract/web';
-import { WhepPlayer } from '@/video/WhepPlayer';
+import { LiveVideo } from '@/video/LiveVideo';
 
 export interface LiveTileProps {
   camera: CameraViewDto;
@@ -14,25 +14,10 @@ export interface LiveTileProps {
 }
 
 export function LiveTile({ camera, status, onClick, usecaseLabel }: LiveTileProps) {
-  const [playerFailed, setPlayerFailed] = useState(false);
-  const [frameTick, setFrameTick] = useState(0);
-  const [stillError, setStillError] = useState(false);
-
   // Preference: sub stream -> main stream -> 2s still frame
   const liveUrl = camera.liveUrls?.sub ?? camera.liveUrls?.main ?? null;
   const fallbackUrl = camera.liveUrls?.sub ? (camera.liveUrls?.main ?? null) : null;
   const isOnline = status !== undefined && status !== null;
-
-  // Decision 4: Fallback still runs every 2s when there are no liveUrls or player fails
-  const useStill = !liveUrl || playerFailed;
-
-  useEffect(() => {
-    if (!useStill) return;
-    const interval = setInterval(() => {
-      setFrameTick((t) => t + 1);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [useStill]);
 
   return (
     <div
@@ -69,34 +54,13 @@ export function LiveTile({ camera, status, onClick, usecaseLabel }: LiveTileProp
 
       {/* Video / Still container (16:9) */}
       <div className="relative aspect-video w-full overflow-hidden bg-zinc-950">
-        {!useStill && liveUrl ? (
-          <WhepPlayer
-            url={liveUrl}
-            fallbackUrl={fallbackUrl}
-            onFail={() => setPlayerFailed(true)}
-            className="size-full object-contain"
-          />
-        ) : (
-          <div className="relative flex size-full items-center justify-center">
-            {!stillError ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={`/api/v1/cameras/${camera.id}/frame?t=${frameTick}`}
-                alt={`Snapshot Kamera ${camera.name}`}
-                onError={() => setStillError(true)}
-                onLoad={() => setStillError(false)}
-                className="size-full object-contain"
-              />
-            ) : (
-              <div className="flex flex-col items-center justify-center p-4 text-center text-zinc-500">
-                <Cctv className="mb-1 size-8 text-zinc-600" />
-                <span className="text-[11px] font-bold">
-                  {isOnline ? 'Menunggu Frame...' : 'Kamera Offline'}
-                </span>
-              </div>
-            )}
-          </div>
-        )}
+        <LiveVideo
+          cameraId={camera.id}
+          alt={`Snapshot Kamera ${camera.name}`}
+          url={liveUrl}
+          fallbackUrl={fallbackUrl}
+          emptyText={isOnline ? 'Menunggu Frame...' : 'Kamera Offline'}
+        />
 
         {/* Hover overlay to expand */}
         <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 backdrop-blur-xs transition group-hover:opacity-100">

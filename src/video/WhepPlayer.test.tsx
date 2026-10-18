@@ -123,7 +123,6 @@ describe('WhepPlayer fallback chain', () => {
           </button>
           <WhepPlayer
             url="/media/webrtc/zv_cam/whep"
-            playoutDelaySec={0.25}
             onVideo={(v) => setVideo(v)}
             onReader={(r) => setReader(r)}
             onFail={() => {}}
@@ -144,13 +143,5 @@ describe('WhepPlayer fallback chain', () => {
 
     expect(instances).toHaveLength(1);
     expect(instances[0].closed).toBe(false);
-
-    // Verify playoutDelaySec applies playoutDelayHint and jitterBufferTarget on track receiver
-    const receiver = { playoutDelayHint: 0, jitterBufferTarget: 0 };
-    act(() => {
-      instances[0].conf.onTrack?.({ receiver, streams: [] });
-    });
-    expect(receiver.playoutDelayHint).toBe(0.25);
-    expect(receiver.jitterBufferTarget).toBe(250);
   });
 });

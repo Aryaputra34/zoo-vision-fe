@@ -40,6 +40,8 @@ export class VideoDelay {
   private timer: ReturnType<typeof setInterval> | null = null;
   private samples: number[] = [];
   private currentDelayMs = 50;
+  // The stats are totals since the connection started: the delay now comes from the change between two reads
+  private last: { delay: number; count: number } | null = null;
 
   constructor(pc: () => RTCPeerConnection | null) {
     this.getPc = pc;
@@ -77,10 +79,13 @@ export class VideoDelay {
         ) {
           if (
             typeof report.jitterBufferDelay === 'number' &&
-            typeof report.jitterBufferEmittedCount === 'number' &&
-            report.jitterBufferEmittedCount > 0
+            typeof report.jitterBufferEmittedCount === 'number'
           ) {
-            const jitterMs = (report.jitterBufferDelay / report.jitterBufferEmittedCount) * 1000;
+            const prev = this.last;
+            this.last = { delay: report.jitterBufferDelay, count: report.jitterBufferEmittedCount };
+            const frames = prev ? report.jitterBufferEmittedCount - prev.count : 0;
+            if (!prev || frames <= 0) return; // first read, a reconnect (totals restart) or no new frames
+            const jitterMs = ((report.jitterBufferDelay - prev.delay) / frames) * 1000;
             const sample = jitterMs + 50;
             this.samples.push(sample);
             if (this.samples.length > 6) {
