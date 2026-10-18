@@ -18,8 +18,9 @@ export function LiveTile({ camera, status, onClick, usecaseLabel }: LiveTileProp
   const [frameTick, setFrameTick] = useState(0);
   const [stillError, setStillError] = useState(false);
 
-  // Preference: sub stream -> main stream
+  // Preference: sub stream -> main stream -> 2s still frame
   const liveUrl = camera.liveUrls?.sub ?? camera.liveUrls?.main ?? null;
+  const fallbackUrl = camera.liveUrls?.sub ? (camera.liveUrls?.main ?? null) : null;
   const isOnline = status !== undefined && status !== null;
 
   // Decision 4: Fallback still runs every 2s when there are no liveUrls or player fails
@@ -71,6 +72,7 @@ export function LiveTile({ camera, status, onClick, usecaseLabel }: LiveTileProp
         {!useStill && liveUrl ? (
           <WhepPlayer
             url={liveUrl}
+            fallbackUrl={fallbackUrl}
             onFail={() => setPlayerFailed(true)}
             className="size-full object-contain"
           />

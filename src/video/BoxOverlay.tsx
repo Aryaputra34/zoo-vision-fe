@@ -8,7 +8,7 @@ import { geometryOf } from './zones';
 import type { MediaMTXWebRTCReader } from './reader';
 
 export interface BoxOverlayProps {
-  video: HTMLVideoElement;
+  video: HTMLVideoElement | HTMLImageElement;
   cameraId: string;
   settings?: unknown;
   extraDelayMs: number;
@@ -55,8 +55,10 @@ export function BoxOverlay({
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      const vw = video.videoWidth;
-      const vh = video.videoHeight;
+      const vw =
+        'videoWidth' in video ? video.videoWidth : video.naturalWidth;
+      const vh =
+        'videoHeight' in video ? video.videoHeight : video.naturalHeight;
       const cw = video.clientWidth;
       const ch = video.clientHeight;
 

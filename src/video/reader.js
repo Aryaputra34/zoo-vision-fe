@@ -578,7 +578,7 @@ class MediaMTXWebRTCReader {
 
       this.#sessionUrl = new URL(
         res.headers.get("location"),
-        this.#conf.url,
+        new URL(this.#conf.url, window.location.href),
       ).toString();
 
       return res.text();
