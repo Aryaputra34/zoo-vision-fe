@@ -3,6 +3,7 @@
 import React from 'react';
 import { AlertTriangle, HardDrive, Radio, Video } from 'lucide-react';
 import { useCamerasStreamInfo } from '@/api/generated/cameras/cameras';
+import { ApiError } from '@/api/http';
 import { useMe } from '@/auth/AuthProvider';
 
 export interface StreamPanelProps {
@@ -25,8 +26,7 @@ export function StreamPanel({ cameraId }: StreamPanelProps) {
     return null;
   }
 
-  // Check for 503 error
-  const is503 = (error as { status?: number })?.status === 503;
+  const is503 = error instanceof ApiError && error.statusCode === 503;
 
   if (is503) {
     return (

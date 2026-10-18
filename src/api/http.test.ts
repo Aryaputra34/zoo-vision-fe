@@ -161,4 +161,18 @@ describe('http and ApiError handling', () => {
     expect(backendHealth.down()).toBe(true);
     expect(html.message).not.toContain('<');
   });
+
+  it("stream-info's 503 (MediaMTX down) is an ApiError 503 but does not mark the backend down", async () => {
+    http.defaults.adapter = ok;
+    await apiFetch({ url: '/reset' });
+
+    const body = { statusCode: 503, code: 'UNAVAILABLE', message: 'MediaMTX is not reachable' };
+    http.defaults.adapter = failWith(503, 'Service Unavailable', body);
+    const err = (await apiFetch({ url: '/api/v1/cameras/cam_gate_01/stream-info' }).catch((e: unknown) => e)) as ApiError;
+    expect(err.statusCode).toBe(503);
+    expect(backendHealth.down()).toBe(false);
+
+    await apiFetch({ url: '/api/v1/cameras' }).catch(() => undefined);
+    expect(backendHealth.down()).toBe(true); // any other 503 still does
+  });
 });

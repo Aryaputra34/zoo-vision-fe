@@ -84,7 +84,9 @@ http.interceptors.response.use(
     const { status, data, statusText } = error.response;
 
     // Behind Caddy a stopped or restarting API is a 502/504 from Caddy, not a network error.
-    if (status === 502 || status === 503 || status === 504) {
+    // stream-info's 503 says MediaMTX is down, not the API: no outage banner for it.
+    const mediamtxDown = status === 503 && /\/stream-info$/.test(error.config?.url ?? '');
+    if ((status === 502 || status === 503 || status === 504) && !mediamtxDown) {
       setDown(true);
     }
 
