@@ -1,6 +1,6 @@
 # Zoo Vision Phase 4b (Evidence and Exports), Frontend Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans (native: the session implements every task itself, no per-task subagents) to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** A proof-of-concept web half of 4b: every time on screen follows the site's time zone from the database,
 an Exports page makes PDFs and keeps the CSV downloads, a Site settings page edits the zone and retention
@@ -76,7 +76,7 @@ files), ideally after its tag `contract-v0.6`.
 
 | Session | Tasks | Ends with |
 |---|---|---|
-| **E: zone and pages** | W1–W5 | everything working against the laptop stack; Sonnet implements and reviews per task |
+| **E: zone and pages** | W1–W5 | everything working against the laptop stack; a Sonnet session implements natively, no per-task review |
 | **F: joint run** | W6 | the spec's laptop run through the UI, Opus whole-branch review of both repos' 4b diffs, pushes after the owner's yes |
 
 ---
