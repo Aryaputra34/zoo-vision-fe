@@ -2,12 +2,11 @@
 
 import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Filter, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useCamerasList } from '@/api/generated/cameras/cameras';
 import { useUsecasesList } from '@/api/generated/usecases/usecases';
 import { useStatus } from '@/live';
 import { PageHeader, Card } from '@/components/ui';
-import { LivePausedBadge } from '@/components/LivePausedBadge';
 import { LiveTile } from './LiveTile';
 import { CameraView } from './CameraView';
 
@@ -42,47 +41,47 @@ export function LivePage() {
   return (
     <>
       <PageHeader
-        tag="Taman Safari Bogor · Sensor Hub"
-        title="Pemantauan Kamera AI Langsung (Live View)"
-        subtitle="Grid feed visual sensor kamera CCTV aktif dengan pemutaran WebRTC WHEP dan deteksi objek AI real-time"
-      >
-        <LivePausedBadge />
-      </PageHeader>
+        title="Live kamera"
+        subtitle="Klik kamera untuk membuka tayangan besar dengan kotak deteksi AI."
+      />
 
-      {/* Filter and Search Bar */}
-      <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div className="relative">
-          <Search className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted" />
+      {/* Search and area filter */}
+      <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center">
+        <div className="relative lg:w-80">
+          <Search aria-hidden className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted" />
           <input
-            type="text"
+            type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Cari kamera CCTV berdasarkan nama, ID, atau area..."
-            className="w-full rounded-2xl border border-line bg-surface py-2.5 pl-10 pr-4 text-xs font-semibold text-ink placeholder:text-muted focus:border-lime focus:outline-none"
+            placeholder="Cari nama, ID, atau area kamera"
+            aria-label="Cari kamera"
+            className="h-10 w-full rounded-[10px] border border-[#cfc9b8] bg-surface pr-3 pl-9 text-sm text-ink placeholder:text-muted focus:border-forest focus:outline-none focus:ring-2 focus:ring-lime/40"
           />
         </div>
-
-        <div className="relative">
-          <Filter className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted" />
-          <select
-            value={selectedArea}
-            onChange={(e) => setSelectedArea(e.target.value)}
-            aria-label="Filter Area"
-            className="w-full appearance-none rounded-2xl border border-line bg-surface py-2.5 pl-10 pr-4 text-xs font-semibold text-ink focus:border-lime focus:outline-none"
-          >
-            <option value="ALL">Semua Area Operasional</option>
-            {areas.map((a) => (
-              <option key={a} value={a}>
-                {a}
-              </option>
-            ))}
-          </select>
+        <div role="group" aria-label="Filter area" className="flex flex-wrap gap-2">
+          {[{ id: 'ALL', label: 'Semua area', count: cameras.length }, ...areas.map((a) => ({ id: a, label: a, count: cameras.filter((c) => c.area === a).length }))].map((opt) => {
+            const on = selectedArea === opt.id;
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                aria-pressed={on}
+                onClick={() => setSelectedArea(opt.id)}
+                className={`inline-flex h-9 cursor-pointer items-center gap-2 rounded-full border px-3.5 text-[13px] font-semibold transition-colors ${
+                  on ? 'border-forest bg-forest text-white' : 'border-[#cfc9b8] bg-surface text-ink hover:bg-surface-2'
+                }`}
+              >
+                {opt.label}
+                <span className={`text-xs font-extrabold ${on ? 'text-lime' : 'text-muted'}`}>{opt.count}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* Camera Grid */}
       {filteredCameras.length > 0 ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-3">
           {filteredCameras.map((cam) => (
             <LiveTile
               key={cam.id}
@@ -95,10 +94,10 @@ export function LivePage() {
         </div>
       ) : (
         <Card>
-          <div className="py-16 text-center text-xs font-bold text-muted">
+          <div className="py-16 text-center text-sm font-semibold text-muted">
             {camerasQuery.isLoading
-              ? 'Memuat daftar kamera CCTV...'
-              : 'Tidak ada kamera aktif yang cocok dengan kriteria pencarian.'}
+              ? 'Memuat daftar kamera…'
+              : 'Tidak ada kamera aktif yang cocok dengan pencarian.'}
           </div>
         </Card>
       )}

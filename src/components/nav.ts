@@ -3,6 +3,7 @@ import { NAV_SECTIONS } from '@/auth/roles';
 export {
   NAV_SECTIONS,
   visibleNav,
+  isNavActive,
   roleAtLeast,
   type Role,
   type NavItem,

@@ -5,7 +5,7 @@ import { Clock, Hourglass, Ticket, Undo2 } from "lucide-react";
 import { useReportsEventStats } from "@/api/generated/reports/reports";
 import { useEventsList } from "@/api/generated/events/events";
 import { Card, Mono, Note, PageHeader, Table, Tile, Tiles } from "@/components/ui";
-import { HourlyBars } from "@/components/client";
+import { HourlyBars, AreaTabs } from "@/components/client";
 import { CsvLink } from "@/components/CsvLink";
 import { EvidenceButton } from "@/components/EvidenceButton";
 import { fmtLocalTime, localDayRange, localDaysRange } from "@/lib/time";
@@ -37,16 +37,17 @@ export function RidesPage({ date: picked }: { date?: string }) {
   return (
     <>
       <PageHeader
-        tag="Taman Safari Bogor · Wahana Rekreasi Satwa"
-        title="Wahana Tunggang Kuda (Pony Rides)"
-        subtitle="Penghitungan AI tripwire setiap kuda poni yang berangkat & kembali dari lintasan arena untuk audit kesesuaian tiket penjualan POS"
+        title="Wahana kuda"
+        subtitle="Kuda yang berangkat dan kembali di lintasan arena, untuk dicocokkan dengan tiket terjual."
         date={date}
       >
         <CsvLink path="/api/v1/exports/events.csv" params={{ ...day, types: TYPE }} />
       </PageHeader>
 
+      <AreaTabs />
+
       {error && (
-        <div role="alert" className="mb-4 rounded-2xl border border-red-300 bg-red-50 px-4 py-2.5 text-xs font-bold text-red-800">
+        <div role="alert" className="mb-4 rounded-2xl border border-crit/25 bg-crit-bg px-4 py-2.5 text-xs font-bold text-crit-ink">
           Gagal memuat data wahana: {error.message}
         </div>
       )}

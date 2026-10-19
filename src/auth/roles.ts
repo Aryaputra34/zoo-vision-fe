@@ -1,13 +1,9 @@
 import {
-  Car,
   Cctv,
+  MapPinned,
   LayoutDashboard,
   ScrollText,
-  Store,
-  Ticket,
-  Utensils,
   BarChart2,
-  TrendingUp,
   Camera,
   Cpu,
   Users,
@@ -39,6 +35,8 @@ export type NavItem = {
   Icon: LucideIcon;
   minRole: Role;
   external?: boolean;
+  /** Path prefixes that also mark this item active (pages reached through tabs). Defaults to `href`. */
+  match?: string[];
 };
 
 export type NavSection = {
@@ -48,27 +46,29 @@ export type NavSection = {
 
 export const NAV_SECTIONS: NavSection[] = [
   {
-    title: 'Pusat Kendali',
+    // One menu for everyday monitoring. Area operasional and Analitik open their first page; the pages under
+    // them switch with tabs (same routes as before), and `match` keeps the menu item lit on each of them.
+    title: 'Pemantauan',
     items: [
-      { href: '/', label: 'Ringkasan', sub: 'Command Center', Icon: LayoutDashboard, minRole: 'USER' },
-      { href: '/live', label: 'Live', sub: 'Kamera AI Langsung', Icon: Cctv, minRole: 'USER' },
-      { href: '/events', label: 'Log Kejadian', sub: 'Live Incident Stream', Icon: ScrollText, minRole: 'USER' },
-    ],
-  },
-  {
-    title: 'Zona Operasional',
-    items: [
-      { href: '/vehicles', label: 'Gerbang', sub: 'Hitung Kendaraan', Icon: Car, minRole: 'USER' },
-      { href: '/cashier', label: 'Loket', sub: 'Loket & Retail Plaza', Icon: Store, minRole: 'USER' },
-      { href: '/restaurant', label: 'Restoran', sub: 'Safari Rainforest Dining', Icon: Utensils, minRole: 'USER' },
-      { href: '/rides', label: 'Wahana Kuda', sub: 'Animal Encounters Arena', Icon: Ticket, minRole: 'USER' },
-    ],
-  },
-  {
-    title: 'Analitik',
-    items: [
-      { href: '/intervals', label: 'Interval', sub: 'Timeline & Agregasi', Icon: BarChart2, minRole: 'USER' },
-      { href: '/metrics', label: 'Metrik', sub: 'Tren & Analisis Operasi', Icon: TrendingUp, minRole: 'USER' },
+      { href: '/', label: 'Ringkasan', sub: 'Kondisi taman hari ini', Icon: LayoutDashboard, minRole: 'USER' },
+      { href: '/live', label: 'Live kamera', sub: 'Tayangan langsung', Icon: Cctv, minRole: 'USER' },
+      { href: '/events', label: 'Kejadian', sub: 'Log deteksi AI', Icon: ScrollText, minRole: 'USER' },
+      {
+        href: '/vehicles',
+        label: 'Area operasional',
+        sub: 'Gerbang, loket, restoran, wahana',
+        Icon: MapPinned,
+        minRole: 'USER',
+        match: ['/vehicles', '/cashier', '/restaurant', '/rides'],
+      },
+      {
+        href: '/intervals',
+        label: 'Analitik',
+        sub: 'Interval dan metrik',
+        Icon: BarChart2,
+        minRole: 'USER',
+        match: ['/intervals', '/metrics'],
+      },
     ],
   },
   {
@@ -104,4 +104,11 @@ export function visibleNav(sections: NavSection[], role: Role): NavSection[] {
       items: sec.items.filter((item) => roleAtLeast(role, item.minRole)),
     }))
     .filter((sec) => sec.items.length > 0);
+}
+
+// Whether a nav item is the current page: `/` only on itself, others on their own prefix or any `match` prefix.
+export function isNavActive(item: Pick<NavItem, 'href' | 'match'>, path: string): boolean {
+  if (item.href === '/') return path === '/';
+  const prefixes = item.match ?? [item.href];
+  return prefixes.some((p) => path === p || path.startsWith(`${p}/`) || path.startsWith(`${p}?`));
 }

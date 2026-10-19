@@ -21,7 +21,7 @@ import {
   Badge,
   Mono,
 } from "@/components/ui";
-import { OccupancyChart } from "@/components/client";
+import { OccupancyChart, AreaTabs } from "@/components/client";
 import { CsvLink } from "@/components/CsvLink";
 import { EvidenceButton } from "@/components/EvidenceButton";
 import { LivePausedBadge } from "@/components/LivePausedBadge";
@@ -162,9 +162,8 @@ export function RestaurantPage({ date: picked }: { date?: string }) {
   return (
     <>
       <PageHeader
-        tag="Taman Safari Bogor · Rainforest Dining"
-        title="Safari Dining Hall & Okupansi Restoran"
-        subtitle="Analisis sensor kapasitas pengunjung, durasi makan tamu di meja, dan peringatan batas daya tampung"
+        title="Restoran"
+        subtitle="Jumlah tamu, keterisian meja, dan peringatan batas kapasitas."
         date={date}
       >
         <CsvLink
@@ -172,6 +171,8 @@ export function RestaurantPage({ date: picked }: { date?: string }) {
           params={{ ...day, types: "capacity_alert" }}
         />
       </PageHeader>
+
+      <AreaTabs />
 
       <Tiles>
         <Tile
@@ -236,14 +237,14 @@ export function RestaurantPage({ date: picked }: { date?: string }) {
                     key={t.id}
                     className={`rounded-2xl border p-3 text-center transition ${
                       isOccupied
-                        ? "border-emerald-300 bg-emerald-50 text-emerald-900"
+                        ? "border-good/20 bg-good-bg text-good"
                         : "border-line bg-surface text-muted"
                     }`}
                   >
                     <div className="text-xs font-extrabold">{t.name}</div>
                     <div
                       className={`mt-1.5 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-black ${
-                        isOccupied ? "bg-emerald-200/60 text-emerald-800" : "bg-zinc-100 text-zinc-500"
+                        isOccupied ? "bg-good/15 text-good" : "bg-off-bg text-[#4b5550]"
                       }`}
                     >
                       {isOccupied ? "Terisi" : "Kosong"}

@@ -22,15 +22,15 @@ export function LiveTile({ camera, status, onClick, usecaseLabel }: LiveTileProp
   return (
     <div
       onClick={onClick}
-      className="group relative flex cursor-pointer flex-col overflow-hidden rounded-3xl border border-line bg-surface shadow-xs transition-all duration-200 hover:-translate-y-1 hover:border-lime/60 hover:shadow-xl"
+      className="group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_1px_2px_rgba(19,36,26,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(12,53,32,0.18)]"
     >
       {/* Tile Header */}
-      <div className="flex items-center justify-between border-b border-line/60 p-4">
+      <div className="flex items-center justify-between gap-2 px-4 py-3">
         <div className="min-w-0 pr-2">
-          <h3 className="truncate text-xs font-black text-forest group-hover:text-forest-dark">
+          <h3 className="truncate text-sm font-extrabold text-ink">
             {camera.name}
           </h3>
-          <p className="truncate text-[10px] text-muted">
+          <p className="truncate text-xs text-muted">
             {camera.area ?? 'Area Utama'} · {usecaseLabel ?? camera.useCase}
           </p>
         </div>
@@ -38,14 +38,14 @@ export function LiveTile({ camera, status, onClick, usecaseLabel }: LiveTileProp
         {/* Status badges */}
         <div className="shrink-0 flex items-center gap-1.5">
           {isOnline ? (
-            <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-extrabold text-emerald-700">
-              <span className="size-1.5 rounded-full bg-emerald-500 camera-pulse" />
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-good-bg px-2 py-0.5 font-mono text-[11px] font-semibold text-good">
+              <span className="size-1.5 rounded-full bg-good camera-pulse" />
               {status?.state ? `${status.state} · ` : ''}
               {typeof status?.fps === 'number' ? `${status.fps.toFixed(1)} FPS` : 'Online'}
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-zinc-100 px-2 py-0.5 text-[10px] font-bold text-zinc-500">
-              <span className="size-1.5 rounded-full bg-zinc-400" />
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-off-bg px-2 py-0.5 text-[11px] font-bold text-[#4b5550]">
+              <span className="size-1.5 rounded-full bg-off" />
               Offline
             </span>
           )}
@@ -53,18 +53,18 @@ export function LiveTile({ camera, status, onClick, usecaseLabel }: LiveTileProp
       </div>
 
       {/* Video / Still container (16:9) */}
-      <div className="relative aspect-video w-full overflow-hidden bg-zinc-950">
+      <div className="relative aspect-video w-full overflow-hidden bg-[#141b17]">
         <LiveVideo
           cameraId={camera.id}
           alt={`Snapshot Kamera ${camera.name}`}
           url={liveUrl}
           fallbackUrl={fallbackUrl}
-          emptyText={isOnline ? 'Menunggu Frame...' : 'Kamera Offline'}
+          emptyText={isOnline ? 'Menunggu frame…' : 'Kamera offline'}
         />
 
         {/* Hover overlay to expand */}
         <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 backdrop-blur-xs transition group-hover:opacity-100">
-          <span className="inline-flex items-center gap-1.5 rounded-xl bg-forest/90 px-3 py-1.5 text-xs font-bold text-white shadow-lg">
+          <span className="inline-flex items-center gap-1.5 rounded-[10px] bg-forest px-3 py-1.5 text-[13px] font-bold text-white shadow-lg">
             <Maximize2 className="size-3.5 text-lime" />
             Buka Kamera
           </span>

@@ -101,9 +101,8 @@ export function EventsExplorerPage({ date: picked }: { date?: string } = {}) {
   return (
     <>
       <PageHeader
-        tag="Data Explorer"
-        title="Pusat Log Kejadian (Events Explorer)"
-        subtitle="Eksplorasi seluruh aliran kejadian AI vision lintas use-case secara generik dengan filter presisi dan bukti snapshot visual"
+        title="Kejadian"
+        subtitle="Semua kejadian yang terdeteksi kamera, dengan filter dan bukti foto atau klip."
         date={pickedDate}
       >
         <CsvLink
@@ -130,7 +129,7 @@ export function EventsExplorerPage({ date: picked }: { date?: string } = {}) {
               setSelectedType("ALL");
             }}
             aria-label="Filter Use-Case"
-            className="w-full appearance-none rounded-2xl border border-line bg-surface py-2.5 px-4 text-xs font-semibold text-ink focus:border-lime focus:outline-none"
+            className="w-full appearance-none rounded-[10px] border border-[#cfc9b8] bg-surface py-2.5 px-4 text-[13px] font-medium text-ink focus:border-forest focus:outline-none focus:ring-2 focus:ring-lime/40"
           >
             <option value="ALL">Semua Use-Case Analitik</option>
             {(usecasesQuery.data ?? []).map((uc) => (
@@ -147,7 +146,7 @@ export function EventsExplorerPage({ date: picked }: { date?: string } = {}) {
             value={selectedType}
             onChange={(e) => handleFilterChange(setSelectedType, e.target.value)}
             aria-label="Filter Tipe Kejadian"
-            className="w-full appearance-none rounded-2xl border border-line bg-surface py-2.5 px-4 text-xs font-semibold text-ink focus:border-lime focus:outline-none"
+            className="w-full appearance-none rounded-[10px] border border-[#cfc9b8] bg-surface py-2.5 px-4 text-[13px] font-medium text-ink focus:border-forest focus:outline-none focus:ring-2 focus:ring-lime/40"
           >
             <option value="ALL">Semua Tipe Kejadian</option>
             {availableTypes.map((t) => (
@@ -164,7 +163,7 @@ export function EventsExplorerPage({ date: picked }: { date?: string } = {}) {
             value={selectedCamera}
             onChange={(e) => handleFilterChange(setSelectedCamera, e.target.value)}
             aria-label="Filter Kamera CCTV"
-            className="w-full appearance-none rounded-2xl border border-line bg-surface py-2.5 px-4 text-xs font-semibold text-ink focus:border-lime focus:outline-none"
+            className="w-full appearance-none rounded-[10px] border border-[#cfc9b8] bg-surface py-2.5 px-4 text-[13px] font-medium text-ink focus:border-forest focus:outline-none focus:ring-2 focus:ring-lime/40"
           >
             <option value="ALL">Semua Kamera CCTV</option>
             {(camerasQuery.data ?? []).map((c) => (
@@ -181,7 +180,7 @@ export function EventsExplorerPage({ date: picked }: { date?: string } = {}) {
             value={selectedSeverity}
             onChange={(e) => handleFilterChange(setSelectedSeverity, e.target.value)}
             aria-label="Filter Tingkat Keparahan"
-            className="w-full appearance-none rounded-2xl border border-line bg-surface py-2.5 px-4 text-xs font-semibold text-ink focus:border-lime focus:outline-none"
+            className="w-full appearance-none rounded-[10px] border border-[#cfc9b8] bg-surface py-2.5 px-4 text-[13px] font-medium text-ink focus:border-forest focus:outline-none focus:ring-2 focus:ring-lime/40"
           >
             <option value="ALL">Semua Tingkat Keparahan</option>
             <option value="info">Info</option>
