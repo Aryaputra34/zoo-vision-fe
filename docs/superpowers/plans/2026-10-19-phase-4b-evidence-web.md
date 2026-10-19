@@ -27,7 +27,8 @@ files), ideally after its tag `contract-v0.6`.
 
 - Work in `D:\WORK\zoo-analytics-web` on branch `phase-4b-evidence`, cut from `main` after the 4a merge
   (`bbcdab2`). Never commit to `main`. Push only after the repo owner says yes.
-- No Claude attribution in commits or pull requests. No test-first steps; one focused test where logic is risky.
+- No Claude attribution in commits or pull requests. No test-first steps, and no new tests in this plan: tests are risk-based (only where a bug loses or leaks data), and
+  nothing here does. The existing suite still runs at every Check step.
 - **This is Next.js 16:** read the matching guide in `node_modules/next/dist/docs/` before touching a Next.js API.
 - The frontend talks only to its own origin (`/api/v1`, `/media`, `/ws`) and opens `http://localhost:8080`, never
   `:3000`.
@@ -62,13 +63,13 @@ files), ideally after its tag `contract-v0.6`.
 ## Review Focus
 
 1. **A SUPERADMIN changes the zone while another page is open in the same tab.** Expected: times, the "today"
-   date and report ranges switch to the new zone without a reload. Test in W1.
+   date and report ranges switch to the new zone without a reload. Checked in W6.
 2. **A job stays `QUEUED` because Gotenberg is down.** Expected: the list keeps polling every 3 s and shows
-   "Menunggu"; when it turns `FAILED` the error shows and polling stops. Test in W3.
+   "Menunggu"; when it turns `FAILED` the error shows and polling stops. Checked in W6.
 3. **A USER opens an event's evidence.** Expected: no "Simpan bukti" button, the badge still shows; a MANAGER's
-   click on a `FAILED` event shows `QUEUED` at once. Test in W5.
+   click on a `FAILED` event shows `QUEUED` at once. Checked in W6.
 4. **Two `disk.warning` messages for the same path** (warning, then critical). Expected: one banner line, now
-   critical. Test in W5.
+   critical. Checked in W6.
 5. **A MANAGER opens Site settings.** Expected: the fields are read-only and there is no save button; a direct
    PATCH would be 403 anyway. Checked in W6.
 
@@ -86,7 +87,7 @@ files), ideally after its tag `contract-v0.6`.
 ### Task W1: Contract v0.6 and the zone from site settings
 
 **Files:**
-- Modify: `src/contract/*`, `src/api/generated/*` (by the pull only), `src/lib/time.ts` (+ `time.test.ts`),
+- Modify: `src/contract/*`, `src/api/generated/*` (by the pull only), `src/lib/time.ts`,
   `src/app/layout.tsx`
 - Create: `src/lib/SiteZoneGate.tsx`
 
@@ -110,12 +111,7 @@ site-settings, evidence and export-jobs hooks; `EventRowDto` has `evidence`.
 
 - [ ] **Step 2: Implement**
 
-- [ ] **Step 3: Write the focused test** (`time.test.ts`)
-
-```ts
-it('after setSiteTimeZone("Asia/Makassar"): fmtLocalTime("2026-10-19T00:00:00Z") is "08:00:00" and localDayRange("2026-10-19").from ends with "+08:00"')   // Review Focus 1
-it('setting it back to Asia/Jakarta gives "07:00:00" again')
-```
+- [ ] **Step 3: No new test** (risk-based: nothing here loses or leaks data; W6 checks it on the laptop)
 
 - [ ] **Step 4: Check**
 
@@ -163,7 +159,7 @@ git commit -m "feat: site settings page (superadmin edits, managers read)"
 ### Task W3: Exports page
 
 **Files:**
-- Create: `src/features/exports/{ExportsPage.tsx,jobs-poll.ts,jobs-poll.test.ts}`, `src/app/exports/page.tsx`
+- Create: `src/features/exports/ExportsPage.tsx`, `src/app/exports/page.tsx`
 - Modify: `src/auth/roles.ts` (nav item)
 
 **Interfaces:**
@@ -174,20 +170,15 @@ git commit -m "feat: site settings page (superadmin edits, managers read)"
   all). "Buat PDF" → `useExportJobsCreate`; a 503 shows "Layanan PDF tidak tersedia"; a 400 shows its message.
 - Jobs list (`useExportJobsList`): created time (local), period and date, status (Menunggu / Selesai / Gagal /
   Kedaluwarsa), size, a download link to `fileUrl` when `DONE`, `error` when `FAILED`.
-- `jobs-poll.ts`: `export function jobsRefetchInterval(jobs: { status: string }[] | undefined): number | false`
-  → `3000` when any job is `QUEUED`, else `false`; passed as `refetchInterval: (q) =>
-  jobsRefetchInterval(q.state.data)` (the `ModelsPage` idiom).
+- Polling: `refetchInterval: (q) => (q.state.data?.some((j) => j.status === 'QUEUED') ? 3000 : false)` (the
+  `ModelsPage` idiom).
 - CSV section below: Dari / Sampai dates (inclusive, default the last 7 days via `localDaysRange`), optional use
   case, and four `CsvLink`s: `/api/v1/exports/events.csv`, `intervals.csv`, `metrics.csv`, and `summary.csv` with
   `bucket=day`.
 
 - [ ] **Step 1: Implement**
 
-- [ ] **Step 2: Write the focused test** (`jobs-poll.test.ts`)
-
-```ts
-it('3000 while one job is QUEUED; false when all are DONE, FAILED or EXPIRED; false for undefined')   // Review Focus 2
-```
+- [ ] **Step 2: No new test** (risk-based: nothing here loses or leaks data; W6 checks it on the laptop)
 
 - [ ] **Step 3: Check** (`npm run lint && npx tsc --noEmit && npm test && npm run build`), expect pass.
 
@@ -230,8 +221,7 @@ git commit -m "feat: camera form sets evidence retention; stream panel shows kep
 - Modify: `src/components/EvidenceButton.tsx`, the six callers (`src/features/explorer/EventsExplorerPage.tsx`,
   `src/usecases/{cashier_presence/CashierPage,horse_riding/RidesPage,overview/OverviewPage,restaurant/RestaurantPage,vehicle_gate/VehiclesPage}.tsx`),
   `src/live/{LiveProvider.tsx,useLiveEvents.ts,index.ts}`, `src/components/CommandCenterShell.tsx`
-- Create: `src/components/DiskBanner.tsx`, `src/components/disk-banner.ts` (+ `disk-banner.test.ts`),
-  `src/components/EvidenceButton.test.tsx`
+- Create: `src/components/DiskBanner.tsx`
 
 **Interfaces:**
 - `EvidenceButton` gains `eventId?: string` and `evidence?: { status: 'QUEUED'|'KEPT'|'NO_RECORDING'|'FAILED';
@@ -242,21 +232,13 @@ git commit -m "feat: camera form sets evidence retention; stream panel shows kep
 - Callers pass `eventId={e.id}` and `evidence={e.evidence}` where they have an event row.
 - `LiveProvider`: `socket.on('disk.warning', …)` to a `diskFns` set like `auditFns`; `useDiskWarnings(fn)` exported
   from `useLiveEvents.ts` and `src/live/index.ts`.
-- `disk-banner.ts`: `export function mergeDiskWarning(list: DiskWarning[], w: DiskWarning): DiskWarning[]` (by
-  `path`, the new one replaces the old). `DiskBanner` (MANAGER and up): one line per path, amber for warning, red
+- `DiskBanner` (MANAGER and up) keeps the latest message per `path` (a new one replaces the old in state): one line per path, amber for warning, red
   for critical: "Disk <path> terisi <usedPercent>% (sisa <free GB> GB)", one dismiss button for the banner. Rendered at the top of
   `CommandCenterShell`'s content.
 
 - [ ] **Step 1: Implement**
 
-- [ ] **Step 2: Write the focused tests**
-
-```ts
-// disk-banner.test.ts
-it('a warning then a critical for /data/recordings → one entry, critical; another path → two entries')   // Review Focus 4
-// EvidenceButton.test.tsx (Testing Library, the hook mocked)
-it('a USER sees the "Gagal" badge and no "Simpan bukti"; a MANAGER clicks it → the badge reads "Menyimpan…"')   // Review Focus 3
-```
+- [ ] **Step 2: No new test** (risk-based: nothing here loses or leaks data; W6 checks it on the laptop)
 
 - [ ] **Step 3: Check** (`npm run lint && npx tsc --noEmit && npm test && npm run build`), expect pass.
 
@@ -286,8 +268,9 @@ git commit -m "feat: keep event evidence by hand, evidence status badge, disk wa
 | Snapshot retention | Site settings: snapshot retention 1 day; restart `api`, wait 60 s → old demo snapshot folders under `data/snapshots/` are gone, the JPEGs of kept events stay and still show in the dialog |
 | Zone | Site settings: zone `Asia/Makassar` → the open Ringkasan page's hours move by one without a reload; `summary.csv` times move too; set it back |
 | Review Focus 5 | log in as a MANAGER: Site settings is read-only |
-| Keep by hand | as a MANAGER, "Simpan bukti" on an info event of the non-audit camera → "Disimpan" within ~2 min |
+| Keep by hand (Review Focus 3) | as a USER the dialog shows the badge and no button; as a MANAGER, "Simpan bukti" on an info event of the non-audit camera → "Disimpan" within ~2 min |
 | Disk banner | in the git-ignored `deploy/docker-compose.override.yml`, give `api` a `tmpfs` at `/data/exports` (`size=10m`); `docker compose exec api sh -c "head -c 9000000 /dev/zero > /data/exports/fill"` → within 5 min a warning banner for `/data/exports` and a `disk_low` row in Kejadian Sistem; 9.6 MB → critical on the same line; remove the override afterwards |
+| PDF service down (Review Focus 2) | `docker compose stop gotenberg`, create a PDF → the list polls and shows Menunggu; after ~7 min Gagal with the error and polling stops; start Gotenberg again |
 
 A backend fix goes on the backend branch `phase-4b-evidence`; one that changes the contract gets a new tag
 (`contract-v0.6.1`) and a re-pull here.
