@@ -45,7 +45,7 @@ files), ideally after its tag `contract-v0.6`.
   | Zone before settings load | none: pages wait (a short "Memuat…" in the shell) |
   | Export jobs refresh | every 3 s while any listed job is `QUEUED`, else none |
   | CSV range on the Exports page | from and to dates (inclusive), default the last 7 days |
-  | Disk banner | MANAGER and up; one line per `path`, the latest message wins; dismissed per path until the next message |
+  | Disk banner | MANAGER and up; one line per `path`, the latest message wins; one dismiss for the whole banner, shown again by the next message |
 
 ## Decisions this plan makes beyond the design
 
@@ -238,14 +238,13 @@ git commit -m "feat: camera form sets evidence retention; stream panel shows kep
   reason: string } | null`. Badge on the thumbnail: Disimpan (KEPT), Menyimpan… (QUEUED), Gagal (FAILED), Tanpa
   rekaman (NO_RECORDING). In the dialog, for MANAGER and up (`useAuth().me.role`) when `eventId` is set and the
   status is not `KEPT`/`QUEUED`: "Simpan bukti" → `useEvidenceKeep`; the answer's status replaces the shown one at
-  once, and event list queries are invalidated. The button also renders (with no thumbnail) when there is no
-  snapshot or clip but `eventId` is set, so a MANAGER can keep it.
+  once, and event list queries are invalidated.
 - Callers pass `eventId={e.id}` and `evidence={e.evidence}` where they have an event row.
 - `LiveProvider`: `socket.on('disk.warning', …)` to a `diskFns` set like `auditFns`; `useDiskWarnings(fn)` exported
   from `useLiveEvents.ts` and `src/live/index.ts`.
 - `disk-banner.ts`: `export function mergeDiskWarning(list: DiskWarning[], w: DiskWarning): DiskWarning[]` (by
   `path`, the new one replaces the old). `DiskBanner` (MANAGER and up): one line per path, amber for warning, red
-  for critical: "Disk <path> terisi <usedPercent>% (sisa <free GB> GB)", a dismiss per line. Rendered at the top of
+  for critical: "Disk <path> terisi <usedPercent>% (sisa <free GB> GB)", one dismiss button for the banner. Rendered at the top of
   `CommandCenterShell`'s content.
 
 - [ ] **Step 1: Implement**
