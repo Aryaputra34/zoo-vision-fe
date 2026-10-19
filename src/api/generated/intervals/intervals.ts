@@ -55,7 +55,7 @@ export const getIntervalsListQueryKey = (params?: IntervalsListParams,) => {
     }
 
     
-export const getIntervalsListQueryOptions = <TData = Awaited<ReturnType<typeof intervalsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: IntervalsListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof intervalsList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getIntervalsListQueryOptions = <TData = Awaited<ReturnType<typeof intervalsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: IntervalsListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof intervalsList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -74,10 +74,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type IntervalsListQueryResult = NonNullable<Awaited<ReturnType<typeof intervalsList>>>
-export type IntervalsListQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody
+export type IntervalsListQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useIntervalsList<TData = Awaited<ReturnType<typeof intervalsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useIntervalsList<TData = Awaited<ReturnType<typeof intervalsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: IntervalsListParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof intervalsList>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof intervalsList>>,
@@ -87,7 +87,7 @@ export function useIntervalsList<TData = Awaited<ReturnType<typeof intervalsList
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useIntervalsList<TData = Awaited<ReturnType<typeof intervalsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useIntervalsList<TData = Awaited<ReturnType<typeof intervalsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: IntervalsListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof intervalsList>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof intervalsList>>,
@@ -97,12 +97,12 @@ export function useIntervalsList<TData = Awaited<ReturnType<typeof intervalsList
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useIntervalsList<TData = Awaited<ReturnType<typeof intervalsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useIntervalsList<TData = Awaited<ReturnType<typeof intervalsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: IntervalsListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof intervalsList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useIntervalsList<TData = Awaited<ReturnType<typeof intervalsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useIntervalsList<TData = Awaited<ReturnType<typeof intervalsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: IntervalsListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof intervalsList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {

@@ -55,7 +55,7 @@ export const getEventsListQueryKey = (params?: EventsListParams,) => {
     }
 
     
-export const getEventsListQueryOptions = <TData = Awaited<ReturnType<typeof eventsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: EventsListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof eventsList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getEventsListQueryOptions = <TData = Awaited<ReturnType<typeof eventsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: EventsListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof eventsList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -74,10 +74,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type EventsListQueryResult = NonNullable<Awaited<ReturnType<typeof eventsList>>>
-export type EventsListQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody
+export type EventsListQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useEventsList<TData = Awaited<ReturnType<typeof eventsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useEventsList<TData = Awaited<ReturnType<typeof eventsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: EventsListParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof eventsList>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof eventsList>>,
@@ -87,7 +87,7 @@ export function useEventsList<TData = Awaited<ReturnType<typeof eventsList>>, TE
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useEventsList<TData = Awaited<ReturnType<typeof eventsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useEventsList<TData = Awaited<ReturnType<typeof eventsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: EventsListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof eventsList>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof eventsList>>,
@@ -97,12 +97,12 @@ export function useEventsList<TData = Awaited<ReturnType<typeof eventsList>>, TE
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useEventsList<TData = Awaited<ReturnType<typeof eventsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useEventsList<TData = Awaited<ReturnType<typeof eventsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: EventsListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof eventsList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useEventsList<TData = Awaited<ReturnType<typeof eventsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useEventsList<TData = Awaited<ReturnType<typeof eventsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: EventsListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof eventsList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {

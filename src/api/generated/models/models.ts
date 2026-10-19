@@ -60,7 +60,7 @@ export const getModelsListQueryKey = () => {
     }
 
     
-export const getModelsListQueryOptions = <TData = Awaited<ReturnType<typeof modelsList>>, TError = ApiErrorBody | ApiErrorBody>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof modelsList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getModelsListQueryOptions = <TData = Awaited<ReturnType<typeof modelsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof modelsList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -79,10 +79,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type ModelsListQueryResult = NonNullable<Awaited<ReturnType<typeof modelsList>>>
-export type ModelsListQueryError = ApiErrorBody | ApiErrorBody
+export type ModelsListQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useModelsList<TData = Awaited<ReturnType<typeof modelsList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useModelsList<TData = Awaited<ReturnType<typeof modelsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof modelsList>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof modelsList>>,
@@ -92,7 +92,7 @@ export function useModelsList<TData = Awaited<ReturnType<typeof modelsList>>, TE
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useModelsList<TData = Awaited<ReturnType<typeof modelsList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useModelsList<TData = Awaited<ReturnType<typeof modelsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof modelsList>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof modelsList>>,
@@ -102,12 +102,12 @@ export function useModelsList<TData = Awaited<ReturnType<typeof modelsList>>, TE
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useModelsList<TData = Awaited<ReturnType<typeof modelsList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useModelsList<TData = Awaited<ReturnType<typeof modelsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof modelsList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useModelsList<TData = Awaited<ReturnType<typeof modelsList>>, TError = ApiErrorBody | ApiErrorBody>(
+export function useModelsList<TData = Awaited<ReturnType<typeof modelsList>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof modelsList>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -150,7 +150,7 @@ if(modelsUploadBody.notes !== undefined) {
   
 
 
-export const getModelsUploadMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
+export const getModelsUploadMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modelsUpload>>, TError,{data: ModelsUploadBody}, TContext>, request?: SecondParameter<typeof apiFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof modelsUpload>>, TError,{data: ModelsUploadBody}, TContext> => {
 
@@ -177,9 +177,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ModelsUploadMutationResult = NonNullable<Awaited<ReturnType<typeof modelsUpload>>>
     export type ModelsUploadMutationBody = ModelsUploadBody
-    export type ModelsUploadMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
+    export type ModelsUploadMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
-    export const useModelsUpload = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
+    export const useModelsUpload = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modelsUpload>>, TError,{data: ModelsUploadBody}, TContext>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof modelsUpload>>,
@@ -209,7 +209,7 @@ export const modelsRescan = (
   
 
 
-export const getModelsRescanMutationOptions = <TError = ApiErrorBody | ApiErrorBody,
+export const getModelsRescanMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modelsRescan>>, TError,void, TContext>, request?: SecondParameter<typeof apiFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof modelsRescan>>, TError,void, TContext> => {
 
@@ -236,12 +236,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ModelsRescanMutationResult = NonNullable<Awaited<ReturnType<typeof modelsRescan>>>
     
-    export type ModelsRescanMutationError = ApiErrorBody | ApiErrorBody
+    export type ModelsRescanMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody
 
     /**
  * @summary Declared before `:id` so that "rescan" is never read as an id.
  */
-export const useModelsRescan = <TError = ApiErrorBody | ApiErrorBody,
+export const useModelsRescan = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modelsRescan>>, TError,void, TContext>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof modelsRescan>>,
@@ -276,7 +276,7 @@ export const getModelsGetQueryKey = (id?: string,) => {
     }
 
     
-export const getModelsGetQueryOptions = <TData = Awaited<ReturnType<typeof modelsGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof modelsGet>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getModelsGetQueryOptions = <TData = Awaited<ReturnType<typeof modelsGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof modelsGet>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -295,10 +295,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type ModelsGetQueryResult = NonNullable<Awaited<ReturnType<typeof modelsGet>>>
-export type ModelsGetQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
+export type ModelsGetQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useModelsGet<TData = Awaited<ReturnType<typeof modelsGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useModelsGet<TData = Awaited<ReturnType<typeof modelsGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof modelsGet>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof modelsGet>>,
@@ -308,7 +308,7 @@ export function useModelsGet<TData = Awaited<ReturnType<typeof modelsGet>>, TErr
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useModelsGet<TData = Awaited<ReturnType<typeof modelsGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useModelsGet<TData = Awaited<ReturnType<typeof modelsGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof modelsGet>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof modelsGet>>,
@@ -318,12 +318,12 @@ export function useModelsGet<TData = Awaited<ReturnType<typeof modelsGet>>, TErr
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useModelsGet<TData = Awaited<ReturnType<typeof modelsGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useModelsGet<TData = Awaited<ReturnType<typeof modelsGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof modelsGet>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useModelsGet<TData = Awaited<ReturnType<typeof modelsGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useModelsGet<TData = Awaited<ReturnType<typeof modelsGet>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof modelsGet>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -352,7 +352,7 @@ export const modelsRemove = (
   
 
 
-export const getModelsRemoveMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
+export const getModelsRemoveMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modelsRemove>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof modelsRemove>>, TError,{id: string}, TContext> => {
 
@@ -379,9 +379,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ModelsRemoveMutationResult = NonNullable<Awaited<ReturnType<typeof modelsRemove>>>
     
-    export type ModelsRemoveMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
+    export type ModelsRemoveMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
-    export const useModelsRemove = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
+    export const useModelsRemove = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modelsRemove>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof modelsRemove>>,
@@ -408,7 +408,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   
 
 
-export const getModelsValidateMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
+export const getModelsValidateMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modelsValidate>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof modelsValidate>>, TError,{id: string}, TContext> => {
 
@@ -435,9 +435,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ModelsValidateMutationResult = NonNullable<Awaited<ReturnType<typeof modelsValidate>>>
     
-    export type ModelsValidateMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
+    export type ModelsValidateMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
-    export const useModelsValidate = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
+    export const useModelsValidate = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modelsValidate>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof modelsValidate>>,
@@ -464,7 +464,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   
 
 
-export const getModelsConvertMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
+export const getModelsConvertMutationOptions = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modelsConvert>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof modelsConvert>>, TError,{id: string}, TContext> => {
 
@@ -491,9 +491,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type ModelsConvertMutationResult = NonNullable<Awaited<ReturnType<typeof modelsConvert>>>
     
-    export type ModelsConvertMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
+    export type ModelsConvertMutationError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
-    export const useModelsConvert = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
+    export const useModelsConvert = <TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof modelsConvert>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof modelsConvert>>,

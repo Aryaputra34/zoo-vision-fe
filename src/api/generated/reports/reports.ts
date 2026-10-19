@@ -59,7 +59,7 @@ export const getReportsEventStatsQueryKey = (params?: ReportsEventStatsParams,) 
     }
 
     
-export const getReportsEventStatsQueryOptions = <TData = Awaited<ReturnType<typeof reportsEventStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: ReportsEventStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsEventStats>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getReportsEventStatsQueryOptions = <TData = Awaited<ReturnType<typeof reportsEventStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: ReportsEventStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsEventStats>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -78,10 +78,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type ReportsEventStatsQueryResult = NonNullable<Awaited<ReturnType<typeof reportsEventStats>>>
-export type ReportsEventStatsQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody
+export type ReportsEventStatsQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useReportsEventStats<TData = Awaited<ReturnType<typeof reportsEventStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useReportsEventStats<TData = Awaited<ReturnType<typeof reportsEventStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: ReportsEventStatsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsEventStats>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof reportsEventStats>>,
@@ -91,7 +91,7 @@ export function useReportsEventStats<TData = Awaited<ReturnType<typeof reportsEv
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useReportsEventStats<TData = Awaited<ReturnType<typeof reportsEventStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useReportsEventStats<TData = Awaited<ReturnType<typeof reportsEventStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: ReportsEventStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsEventStats>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof reportsEventStats>>,
@@ -101,12 +101,12 @@ export function useReportsEventStats<TData = Awaited<ReturnType<typeof reportsEv
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useReportsEventStats<TData = Awaited<ReturnType<typeof reportsEventStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useReportsEventStats<TData = Awaited<ReturnType<typeof reportsEventStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: ReportsEventStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsEventStats>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useReportsEventStats<TData = Awaited<ReturnType<typeof reportsEventStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useReportsEventStats<TData = Awaited<ReturnType<typeof reportsEventStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: ReportsEventStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsEventStats>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -145,7 +145,7 @@ export const getReportsIntervalStatsQueryKey = (params?: ReportsIntervalStatsPar
     }
 
     
-export const getReportsIntervalStatsQueryOptions = <TData = Awaited<ReturnType<typeof reportsIntervalStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: ReportsIntervalStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsIntervalStats>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getReportsIntervalStatsQueryOptions = <TData = Awaited<ReturnType<typeof reportsIntervalStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: ReportsIntervalStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsIntervalStats>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -164,10 +164,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type ReportsIntervalStatsQueryResult = NonNullable<Awaited<ReturnType<typeof reportsIntervalStats>>>
-export type ReportsIntervalStatsQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody
+export type ReportsIntervalStatsQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useReportsIntervalStats<TData = Awaited<ReturnType<typeof reportsIntervalStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useReportsIntervalStats<TData = Awaited<ReturnType<typeof reportsIntervalStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: ReportsIntervalStatsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsIntervalStats>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof reportsIntervalStats>>,
@@ -177,7 +177,7 @@ export function useReportsIntervalStats<TData = Awaited<ReturnType<typeof report
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useReportsIntervalStats<TData = Awaited<ReturnType<typeof reportsIntervalStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useReportsIntervalStats<TData = Awaited<ReturnType<typeof reportsIntervalStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: ReportsIntervalStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsIntervalStats>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof reportsIntervalStats>>,
@@ -187,12 +187,12 @@ export function useReportsIntervalStats<TData = Awaited<ReturnType<typeof report
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useReportsIntervalStats<TData = Awaited<ReturnType<typeof reportsIntervalStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useReportsIntervalStats<TData = Awaited<ReturnType<typeof reportsIntervalStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: ReportsIntervalStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsIntervalStats>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useReportsIntervalStats<TData = Awaited<ReturnType<typeof reportsIntervalStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useReportsIntervalStats<TData = Awaited<ReturnType<typeof reportsIntervalStats>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: ReportsIntervalStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsIntervalStats>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -231,7 +231,7 @@ export const getReportsMetricSeriesQueryKey = (params?: ReportsMetricSeriesParam
     }
 
     
-export const getReportsMetricSeriesQueryOptions = <TData = Awaited<ReturnType<typeof reportsMetricSeries>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: ReportsMetricSeriesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsMetricSeries>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getReportsMetricSeriesQueryOptions = <TData = Awaited<ReturnType<typeof reportsMetricSeries>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: ReportsMetricSeriesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsMetricSeries>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -250,10 +250,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type ReportsMetricSeriesQueryResult = NonNullable<Awaited<ReturnType<typeof reportsMetricSeries>>>
-export type ReportsMetricSeriesQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody
+export type ReportsMetricSeriesQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useReportsMetricSeries<TData = Awaited<ReturnType<typeof reportsMetricSeries>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useReportsMetricSeries<TData = Awaited<ReturnType<typeof reportsMetricSeries>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: ReportsMetricSeriesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsMetricSeries>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof reportsMetricSeries>>,
@@ -263,7 +263,7 @@ export function useReportsMetricSeries<TData = Awaited<ReturnType<typeof reports
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useReportsMetricSeries<TData = Awaited<ReturnType<typeof reportsMetricSeries>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useReportsMetricSeries<TData = Awaited<ReturnType<typeof reportsMetricSeries>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: ReportsMetricSeriesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsMetricSeries>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof reportsMetricSeries>>,
@@ -273,12 +273,12 @@ export function useReportsMetricSeries<TData = Awaited<ReturnType<typeof reports
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useReportsMetricSeries<TData = Awaited<ReturnType<typeof reportsMetricSeries>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useReportsMetricSeries<TData = Awaited<ReturnType<typeof reportsMetricSeries>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: ReportsMetricSeriesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsMetricSeries>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useReportsMetricSeries<TData = Awaited<ReturnType<typeof reportsMetricSeries>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useReportsMetricSeries<TData = Awaited<ReturnType<typeof reportsMetricSeries>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: ReportsMetricSeriesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsMetricSeries>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {

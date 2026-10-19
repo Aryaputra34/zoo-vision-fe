@@ -62,7 +62,7 @@ export const getSystemLogAuditQueryKey = (params?: SystemLogAuditParams,) => {
     }
 
     
-export const getSystemLogAuditQueryOptions = <TData = Awaited<ReturnType<typeof systemLogAudit>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: SystemLogAuditParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogAudit>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getSystemLogAuditQueryOptions = <TData = Awaited<ReturnType<typeof systemLogAudit>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: SystemLogAuditParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogAudit>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -81,10 +81,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type SystemLogAuditQueryResult = NonNullable<Awaited<ReturnType<typeof systemLogAudit>>>
-export type SystemLogAuditQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody
+export type SystemLogAuditQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useSystemLogAudit<TData = Awaited<ReturnType<typeof systemLogAudit>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogAudit<TData = Awaited<ReturnType<typeof systemLogAudit>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogAuditParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogAudit>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof systemLogAudit>>,
@@ -94,7 +94,7 @@ export function useSystemLogAudit<TData = Awaited<ReturnType<typeof systemLogAud
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSystemLogAudit<TData = Awaited<ReturnType<typeof systemLogAudit>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogAudit<TData = Awaited<ReturnType<typeof systemLogAudit>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogAuditParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogAudit>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof systemLogAudit>>,
@@ -104,12 +104,12 @@ export function useSystemLogAudit<TData = Awaited<ReturnType<typeof systemLogAud
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSystemLogAudit<TData = Awaited<ReturnType<typeof systemLogAudit>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogAudit<TData = Awaited<ReturnType<typeof systemLogAudit>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogAuditParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogAudit>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useSystemLogAudit<TData = Awaited<ReturnType<typeof systemLogAudit>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogAudit<TData = Awaited<ReturnType<typeof systemLogAudit>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogAuditParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogAudit>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -148,7 +148,7 @@ export const getSystemLogLoginsQueryKey = (params?: SystemLogLoginsParams,) => {
     }
 
     
-export const getSystemLogLoginsQueryOptions = <TData = Awaited<ReturnType<typeof systemLogLogins>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: SystemLogLoginsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogLogins>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getSystemLogLoginsQueryOptions = <TData = Awaited<ReturnType<typeof systemLogLogins>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: SystemLogLoginsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogLogins>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -167,10 +167,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type SystemLogLoginsQueryResult = NonNullable<Awaited<ReturnType<typeof systemLogLogins>>>
-export type SystemLogLoginsQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody
+export type SystemLogLoginsQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useSystemLogLogins<TData = Awaited<ReturnType<typeof systemLogLogins>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogLogins<TData = Awaited<ReturnType<typeof systemLogLogins>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogLoginsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogLogins>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof systemLogLogins>>,
@@ -180,7 +180,7 @@ export function useSystemLogLogins<TData = Awaited<ReturnType<typeof systemLogLo
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSystemLogLogins<TData = Awaited<ReturnType<typeof systemLogLogins>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogLogins<TData = Awaited<ReturnType<typeof systemLogLogins>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogLoginsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogLogins>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof systemLogLogins>>,
@@ -190,12 +190,12 @@ export function useSystemLogLogins<TData = Awaited<ReturnType<typeof systemLogLo
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSystemLogLogins<TData = Awaited<ReturnType<typeof systemLogLogins>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogLogins<TData = Awaited<ReturnType<typeof systemLogLogins>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogLoginsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogLogins>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useSystemLogLogins<TData = Awaited<ReturnType<typeof systemLogLogins>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogLogins<TData = Awaited<ReturnType<typeof systemLogLogins>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogLoginsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogLogins>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -234,7 +234,7 @@ export const getSystemLogSystemEventsQueryKey = (params?: SystemLogSystemEventsP
     }
 
     
-export const getSystemLogSystemEventsQueryOptions = <TData = Awaited<ReturnType<typeof systemLogSystemEvents>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: SystemLogSystemEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogSystemEvents>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getSystemLogSystemEventsQueryOptions = <TData = Awaited<ReturnType<typeof systemLogSystemEvents>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: SystemLogSystemEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogSystemEvents>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -253,10 +253,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type SystemLogSystemEventsQueryResult = NonNullable<Awaited<ReturnType<typeof systemLogSystemEvents>>>
-export type SystemLogSystemEventsQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody
+export type SystemLogSystemEventsQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useSystemLogSystemEvents<TData = Awaited<ReturnType<typeof systemLogSystemEvents>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogSystemEvents<TData = Awaited<ReturnType<typeof systemLogSystemEvents>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogSystemEventsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogSystemEvents>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof systemLogSystemEvents>>,
@@ -266,7 +266,7 @@ export function useSystemLogSystemEvents<TData = Awaited<ReturnType<typeof syste
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSystemLogSystemEvents<TData = Awaited<ReturnType<typeof systemLogSystemEvents>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogSystemEvents<TData = Awaited<ReturnType<typeof systemLogSystemEvents>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogSystemEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogSystemEvents>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof systemLogSystemEvents>>,
@@ -276,12 +276,12 @@ export function useSystemLogSystemEvents<TData = Awaited<ReturnType<typeof syste
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSystemLogSystemEvents<TData = Awaited<ReturnType<typeof systemLogSystemEvents>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogSystemEvents<TData = Awaited<ReturnType<typeof systemLogSystemEvents>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogSystemEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogSystemEvents>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useSystemLogSystemEvents<TData = Awaited<ReturnType<typeof systemLogSystemEvents>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogSystemEvents<TData = Awaited<ReturnType<typeof systemLogSystemEvents>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogSystemEventsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogSystemEvents>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -320,7 +320,7 @@ export const getSystemLogAuditCsvQueryKey = (params?: SystemLogAuditCsvParams,) 
     }
 
     
-export const getSystemLogAuditCsvQueryOptions = <TData = Awaited<ReturnType<typeof systemLogAuditCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: SystemLogAuditCsvParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogAuditCsv>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getSystemLogAuditCsvQueryOptions = <TData = Awaited<ReturnType<typeof systemLogAuditCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: SystemLogAuditCsvParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogAuditCsv>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -339,10 +339,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type SystemLogAuditCsvQueryResult = NonNullable<Awaited<ReturnType<typeof systemLogAuditCsv>>>
-export type SystemLogAuditCsvQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody
+export type SystemLogAuditCsvQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useSystemLogAuditCsv<TData = Awaited<ReturnType<typeof systemLogAuditCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogAuditCsv<TData = Awaited<ReturnType<typeof systemLogAuditCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogAuditCsvParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogAuditCsv>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof systemLogAuditCsv>>,
@@ -352,7 +352,7 @@ export function useSystemLogAuditCsv<TData = Awaited<ReturnType<typeof systemLog
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSystemLogAuditCsv<TData = Awaited<ReturnType<typeof systemLogAuditCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogAuditCsv<TData = Awaited<ReturnType<typeof systemLogAuditCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogAuditCsvParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogAuditCsv>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof systemLogAuditCsv>>,
@@ -362,12 +362,12 @@ export function useSystemLogAuditCsv<TData = Awaited<ReturnType<typeof systemLog
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSystemLogAuditCsv<TData = Awaited<ReturnType<typeof systemLogAuditCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogAuditCsv<TData = Awaited<ReturnType<typeof systemLogAuditCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogAuditCsvParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogAuditCsv>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useSystemLogAuditCsv<TData = Awaited<ReturnType<typeof systemLogAuditCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogAuditCsv<TData = Awaited<ReturnType<typeof systemLogAuditCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogAuditCsvParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogAuditCsv>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -406,7 +406,7 @@ export const getSystemLogLoginsCsvQueryKey = (params?: SystemLogLoginsCsvParams,
     }
 
     
-export const getSystemLogLoginsCsvQueryOptions = <TData = Awaited<ReturnType<typeof systemLogLoginsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: SystemLogLoginsCsvParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogLoginsCsv>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getSystemLogLoginsCsvQueryOptions = <TData = Awaited<ReturnType<typeof systemLogLoginsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: SystemLogLoginsCsvParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogLoginsCsv>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -425,10 +425,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type SystemLogLoginsCsvQueryResult = NonNullable<Awaited<ReturnType<typeof systemLogLoginsCsv>>>
-export type SystemLogLoginsCsvQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody
+export type SystemLogLoginsCsvQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useSystemLogLoginsCsv<TData = Awaited<ReturnType<typeof systemLogLoginsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogLoginsCsv<TData = Awaited<ReturnType<typeof systemLogLoginsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogLoginsCsvParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogLoginsCsv>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof systemLogLoginsCsv>>,
@@ -438,7 +438,7 @@ export function useSystemLogLoginsCsv<TData = Awaited<ReturnType<typeof systemLo
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSystemLogLoginsCsv<TData = Awaited<ReturnType<typeof systemLogLoginsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogLoginsCsv<TData = Awaited<ReturnType<typeof systemLogLoginsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogLoginsCsvParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogLoginsCsv>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof systemLogLoginsCsv>>,
@@ -448,12 +448,12 @@ export function useSystemLogLoginsCsv<TData = Awaited<ReturnType<typeof systemLo
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSystemLogLoginsCsv<TData = Awaited<ReturnType<typeof systemLogLoginsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogLoginsCsv<TData = Awaited<ReturnType<typeof systemLogLoginsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogLoginsCsvParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogLoginsCsv>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useSystemLogLoginsCsv<TData = Awaited<ReturnType<typeof systemLogLoginsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogLoginsCsv<TData = Awaited<ReturnType<typeof systemLogLoginsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogLoginsCsvParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogLoginsCsv>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -492,7 +492,7 @@ export const getSystemLogSystemEventsCsvQueryKey = (params?: SystemLogSystemEven
     }
 
     
-export const getSystemLogSystemEventsCsvQueryOptions = <TData = Awaited<ReturnType<typeof systemLogSystemEventsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: SystemLogSystemEventsCsvParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogSystemEventsCsv>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+export const getSystemLogSystemEventsCsvQueryOptions = <TData = Awaited<ReturnType<typeof systemLogSystemEventsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(params: SystemLogSystemEventsCsvParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogSystemEventsCsv>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -511,10 +511,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type SystemLogSystemEventsCsvQueryResult = NonNullable<Awaited<ReturnType<typeof systemLogSystemEventsCsv>>>
-export type SystemLogSystemEventsCsvQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody
+export type SystemLogSystemEventsCsvQueryError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody
 
 
-export function useSystemLogSystemEventsCsv<TData = Awaited<ReturnType<typeof systemLogSystemEventsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogSystemEventsCsv<TData = Awaited<ReturnType<typeof systemLogSystemEventsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogSystemEventsCsvParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogSystemEventsCsv>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof systemLogSystemEventsCsv>>,
@@ -524,7 +524,7 @@ export function useSystemLogSystemEventsCsv<TData = Awaited<ReturnType<typeof sy
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSystemLogSystemEventsCsv<TData = Awaited<ReturnType<typeof systemLogSystemEventsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogSystemEventsCsv<TData = Awaited<ReturnType<typeof systemLogSystemEventsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogSystemEventsCsvParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogSystemEventsCsv>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof systemLogSystemEventsCsv>>,
@@ -534,12 +534,12 @@ export function useSystemLogSystemEventsCsv<TData = Awaited<ReturnType<typeof sy
       >, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useSystemLogSystemEventsCsv<TData = Awaited<ReturnType<typeof systemLogSystemEventsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogSystemEventsCsv<TData = Awaited<ReturnType<typeof systemLogSystemEventsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogSystemEventsCsvParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogSystemEventsCsv>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useSystemLogSystemEventsCsv<TData = Awaited<ReturnType<typeof systemLogSystemEventsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody>(
+export function useSystemLogSystemEventsCsv<TData = Awaited<ReturnType<typeof systemLogSystemEventsCsv>>, TError = ApiErrorBody | ApiErrorBody | ApiErrorBody | ApiErrorBody>(
  params: SystemLogSystemEventsCsvParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof systemLogSystemEventsCsv>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
