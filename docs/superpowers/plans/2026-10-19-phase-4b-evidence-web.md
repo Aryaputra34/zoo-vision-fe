@@ -28,7 +28,8 @@ files), ideally after its tag `contract-v0.6`.
 - Work in `D:\WORK\zoo-analytics-web` on branch `phase-4b-evidence`, cut from `main` after the 4a merge
   (`bbcdab2`). Never commit to `main`. Push only after the repo owner says yes.
 - No Claude attribution in commits or pull requests. No test-first steps, and no new tests in this plan: tests are risk-based (only where a bug loses or leaks data), and
-  nothing here does. The existing suite still runs at every Check step.
+  nothing here does. The existing suite still runs at every Check step. While fixing, run only the file you work on
+  (`npx vitest run <file>`); run the full Check once, before the commit.
 - **This is Next.js 16:** read the matching guide in `node_modules/next/dist/docs/` before touching a Next.js API.
 - The frontend talks only to its own origin (`/api/v1`, `/media`, `/ws`) and opens `http://localhost:8080`, never
   `:3000`.
@@ -74,6 +75,9 @@ files), ideally after its tag `contract-v0.6`.
    PATCH would be 403 anyway. Checked in W6.
 
 ## Execution sessions
+
+Each session starts by reading this plan, the spec and `git log --oneline main..` (trust git, not the checkboxes).
+If a session's context gets long (many fix rounds), commit the finished task and continue in a new session.
 
 | Session | Tasks | Ends with |
 |---|---|---|
