@@ -360,7 +360,7 @@ export function CommandCenterShell({
 
       {/* ── Main column ── */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b border-line bg-surface/90 px-4 backdrop-blur-md sm:px-7">
+        <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b border-line bg-surface/90 px-4 backdrop-blur-md sm:px-6 2xl:px-8">
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
@@ -380,7 +380,7 @@ export function CommandCenterShell({
           </span>
         </header>
 
-        <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 py-6 sm:px-7">
+        <main className="w-full min-w-0 flex-1 px-4 py-6 sm:px-6 2xl:px-8">
           <BackendBanner />
           {children}
         </main>

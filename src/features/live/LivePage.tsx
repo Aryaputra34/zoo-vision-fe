@@ -81,7 +81,7 @@ export function LivePage() {
 
       {/* Camera Grid */}
       {filteredCameras.length > 0 ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 min-[1900px]:grid-cols-4">
           {filteredCameras.map((cam) => (
             <LiveTile
               key={cam.id}

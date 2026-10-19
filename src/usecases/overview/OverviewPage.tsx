@@ -508,7 +508,7 @@ function AttentionCard({ event: e, date }: { event: EventRowDto; date: string })
         crit ? "border-[#f3c7c1]" : "border-line"
       }`}
     >
-      <div className="relative aspect-video bg-[#1b2822]">
+      <div className="relative aspect-video bg-[#1b2822] 2xl:aspect-[21/9]">
         {e.snapshotUrl ? (
           // eslint-disable-next-line @next/next/no-img-element -- a session-protected JPEG from the API
           <img src={e.snapshotUrl} alt={`Snapshot ${title}`} loading="lazy" className="size-full object-cover" />
