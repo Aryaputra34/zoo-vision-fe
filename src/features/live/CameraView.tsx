@@ -43,22 +43,22 @@ export function CameraView({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
-      <div className="flex max-h-[95vh] w-full max-w-5xl flex-col overflow-hidden rounded-[18px] border border-line bg-surface shadow-2xl">
+      <div className="flex max-h-[95vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-line bg-surface shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-line p-4 sm:p-5">
           <div className="min-w-0 pr-4">
             <div className="flex items-center gap-2">
-              <h2 className="truncate text-lg font-extrabold text-ink">{camera.name}</h2>
+              <h2 className="truncate text-base font-black text-ink">{camera.name}</h2>
               <span
-                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
+                className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${
                   isOnline
-                    ? 'bg-good-bg text-good'
-                    : 'bg-off-bg text-[#4b5550]'
+                    ? 'border border-emerald-200 bg-emerald-50 text-emerald-700'
+                    : 'border border-zinc-200 bg-zinc-100 text-zinc-500'
                 }`}
               >
                 <span
                   className={`size-1.5 rounded-full ${
-                    isOnline ? 'bg-good camera-pulse' : 'bg-off'
+                    isOnline ? 'bg-emerald-500 camera-pulse' : 'bg-zinc-400'
                   }`}
                 />
                 {isOnline
@@ -66,8 +66,8 @@ export function CameraView({
                   : 'OFFLINE'}
               </span>
             </div>
-            <p className="mt-1 text-[13px] text-muted">
-              <span className="font-mono">{camera.id}</span> · {camera.area ?? 'Utama'} ·{' '}
+            <p className="mt-0.5 text-xs text-muted">
+              ID: {camera.id} · Area: {camera.area ?? 'Utama'} · Use Case:{' '}
               {usecaseLabel ?? camera.useCase}
             </p>
           </div>
@@ -93,7 +93,7 @@ export function CameraView({
               type="button"
               onClick={onClose}
               aria-label="Tutup"
-              className="rounded-[10px] border border-[#cfc9b8] p-2 text-muted transition hover:bg-surface-2 hover:text-ink"
+              className="rounded-xl border border-line p-2 text-muted transition hover:bg-surface-2 hover:text-ink"
             >
               <X className="size-4" />
             </button>

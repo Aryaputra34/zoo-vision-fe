@@ -20,7 +20,7 @@ import {
   Badge,
   Mono,
 } from "@/components/ui";
-import { HourlyBars, AreaTabs } from "@/components/client";
+import { HourlyBars } from "@/components/client";
 import { CsvLink } from "@/components/CsvLink";
 import { EvidenceButton } from "@/components/EvidenceButton";
 import { LivePausedBadge } from "@/components/LivePausedBadge";
@@ -188,14 +188,13 @@ export function CashierPage({ date: picked }: { date?: string }) {
   return (
     <>
       <PageHeader
-        title="Loket kasir"
-        subtitle="Kehadiran kasir, durasi loket tanpa petugas, dan pengunjung yang menunggu."
+        tag="Taman Safari Bogor · Loket Tiket"
+        title="Pengawasan Kasir & Waktu Antre Loket"
+        subtitle="Analitik AI sensor kehadiran staf kasir loket, durasi loket tak berpenjaga, dan kepuasan antrean pengunjung"
         date={date}
       >
         <CsvLink path="/api/v1/exports/events.csv" params={{ ...day, types: TYPES }} />
       </PageHeader>
-
-      <AreaTabs />
 
       <Tiles>
         <Tile
@@ -257,7 +256,7 @@ export function CashierPage({ date: picked }: { date?: string }) {
                     >
                       <div className="text-xs font-bold text-ink">{cam.name}</div>
                       <div className="mt-2 text-xl font-black text-muted">—</div>
-                      <div className="mt-1 text-[11px] font-bold text-off">Kamera offline</div>
+                      <div className="mt-1 text-[11px] font-bold text-zinc-400">Kamera offline</div>
                     </div>
                   );
                 }
@@ -269,18 +268,18 @@ export function CashierPage({ date: picked }: { date?: string }) {
                     key={cam.id}
                     className={`rounded-2xl border p-4 shadow-sm transition ${
                       isManned
-                        ? "border-good/20 bg-good-bg"
-                        : "border-warn/40 bg-warn-bg"
+                        ? "border-emerald-200 bg-emerald-50/50"
+                        : "border-amber-200 bg-amber-50/50"
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-black text-ink">{cam.name}</span>
                       {isManned ? (
-                        <span className="rounded-full bg-good-bg px-2 py-0.5 text-[10px] font-black text-good">
+                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-black text-emerald-800">
                           Berpenjaga
                         </span>
                       ) : (
-                        <span className="rounded-full bg-warn-bg px-2 py-0.5 text-[10px] font-black text-gold-ink">
+                        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-black text-amber-800">
                           Kasir Kosong
                         </span>
                       )}

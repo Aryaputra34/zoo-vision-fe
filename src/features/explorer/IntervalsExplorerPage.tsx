@@ -5,7 +5,6 @@ import { useIntervalsList } from "@/api/generated/intervals/intervals";
 import { useUsecasesList } from "@/api/generated/usecases/usecases";
 import { useCamerasList } from "@/api/generated/cameras/cameras";
 import { PageHeader, Card, Table } from "@/components/ui";
-import { AnalyticsTabs } from "@/components/client";
 import { CsvLink } from "@/components/CsvLink";
 import { fmtLocalTime, localDayRange } from "@/lib/time";
 import { useToday } from "@/lib/useToday";
@@ -78,8 +77,9 @@ export function IntervalsExplorerPage({ date: picked }: { date?: string } = {}) 
   return (
     <>
       <PageHeader
-        title="Analitik"
-        subtitle="Rentang durasi per kamera, misalnya kasir kosong atau sesi meja."
+        tag="Data Explorer"
+        title="Garis Waktu Durasi (Interval Timeline)"
+        subtitle="Visualisasi rentang interval durasi operasional per kamera: kasir kosong, sesi meja, hingga downtime konektivitas sensor"
         date={pickedDate}
       >
         <CsvLink
@@ -94,8 +94,6 @@ export function IntervalsExplorerPage({ date: picked }: { date?: string } = {}) 
         />
       </PageHeader>
 
-      <AnalyticsTabs />
-
       {/* Control bar */}
       <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="relative">
@@ -105,7 +103,7 @@ export function IntervalsExplorerPage({ date: picked }: { date?: string } = {}) 
           <select
             value={selectedKind}
             onChange={(e) => setSelectedKind(e.target.value)}
-            className="w-full rounded-[10px] border border-[#cfc9b8] bg-surface py-2.5 px-4 text-[13px] font-medium text-ink focus:border-forest focus:outline-none focus:ring-2 focus:ring-lime/40"
+            className="w-full rounded-2xl border border-line bg-surface py-2.5 px-4 text-xs font-bold text-ink focus:border-lime focus:outline-none"
           >
             {availableKinds.map((k) => (
               <option key={k.kind} value={k.kind}>
@@ -122,7 +120,7 @@ export function IntervalsExplorerPage({ date: picked }: { date?: string } = {}) 
           <select
             value={selectedCamera}
             onChange={(e) => setSelectedCamera(e.target.value)}
-            className="w-full rounded-[10px] border border-[#cfc9b8] bg-surface py-2.5 px-4 text-[13px] font-medium text-ink focus:border-forest focus:outline-none focus:ring-2 focus:ring-lime/40"
+            className="w-full rounded-2xl border border-line bg-surface py-2.5 px-4 text-xs font-bold text-ink focus:border-lime focus:outline-none"
           >
             <option value="ALL">Semua Kamera CCTV</option>
             {cameras.map((c) => (
@@ -177,7 +175,7 @@ export function IntervalsExplorerPage({ date: picked }: { date?: string } = {}) 
                             inv.end ? fmtLocalTime(inv.end) : "Sedang Berlangsung"
                           } (${inv.durationSec ? `${inv.durationSec}s` : "Terbuka"})`}
                           className={`absolute top-0 bottom-0 rounded-md transition hover:brightness-125 ${
-                            isOpen ? "bg-warn animate-pulse" : "bg-forest"
+                            isOpen ? "bg-amber-500 animate-pulse" : "bg-forest"
                           }`}
                         />
                       );
@@ -213,7 +211,7 @@ export function IntervalsExplorerPage({ date: picked }: { date?: string } = {}) 
             inv.end ? (
               fmtLocalTime(inv.end)
             ) : (
-              <span key="open" className="font-bold text-gold-ink">
+              <span key="open" className="font-bold text-amber-600">
                 Sedang Berlangsung
               </span>
             ),

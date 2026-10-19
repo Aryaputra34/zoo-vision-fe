@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { Geist_Mono, Nunito } from "next/font/google";
 import { CommandCenterShell } from "@/components/CommandCenterShell";
 import { Providers } from "@/app/providers";
 import { AuthProvider } from "@/auth/AuthProvider";
@@ -7,9 +7,9 @@ import { LiveProvider } from "@/live/LiveProvider";
 import { AuditNoticeToaster } from "@/features/system-log/AuditNoticeToaster";
 import "./globals.css";
 
-// Plus Jakarta Sans: the Elangvision redesign typeface (UI text); Geist Mono for IDs, times and figures.
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
+// Nunito: rounded friendly typography matching Gotham Rounded / Mikado used on tamansafari.com
+const nunito = Nunito({
+  variable: "--font-nunito",
   subsets: ["latin"],
 });
 
@@ -19,8 +19,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Elangvision · Taman Safari Bogor",
-  description: "Sistem pemantauan kamera AI internal Taman Safari Bogor",
+  title: "Taman Safari Indonesia · AI Command Center",
+  description: "Official real-time AI computer vision operations platform for Taman Safari Indonesia parks & resorts",
   icons: {
     icon: "/logo_safari.svg",
     shortcut: "/logo_safari.svg",
@@ -30,8 +30,20 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" data-theme="light" className={`${jakarta.variable} ${geistMono.variable} h-full antialiased`} suppressHydrationWarning>
-      <body className="min-h-full bg-bg font-sans text-ink selection:bg-lime selection:text-forest">
+    <html lang="id" className={`${nunito.variable} ${geistMono.variable} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const t = localStorage.getItem('tamansafari_theme') || 'light';
+                document.documentElement.setAttribute('data-theme', t);
+              } catch (_) {}
+            `,
+          }}
+        />
+      </head>
+      <body className="min-h-full bg-bg font-sans text-ink selection:bg-lime selection:text-forest transition-colors duration-200">
         <Providers>
           <AuthProvider>
             <LiveProvider>

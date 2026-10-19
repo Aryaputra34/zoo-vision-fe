@@ -6,7 +6,7 @@ import { Car, ArrowRightLeft, Clock, ShieldCheck, Filter } from "lucide-react";
 import { useReportsEventStats } from "@/api/generated/reports/reports";
 import { useEventsList } from "@/api/generated/events/events";
 import { Card, PageHeader, Table, Tile, Tiles, Mono } from "@/components/ui";
-import { HourlyBars, AreaTabs } from "@/components/client";
+import { HourlyBars } from "@/components/client";
 import { CsvLink } from "@/components/CsvLink";
 import { EvidenceButton } from "@/components/EvidenceButton";
 import { fillBuckets } from "@/lib/buckets";
@@ -150,14 +150,13 @@ export function VehiclesPage({ date: picked }: { date?: string }) {
   return (
     <>
       <PageHeader
-        title="Gerbang kendaraan"
-        subtitle="Kendaraan yang melintasi garis hitung di gerbang masuk dan keluar."
+        tag="Taman Safari Bogor · Koridor Utama"
+        title="Gerbang Lalu Lintas Kendaraan"
+        subtitle="Penghitungan AI tripwire kendaraan pengunjung, bus safari, dan armada staf di gerbang masuk & keluar"
         date={date}
       >
         <CsvLink path="/api/v1/exports/events.csv" params={{ ...day, types: TYPE }} />
       </PageHeader>
-
-      <AreaTabs />
 
       <Tiles>
         <Tile
@@ -275,7 +274,7 @@ export function VehiclesPage({ date: picked }: { date?: string }) {
                     ↗ Masuk
                   </span>
                 ) : (
-                  <span key="dir" className="inline-flex items-center gap-1 font-bold text-gold-ink">
+                  <span key="dir" className="inline-flex items-center gap-1 font-bold text-amber-600">
                     ↙ Keluar
                   </span>
                 ),

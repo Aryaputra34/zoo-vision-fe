@@ -23,7 +23,6 @@ import { useReportsMetricSeries } from "@/api/generated/reports/reports";
 import { useUsecasesList } from "@/api/generated/usecases/usecases";
 import { useCamerasList } from "@/api/generated/cameras/cameras";
 import { PageHeader, Card, Table, Tile, Tiles, Mono } from "@/components/ui";
-import { AnalyticsTabs } from "@/components/client";
 import { CsvLink } from "@/components/CsvLink";
 import { fmtLocalTime, localDayRange } from "@/lib/time";
 import { useToday } from "@/lib/useToday";
@@ -120,8 +119,9 @@ export function MetricsExplorerPage() {
   return (
     <>
       <PageHeader
-        title="Analitik"
-        subtitle="Grafik deret waktu metrik dengan resolusi 5 menit, 15 menit, jam, atau hari."
+        tag="Data Explorer"
+        title="Eksplorasi Deret Waktu Metrik (Metric Series)"
+        subtitle="Analisis grafik deret waktu metrik analitik dengan resolusi 5m, 15m, jam, atau hari, serta agregasi khusus"
         date={pickedDate}
       >
         <CsvLink
@@ -136,8 +136,6 @@ export function MetricsExplorerPage() {
         />
       </PageHeader>
 
-      <AnalyticsTabs />
-
       {/* Dynamic Pickers Toolbar */}
       <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {/* Metric Picker */}
@@ -148,7 +146,7 @@ export function MetricsExplorerPage() {
           <select
             value={activeMetric?.name ?? ""}
             onChange={(e) => setSelectedMetricName(e.target.value)}
-            className="w-full rounded-[10px] border border-[#cfc9b8] bg-surface py-2.5 px-3 text-[13px] font-medium text-ink focus:border-forest focus:outline-none focus:ring-2 focus:ring-lime/40"
+            className="w-full rounded-2xl border border-line bg-surface py-2.5 px-3 text-xs font-bold text-ink focus:border-lime focus:outline-none"
           >
             {allMetrics.map((m) => (
               <option key={m.name} value={m.name}>
@@ -166,7 +164,7 @@ export function MetricsExplorerPage() {
           <select
             value={selectedCamera}
             onChange={(e) => setSelectedCamera(e.target.value)}
-            className="w-full rounded-[10px] border border-[#cfc9b8] bg-surface py-2.5 px-3 text-[13px] font-medium text-ink focus:border-forest focus:outline-none focus:ring-2 focus:ring-lime/40"
+            className="w-full rounded-2xl border border-line bg-surface py-2.5 px-3 text-xs font-bold text-ink focus:border-lime focus:outline-none"
           >
             <option value="ALL">Semua Kamera Relevan</option>
             {cameras.map((c) => (
@@ -185,7 +183,7 @@ export function MetricsExplorerPage() {
           <select
             value={selectedBucket}
             onChange={(e) => setSelectedBucket(e.target.value as Bucket)}
-            className="w-full rounded-[10px] border border-[#cfc9b8] bg-surface py-2.5 px-3 text-[13px] font-medium text-ink focus:border-forest focus:outline-none focus:ring-2 focus:ring-lime/40"
+            className="w-full rounded-2xl border border-line bg-surface py-2.5 px-3 text-xs font-bold text-ink focus:border-lime focus:outline-none"
           >
             <option value="5m">5 Menit (5m)</option>
             <option value="15m">15 Menit (15m)</option>
@@ -203,7 +201,7 @@ export function MetricsExplorerPage() {
             <select
               value={aggMode}
               onChange={(e) => setAggMode(e.target.value as "avg" | "max" | "min" | "above")}
-              className="w-full rounded-[10px] border border-[#cfc9b8] bg-surface py-2.5 px-3 text-[13px] font-medium text-ink focus:border-forest focus:outline-none focus:ring-2 focus:ring-lime/40"
+              className="w-full rounded-2xl border border-line bg-surface py-2.5 px-3 text-xs font-bold text-ink focus:border-lime focus:outline-none"
             >
               <option value="max">Maksimum (max)</option>
               <option value="avg">Rata-Rata (avg)</option>
@@ -216,7 +214,7 @@ export function MetricsExplorerPage() {
                 value={aboveThreshold}
                 onChange={(e) => setAboveThreshold(Number(e.target.value))}
                 placeholder="Ambang"
-                className="w-20 rounded-[10px] border border-[#cfc9b8] bg-surface px-2 text-[13px] font-medium text-ink focus:border-forest focus:outline-none focus:ring-2 focus:ring-lime/40"
+                className="w-20 rounded-2xl border border-line bg-surface px-2 text-xs font-bold text-ink focus:border-lime focus:outline-none"
               />
             )}
           </div>

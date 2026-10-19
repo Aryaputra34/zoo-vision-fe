@@ -1,53 +1,109 @@
 @import "tailwindcss";
 
-/* `dark:` utilities only apply under data-theme="dark". The app ships one light theme (Elangvision redesign),
-   so an OS-level dark preference no longer half-applies dark styles on top of light tokens. */
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
-
-/* Elangvision · Taman Safari theme (light only)
-   Kanopi #0C3520 (sidebar, hero) · Forest #0D542E (primary action) · Lime #8CC63F (active/accent)
-   Matahari #E9A23B (warning) · Gading #F5F3EC (page background) */
+/* Taman Safari Indonesia Official Theme (tamansafari.com)
+   Brand Primary: #82bb3a (Safari Lime Green)
+   Brand Accent: #0d542e (Deep Jungle Forest Green)
+   Background: #f8f7f2 (Parchment Ivory)
+   Dark Forest: #062916 (Midnight Canopy)
+   Gold: #f5a623 (Safari Sun)
+*/
 :root,
 [data-theme="light"] {
   color-scheme: light;
-  --bg: #f5f3ec;
+  --bg: #f8f7f2;
   --surface: #ffffff;
-  --surface-2: #efece2;
-  --surface-3: #e3ded0;
-  --ink: #13241a;
-  --ink-2: #3c5044;
-  --muted: #5c6c61;
-  --line: #e3ded0;
-  --line-soft: #f1eee6;
-  --grid: #eeeae0;
-  --axis: #cfc9b8;
+  --surface-2: #f1ede3;
+  --surface-3: #e6dfd2;
+  --ink: #0d2818;
+  --ink-2: #244b32;
+  --muted: #5e7a68;
+  --line: rgba(13, 84, 46, 0.12);
+  --grid: #e8e3d6;
+  --axis: #b8b19e;
   --accent: #0d542e;
-  --accent-hover: #0a4425;
-  --lime: #8cc63f;
-  --lime-2: #a3d45e;
-  --lime-soft: rgba(140, 198, 63, 0.16);
+  --accent-hover: #083d21;
+  --lime: #82bb3a;
+  --lime-2: #92cd44;
+  --lime-soft: rgba(130, 187, 58, 0.16);
   --forest: #0d542e;
-  --forest-dark: #0c3520;
-  --side: #0c3520;
+  --forest-dark: #062916;
+  --side: #083d21;
   --side-ink: #ffffff;
-  --side-ink-2: #c9ddcf;
-  --gold: #e9a23b;
-  --gold-ink: #74470a;
+  --side-ink-2: #cde4d3;
   --s1: #0d542e;
-  --s2: #8cc63f;
-  --s3: #e9a23b;
-  --s4: #3b78b8;
-  --good: #1d6a36;
-  --good-bg: #e3f3e8;
-  --warn: #e9a23b;
-  --warn-bg: #fcefd4;
-  --crit: #b42318;
-  --crit-bg: #fdecea;
-  --crit-ink: #9a1c12;
-  --info: #154a7e;
-  --info-bg: #e5eff9;
-  --off: #6b776f;
-  --off-bg: #eceeec;
+  --s2: #82bb3a;
+  --s3: #f5a623;
+  --s4: #2080c4;
+  --good: #22a347;
+  --warn: #f5a623;
+  --crit: #d9383a;
+  --off: #8d9f95;
+}
+
+[data-theme="dark"],
+.dark {
+  color-scheme: dark;
+  --bg: #07190f;
+  --surface: #0e2719;
+  --surface-2: #143522;
+  --surface-3: #1a422b;
+  --ink: #f0f7f2;
+  --ink-2: #b8d4c2;
+  --muted: #8aa995;
+  --line: rgba(130, 187, 58, 0.20);
+  --grid: #1a3c28;
+  --axis: #2a5538;
+  --accent: #82bb3a;
+  --accent-hover: #92cd44;
+  --lime: #82bb3a;
+  --lime-2: #92cd44;
+  --lime-soft: rgba(130, 187, 58, 0.22);
+  --forest: #96d649; /* High-contrast luminous green in dark mode */
+  --forest-dark: #051a0e;
+  --side: #051a0e;
+  --side-ink: #ffffff;
+  --side-ink-2: #b8d4c2;
+  --s1: #82bb3a;
+  --s2: #3a8ee0;
+  --s3: #f5a623;
+  --s4: #c4508c;
+  --good: #38c863;
+  --warn: #f5a623;
+  --crit: #e84c4e;
+  --off: #6b7f71;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    color-scheme: dark;
+    --bg: #07190f;
+    --surface: #0e2719;
+    --surface-2: #143522;
+    --surface-3: #1a422b;
+    --ink: #f0f7f2;
+    --ink-2: #b8d4c2;
+    --muted: #8aa995;
+    --line: rgba(130, 187, 58, 0.20);
+    --grid: #1a3c28;
+    --axis: #2a5538;
+    --accent: #82bb3a;
+    --accent-hover: #92cd44;
+    --lime: #82bb3a;
+    --lime-2: #92cd44;
+    --lime-soft: rgba(130, 187, 58, 0.22);
+    --forest: #96d649;
+    --forest-dark: #051a0e;
+    --side: #051a0e;
+    --side-ink: #ffffff;
+    --side-ink-2: #b8d4c2;
+    --s1: #82bb3a;
+    --s2: #3a8ee0;
+    --s3: #f5a623;
+    --s4: #c4508c;
+    --good: #38c863;
+    --warn: #f5a623;
+    --crit: #e84c4e;
+  }
 }
 
 @theme inline {
@@ -59,7 +115,6 @@
   --color-ink-2: var(--ink-2);
   --color-muted: var(--muted);
   --color-line: var(--line);
-  --color-line-soft: var(--line-soft);
   --color-accent: var(--accent);
   --color-lime: var(--lime);
   --color-lime-2: var(--lime-2);
@@ -69,25 +124,16 @@
   --color-side: var(--side);
   --color-side-ink: var(--side-ink);
   --color-side-ink-2: var(--side-ink-2);
-  --color-gold: var(--gold);
-  --color-gold-ink: var(--gold-ink);
   --color-s1: var(--s1);
   --color-s2: var(--s2);
   --color-s3: var(--s3);
   --color-s4: var(--s4);
   --color-good: var(--good);
-  --color-good-bg: var(--good-bg);
   --color-warn: var(--warn);
-  --color-warn-bg: var(--warn-bg);
   --color-crit: var(--crit);
-  --color-crit-bg: var(--crit-bg);
-  --color-crit-ink: var(--crit-ink);
-  --color-info: var(--info);
-  --color-info-bg: var(--info-bg);
   --color-off: var(--off);
-  --color-off-bg: var(--off-bg);
-  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-sans: var(--font-nunito);
+  --font-mono: var(--font-geist-mono);
 }
 
 /* Taman Safari Zebra stripe accent */
@@ -95,42 +141,24 @@
   background: repeating-linear-gradient(118deg, var(--lime) 0 16px, var(--lime-2) 16px 28px);
 }
 
-/* Page hero band: the same photo + canopy gradient as the Ringkasan mockup */
-.hero-band {
-  background-color: var(--forest-dark);
-  background-image:
-    linear-gradient(100deg, #0c3520 0%, rgba(12, 53, 32, 0.94) 42%, rgba(13, 84, 46, 0.6) 100%),
-    url("/taman_safari_hero.jpg");
-  background-size: cover;
-  background-position: center 55%;
-}
-
 /* Safari pulse for active cameras */
 @keyframes safariPulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(140, 198, 63, 0.7);
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(34, 163, 71, 0.7);
   }
   70% {
-    box-shadow: 0 0 0 7px rgba(140, 198, 63, 0);
+    transform: scale(1);
+    box-shadow: 0 0 0 7px rgba(34, 163, 71, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(140, 198, 63, 0);
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(34, 163, 71, 0);
   }
 }
 
 .camera-pulse {
   animation: safariPulse 2s infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .camera-pulse,
-  .animate-pulse,
-  .animate-ping {
-    animation: none !important;
-  }
-  * {
-    transition-duration: 0ms !important;
-  }
 }
 
 /* Smooth custom scrollbars */
@@ -142,9 +170,10 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--surface-3);
+  background: var(--line);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--muted);
 }
+
