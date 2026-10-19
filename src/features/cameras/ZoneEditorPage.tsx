@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import Link from "next/link";
+import { CameraTabs } from "@/components/client";
 import {
   ArrowLeft,
   Save,
@@ -280,31 +281,40 @@ function ZoneEditorInner({
 
   return (
     <>
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <Link
-          href={`/config/cameras/${id}`}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-muted transition hover:text-forest"
-        >
-          <ArrowLeft className="size-4" />
-          Kembali ke Pengaturan Kamera
-        </Link>
+      <Link
+        href="/config/cameras"
+        className="mb-3 inline-flex items-center gap-1.5 text-[13px] font-bold text-muted transition hover:text-forest"
+      >
+        <ArrowLeft className="size-4" />
+        Semua kamera
+      </Link>
 
-        <div className="flex items-center gap-2">
+      <PageHeader
+        tag={`Konfigurasi v${baseVersion}`}
+        title={camera?.name ?? id}
+        subtitle={`Zona dan ambang batas · ${usecase?.label ?? camera?.useCase ?? ""}`}
+      />
+      <CameraTabs id={id} />
+
+      {/* Save bar: status of the last save, version history, save */}
+      <div className="sticky top-14 z-20 -mx-1 mb-5 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-surface/95 px-3 py-2.5 shadow-[0_6px_16px_rgba(19,36,26,0.06)] backdrop-blur">
+        <span className="px-1 text-xs font-medium text-muted">Simpan membuat versi baru, lalu engine menerapkannya.</span>
+        <div className="flex flex-wrap items-center gap-2">
           {effectiveSaveState === "APPLIED" && (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-800">
-              <CheckCircle2 className="size-3.5 text-emerald-600" />
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-good/25 bg-good-bg px-3 py-1 text-xs font-extrabold text-good">
+              <CheckCircle2 className="size-3.5 text-good" />
               Diterapkan ✓ (v{saveVersionNumber})
             </span>
           )}
           {effectiveSaveState === "SAVED" && (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-lime/40 bg-lime/20 px-3 py-1 text-xs font-black text-forest">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-lime/40 bg-lime/20 px-3 py-1 text-xs font-extrabold text-forest">
               <Clock className="size-3.5 animate-spin text-forest" />
               Tersimpan · Menerapkan ke Mesin AI...
             </span>
           )}
           {effectiveSaveState === "REJECTED" && (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-red-300 bg-red-50 px-3 py-1 text-xs font-bold text-red-800">
-              <AlertCircle className="size-3.5 text-red-600" />
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-crit/25 bg-crit-bg px-3 py-1 text-xs font-bold text-crit-ink">
+              <AlertCircle className="size-3.5 text-crit" />
               Ditolak: {effectiveErrorMessage}
             </span>
           )}
@@ -325,7 +335,7 @@ function ZoneEditorInner({
             type="button"
             disabled={saveMutation.isPending}
             onClick={handleSave}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-forest px-4 py-2 text-xs font-black text-white shadow-md transition hover:bg-forest-dark hover:shadow-lg disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-forest px-4 py-2 text-xs font-extrabold text-white shadow-md transition hover:bg-forest-dark hover:shadow-lg disabled:opacity-50"
           >
             <Save className="size-4" />
             {saveMutation.isPending ? "Menyimpan..." : "Simpan Konfigurasi"}
@@ -333,16 +343,10 @@ function ZoneEditorInner({
         </div>
       </div>
 
-      <PageHeader
-        tag={`Zona Kamera · v${baseVersion}`}
-        title={`Editor Zona & Ambang Batas: ${camera?.name ?? id}`}
-        subtitle={`Gambar batas deteksi AI dan tentukan parameter logika ${usecase?.label ?? camera?.useCase}`}
-      />
-
       {effectiveErrorMessage && effectiveSaveState !== "REJECTED" && (
-        <div role="alert" className="mb-6 rounded-2xl border border-red-300 bg-red-50 p-4 text-xs font-bold text-red-800">
+        <div role="alert" className="mb-6 rounded-2xl border border-crit/25 bg-crit-bg p-4 text-xs font-bold text-crit-ink">
           <div className="flex items-center gap-2">
-            <AlertCircle className="size-4 text-red-600" />
+            <AlertCircle className="size-4 text-crit" />
             <span>{effectiveErrorMessage}</span>
           </div>
         </div>
@@ -372,7 +376,7 @@ function ZoneEditorInner({
             <div
               ref={canvasRef}
               onClick={handleCanvasClick}
-              className="group relative aspect-video w-full cursor-crosshair overflow-hidden rounded-2xl border-2 border-dashed border-line bg-zinc-950 select-none"
+              className="group relative aspect-video w-full cursor-crosshair overflow-hidden rounded-2xl border-2 border-dashed border-line bg-[#141b17] select-none"
             >
               {/* Background Frame Image */}
               {!frameError ? (
@@ -384,12 +388,12 @@ function ZoneEditorInner({
                   className="absolute inset-0 size-full object-contain pointer-events-none"
                 />
               ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900/90 text-zinc-400 p-4 text-center pointer-events-none">
-                  <div className="rounded-full bg-zinc-800 p-3 mb-2">
-                    <Maximize2 className="size-6 text-zinc-500" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#141b17]/90 text-[#a8b2ac] p-4 text-center pointer-events-none">
+                  <div className="rounded-full bg-white/10 p-3 mb-2">
+                    <Maximize2 className="size-6 text-[#a8b2ac]" />
                   </div>
-                  <span className="text-xs font-extrabold text-zinc-300">Belum ada gambar dari kamera</span>
-                  <span className="text-[10px] text-zinc-500 mt-1 max-w-sm">
+                  <span className="text-xs font-extrabold text-[#dde7e0]">Belum ada gambar dari kamera</span>
+                  <span className="text-[10px] text-muted mt-1 max-w-sm">
                     Kamera belum mengirimkan frame atau sedang offline. Anda tetap dapat menggambar zona pada kanvas 16:9 ini.
                   </span>
                 </div>
@@ -551,7 +555,7 @@ function ZoneEditorInner({
                       <button
                         type="button"
                         onClick={() => updateNestedValue(activePathArray, [])}
-                        className="rounded-xl border border-line bg-surface px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50"
+                        className="rounded-xl border border-line bg-surface px-3 py-1.5 text-xs font-bold text-crit hover:bg-crit-bg"
                       >
                         Reset Poligon
                       </button>
@@ -562,7 +566,7 @@ function ZoneEditorInner({
                     <button
                       type="button"
                       onClick={() => updateNestedValue(activePathArray, {})}
-                      className="rounded-xl border border-line bg-surface px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50"
+                      className="rounded-xl border border-line bg-surface px-3 py-1.5 text-xs font-bold text-crit hover:bg-crit-bg"
                     >
                       Reset Garis
                     </button>
@@ -610,7 +614,7 @@ function ZoneEditorInner({
                       onClick={() => setSelectedListItemId(item.id)}
                       className={`cursor-pointer rounded-2xl border p-3 transition ${
                         isSelected
-                          ? "border-emerald-500 bg-emerald-50/50 shadow-sm"
+                          ? "border-good bg-good-bg shadow-sm"
                           : "border-line bg-surface hover:border-lime/40"
                       }`}
                     >
@@ -627,7 +631,7 @@ function ZoneEditorInner({
                             );
                             if (selectedListItemId === item.id) setSelectedListItemId(null);
                           }}
-                          className="text-zinc-400 hover:text-red-600"
+                          className="text-muted hover:text-crit"
                         >
                           <Trash2 className="size-3.5" />
                         </button>
@@ -668,7 +672,7 @@ function ZoneEditorInner({
                             {String(propVal["title"] || propKey)}
                           </label>
                           {!isAllowed && (
-                            <span className="rounded-md bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold text-amber-800">
+                            <span className="rounded-md bg-warn-bg px-1.5 py-0.5 text-[9px] font-bold text-gold-ink">
                               Butuh {minRole}
                             </span>
                           )}
@@ -746,11 +750,11 @@ function ZoneEditorInner({
       {/* History and Rollback Modal */}
       {historyOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-2xl rounded-3xl border border-line bg-surface p-6 shadow-2xl">
+          <div className="w-full max-w-2xl rounded-2xl border border-line bg-surface p-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-line pb-4">
               <div className="flex items-center gap-2">
                 <History className="size-5 text-forest" />
-                <h3 className="text-base font-black text-ink">Riwayat Versi Konfigurasi Kamera</h3>
+                <h3 className="text-base font-extrabold text-ink">Riwayat Versi Konfigurasi Kamera</h3>
               </div>
               <button
                 type="button"
@@ -784,7 +788,7 @@ function ZoneEditorInner({
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-black text-forest">Versi {ver.version}</span>
+                          <span className="text-sm font-extrabold text-forest">Versi {ver.version}</span>
                           {isCurrent && (
                             <span className="rounded-full bg-forest px-2 py-0.5 text-[10px] font-bold text-white">
                               Aktif
@@ -813,7 +817,7 @@ function ZoneEditorInner({
                                   data: { baseVersion, version: ver.version },
                                 })
                               }
-                              className="inline-flex items-center gap-1 rounded-xl bg-lime-dark px-3 py-1 text-xs font-black text-forest hover:bg-lime"
+                              className="inline-flex items-center gap-1 rounded-xl bg-lime-dark px-3 py-1 text-xs font-extrabold text-forest hover:bg-lime"
                             >
                               <RotateCcw className="size-3" />
                               Rollback
@@ -835,20 +839,20 @@ function ZoneEditorInner({
 
                       {/* Version Diff View */}
                       {isSelected && versionDetailQuery.data && (
-                        <div className="mt-3 rounded-xl border border-line bg-zinc-950 p-3 text-xs font-mono text-zinc-300">
-                          <div className="text-[11px] font-bold text-zinc-400 mb-2">
+                        <div className="mt-3 rounded-xl border border-line bg-forest-dark p-3 text-xs font-mono text-[#dde7e0]">
+                          <div className="text-[11px] font-bold text-muted mb-2">
                             Perubahan dari versi sebelumnya:
                           </div>
                           {versionDetailQuery.data.changes && versionDetailQuery.data.changes.length > 0 ? (
                             versionDetailQuery.data.changes.map((ch, idx) => (
                               <div key={idx} className="space-y-0.5">
                                 <span className="text-lime">{ch.path}</span>
-                                <div className="text-red-400">- {JSON.stringify(ch.before)}</div>
-                                <div className="text-emerald-400">+ {JSON.stringify(ch.after)}</div>
+                                <div className="text-crit">- {JSON.stringify(ch.before)}</div>
+                                <div className="text-good">+ {JSON.stringify(ch.after)}</div>
                               </div>
                             ))
                           ) : (
-                            <div className="text-zinc-500">Tidak ada perbedaan data tercatat.</div>
+                            <div className="text-muted">Tidak ada perbedaan data tercatat.</div>
                           )}
                         </div>
                       )}
@@ -864,10 +868,10 @@ function ZoneEditorInner({
       {/* Stale Version Conflict Modal */}
       {staleModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-3xl border border-line bg-surface p-6 shadow-2xl">
-            <div className="flex items-center gap-3 text-amber-600">
+          <div className="w-full max-w-md rounded-2xl border border-line bg-surface p-6 shadow-2xl">
+            <div className="flex items-center gap-3 text-gold-ink">
               <AlertCircle className="size-6" />
-              <h3 className="text-base font-black text-ink">Konflik Versi (Stale Version)</h3>
+              <h3 className="text-base font-extrabold text-ink">Konflik Versi (Stale Version)</h3>
             </div>
             <p className="mt-3 text-xs font-semibold text-ink-2 leading-relaxed">
               Konfigurasi kamera ini telah diperbarui oleh pengguna lain saat Anda membuka halaman. Untuk menghindari penimpaan konfigurasi yang tidak disengaja, silakan muat ulang versi terbaru.
@@ -883,7 +887,7 @@ function ZoneEditorInner({
               <button
                 type="button"
                 onClick={handleReloadLatest}
-                className="rounded-xl bg-forest px-4 py-2 text-xs font-black text-white hover:bg-forest-dark"
+                className="rounded-xl bg-forest px-4 py-2 text-xs font-extrabold text-white hover:bg-forest-dark"
               >
                 Muat Ulang Versi Terbaru
               </button>
@@ -915,7 +919,7 @@ export function ZoneEditorPage({ id }: { id: string }) {
         </Card>
       ) : !camera || !config ? (
         <Card>
-          <div className="py-12 text-center text-xs font-bold text-red-600">
+          <div className="py-12 text-center text-xs font-bold text-crit">
             Kamera atau konfigurasi tidak ditemukan.
           </div>
         </Card>

@@ -79,14 +79,13 @@ export function CamerasListPage() {
   return (
     <RequireRole min="MANAGER">
       <PageHeader
-        tag="Konfigurasi Sistem"
-        title="Manajemen Kamera AI"
-        subtitle="Daftar sensor video CCTV, use-case analitik, versi konfigurasi, dan status stream operasional"
+        title="Kamera"
+        subtitle="Semua kamera beserta use case, versi konfigurasi, dan statusnya. Buka kamera untuk mengatur zona."
       >
         {isSuperadmin && (
           <Link
             href="/config/cameras/new"
-            className="inline-flex items-center gap-2 rounded-xl bg-forest px-4 py-2.5 text-xs font-black text-white shadow-md transition-all hover:bg-forest-dark hover:shadow-lg active:scale-95"
+            className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-[10px] bg-lime px-4 text-[13px] font-extrabold text-forest-dark transition-colors hover:bg-lime-2"
           >
             <Plus className="size-4" />
             Tambah Kamera
@@ -165,12 +164,12 @@ export function CamerasListPage() {
                 <div className="flex items-center gap-2">
                   <span className="font-extrabold text-forest">{cam.name}</span>
                   {!cam.enabled && (
-                    <span className="rounded-md bg-zinc-100 px-1.5 py-0.5 text-[10px] font-bold text-zinc-500">
+                    <span className="rounded-md bg-off-bg px-1.5 py-0.5 text-[10px] font-bold text-muted">
                       Nonaktif
                     </span>
                   )}
                   {cam.auditCamera && (
-                    <span className="rounded-md bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold text-amber-800">
+                    <span className="rounded-md bg-warn-bg px-1.5 py-0.5 text-[10px] font-bold text-gold-ink">
                       Audit
                     </span>
                   )}
@@ -201,11 +200,11 @@ export function CamerasListPage() {
                   <span className="text-xs font-bold text-ink">v{activeVer}</span>
                   {appliedVer !== undefined ? (
                     isSynced ? (
-                      <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-emerald-600">
+                      <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-good">
                         <CheckCircle2 className="size-3" /> Diterapkan (v{appliedVer})
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-amber-600">
+                      <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-gold-ink">
                         <Clock className="size-3" /> Menerapkan (v{appliedVer ?? 0} → v{activeVer})
                       </span>
                     )
@@ -214,7 +213,7 @@ export function CamerasListPage() {
                   )}
                 </div>
                 {status?.configError && (
-                  <span className="text-[10px] font-semibold text-red-600">
+                  <span className="text-[10px] font-semibold text-crit">
                     Ditolak: {status.configError}
                   </span>
                 )}
@@ -247,7 +246,7 @@ export function CamerasListPage() {
                       setDeletingCamera({ id: cam.id, name: cam.name });
                       setDeleteError(null);
                     }}
-                    className="grid size-8 place-items-center rounded-xl text-zinc-400 transition hover:bg-red-50 hover:text-red-600"
+                    className="grid size-8 place-items-center rounded-xl text-muted transition hover:bg-crit-bg hover:text-crit"
                   >
                     <Trash2 className="size-3.5" />
                   </button>
@@ -268,13 +267,13 @@ export function CamerasListPage() {
       {/* Delete Confirmation Modal */}
       {deletingCamera && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-3xl border border-line bg-surface p-6 shadow-2xl">
-            <div className="flex items-center gap-3 text-red-600">
-              <div className="grid size-10 place-items-center rounded-2xl bg-red-100">
-                <AlertTriangle className="size-5 text-red-600" />
+          <div className="w-full max-w-md rounded-2xl border border-line bg-surface p-6 shadow-2xl">
+            <div className="flex items-center gap-3 text-crit">
+              <div className="grid size-10 place-items-center rounded-2xl bg-crit-bg">
+                <AlertTriangle className="size-5 text-crit" />
               </div>
               <div>
-                <h3 className="text-base font-black text-ink">Konfirmasi Hapus Kamera</h3>
+                <h3 className="text-base font-extrabold text-ink">Konfirmasi Hapus Kamera</h3>
                 <p className="text-xs font-semibold text-muted">ID: {deletingCamera.id}</p>
               </div>
             </div>
@@ -284,7 +283,7 @@ export function CamerasListPage() {
             </p>
 
             {deleteError && (
-              <div role="alert" className="mt-3 rounded-2xl border border-red-300 bg-red-50 p-3 text-xs font-bold text-red-800">
+              <div role="alert" className="mt-3 rounded-2xl border border-crit/25 bg-crit-bg p-3 text-xs font-bold text-crit-ink">
                 {deleteError}
               </div>
             )}
@@ -301,7 +300,7 @@ export function CamerasListPage() {
                 type="button"
                 disabled={removeMutation.isPending}
                 onClick={() => removeMutation.mutate({ id: deletingCamera.id })}
-                className="rounded-xl bg-red-600 px-4 py-2 text-xs font-black text-white hover:bg-red-700 disabled:opacity-50"
+                className="rounded-xl bg-crit px-4 py-2 text-xs font-extrabold text-white hover:bg-crit disabled:opacity-50"
               >
                 {removeMutation.isPending ? "Menghapus..." : "Hapus Kamera"}
               </button>

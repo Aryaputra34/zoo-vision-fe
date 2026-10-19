@@ -1,5 +1,6 @@
 "use client";
 
+import { SystemLogTabs } from "@/components/client";
 import { useState, useMemo } from "react";
 import { Search, RefreshCw } from "lucide-react";
 import { useSystemLogLogins } from "@/api/generated/system-log/system-log";
@@ -11,12 +12,12 @@ import { useToday } from "@/lib/useToday";
 import type { LoginResult, LoginRowDto } from "@/api/generated/zooVisionAPI.schemas";
 
 const RESULT_LABELS: Record<LoginResult, { label: string; badgeCls: string }> = {
-  SUCCESS: { label: "Berhasil", badgeCls: "bg-emerald-100 text-emerald-800 border-emerald-300" },
-  WRONG_PASSWORD: { label: "Kata Sandi Salah", badgeCls: "bg-red-100 text-red-800 border-red-300" },
-  DISABLED: { label: "Akun Dinonaktifkan", badgeCls: "bg-zinc-100 text-zinc-600 border-zinc-300" },
-  LOCKED: { label: "Akun Terkunci (5x Salah)", badgeCls: "bg-red-100 text-red-800 border-red-300" },
-  RATE_LIMITED: { label: "Dibatasi (Rate Limit)", badgeCls: "bg-amber-100 text-amber-800 border-amber-300" },
-  LOGOUT: { label: "Keluar (Logout)", badgeCls: "bg-zinc-100 text-zinc-700 border-zinc-300" },
+  SUCCESS: { label: "Berhasil", badgeCls: "bg-good-bg text-good border-good/25" },
+  WRONG_PASSWORD: { label: "Kata Sandi Salah", badgeCls: "bg-crit-bg text-crit-ink border-crit/25" },
+  DISABLED: { label: "Akun Dinonaktifkan", badgeCls: "bg-off-bg text-muted border-line" },
+  LOCKED: { label: "Akun Terkunci (5x Salah)", badgeCls: "bg-crit-bg text-crit-ink border-crit/25" },
+  RATE_LIMITED: { label: "Dibatasi (Rate Limit)", badgeCls: "bg-warn-bg text-gold-ink border-warn/25" },
+  LOGOUT: { label: "Keluar (Logout)", badgeCls: "bg-off-bg text-ink-2 border-line" },
 };
 
 export function LoginsPage({ date: picked }: { date?: string } = {}) {
@@ -81,9 +82,8 @@ export function LoginsPage({ date: picked }: { date?: string } = {}) {
   return (
     <RequireRole min="MANAGER">
       <PageHeader
-        tag="Log Sistem & Keamanan"
-        title="Riwayat Autentikasi & Sesi Login (Login History)"
-        subtitle="Log percobaan masuk, verifikasi kata sandi, insiden penguncian akun, dan sesi aktif"
+        title="Log sistem"
+        subtitle="Percobaan masuk, keberhasilan, dan penguncian akun."
         date={pickedDate}
       >
         <CsvLink
@@ -96,6 +96,7 @@ export function LoginsPage({ date: picked }: { date?: string } = {}) {
           }}
         />
       </PageHeader>
+      <SystemLogTabs />
 
       {/* Filter toolbar */}
       <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -142,7 +143,7 @@ export function LoginsPage({ date: picked }: { date?: string } = {}) {
           rows={rows.map((r) => {
             const meta = RESULT_LABELS[r.result] ?? {
               label: r.result,
-              badgeCls: "bg-zinc-100 text-zinc-600 border-zinc-200",
+              badgeCls: "bg-off-bg text-muted border-line",
             };
 
             return [
@@ -157,7 +158,7 @@ export function LoginsPage({ date: picked }: { date?: string } = {}) {
 
               <span
                 key="res"
-                className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-black w-fit ${meta.badgeCls}`}
+                className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-extrabold w-fit ${meta.badgeCls}`}
               >
                 {meta.label}
               </span>,
@@ -190,7 +191,7 @@ export function LoginsPage({ date: picked }: { date?: string } = {}) {
               type="button"
               disabled={loginsQuery.isFetching}
               onClick={handleLoadMore}
-              className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-5 py-2.5 text-xs font-black text-forest shadow-sm transition hover:border-lime hover:bg-lime/10 disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-5 py-2.5 text-xs font-extrabold text-forest shadow-sm transition hover:border-lime hover:bg-lime/10 disabled:opacity-50"
             >
               <RefreshCw className={`size-3.5 ${loginsQuery.isFetching ? "animate-spin" : ""}`} />
               Muat Halaman Berikutnya

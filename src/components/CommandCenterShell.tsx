@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { ChevronsLeft, ChevronsRight, LogOut, Menu, X } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, KeyRound, LogOut, Menu, X } from "lucide-react";
 import { NAV_SECTIONS, visibleNav, isNavActive, type Role } from "./nav";
 import { useMe } from "@/auth/AuthProvider";
 import { useAuthLogout } from "@/api/generated/auth/auth";
@@ -142,6 +142,8 @@ export function CommandCenterShell({
   const sections = visibleNav(NAV_SECTIONS, currentRole);
 
   const crumb = (() => {
+    // The account page is reached from the user card, not the menu.
+    if (path.startsWith("/account")) return { section: "Akun", label: "Ganti kata sandi" };
     for (const s of sections) {
       const item = s.items.find((i) => isNavActive(i, path));
       if (item) return { section: s.title, label: item.label };
@@ -293,6 +295,14 @@ export function CommandCenterShell({
               >
                 <ChevronsRight className="size-4" />
               </button>
+              <Link
+                href="/account/password"
+                className="grid size-9 place-items-center rounded-lg border border-white/15 text-side-ink-2 hover:bg-white/10"
+                aria-label="Ganti kata sandi"
+                title="Ganti kata sandi"
+              >
+                <KeyRound className="size-4" />
+              </Link>
               <button
                 type="button"
                 onClick={handleLogout}
@@ -321,6 +331,18 @@ export function CommandCenterShell({
                   </span>
                 )}
               </span>
+              <Link
+                href="/account/password"
+                onClick={() => setMobileOpen(false)}
+                aria-current={path.startsWith("/account") ? "page" : undefined}
+                className={`grid size-8 shrink-0 place-items-center rounded-lg border border-white/10 hover:bg-white/10 hover:text-white ${
+                  path.startsWith("/account") ? "bg-lime/25 text-white" : "text-side-ink-2"
+                }`}
+                aria-label="Ganti kata sandi"
+                title="Ganti kata sandi"
+              >
+                <KeyRound className="size-4" />
+              </Link>
               <button
                 type="button"
                 onClick={handleLogout}

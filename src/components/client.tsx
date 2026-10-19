@@ -238,14 +238,16 @@ const ANALYTICS_TABS = [
 ];
 
 // Tabs between sibling pages that share one menu item. Each tab is its existing route; the chosen date is kept.
-function SectionTabs({ label, tabs }: { label: string; tabs: { href: string; label: string; sub: string }[] }) {
+type Tab = { href: string; label: string; sub: string; exact?: boolean };
+
+function SectionTabs({ label, tabs }: { label: string; tabs: Tab[] }) {
   const path = usePathname();
   const sp = useSearchParams();
   const date = sp.get("date");
   return (
     <nav aria-label={label} className="mb-5 flex gap-1 overflow-x-auto border-b border-line [scrollbar-width:none]">
       {tabs.map((t) => {
-        const active = path === t.href || path.startsWith(`${t.href}/`);
+        const active = path === t.href || (!t.exact && path.startsWith(`${t.href}/`));
         return (
           <Link
             key={t.href}
@@ -276,6 +278,36 @@ export function AnalyticsTabs() {
   return (
     <Suspense fallback={null}>
       <SectionTabs label="Analitik" tabs={ANALYTICS_TABS} />
+    </Suspense>
+  );
+}
+
+const SYSTEM_LOG_TABS = [
+  { href: "/system-log/audit", label: "Audit", sub: "Jejak perubahan" },
+  { href: "/system-log/logins", label: "Riwayat login", sub: "Percobaan masuk" },
+  { href: "/system-log/system-events", label: "Kejadian sistem", sub: "Laporan engine" },
+];
+
+export function SystemLogTabs() {
+  return (
+    <Suspense fallback={null}>
+      <SectionTabs label="Log sistem" tabs={SYSTEM_LOG_TABS} />
+    </Suspense>
+  );
+}
+
+// The camera hub: zones/thresholds and settings of one camera are tabs (their existing routes).
+export function CameraTabs({ id }: { id: string }) {
+  const base = `/config/cameras/${encodeURIComponent(id)}`;
+  return (
+    <Suspense fallback={null}>
+      <SectionTabs
+        label="Pusat kamera"
+        tabs={[
+          { href: `${base}/zones`, label: "Zona & ambang", sub: "Area deteksi dan parameter" },
+          { href: base, label: "Pengaturan", sub: "Identitas, stream, rekaman", exact: true },
+        ]}
+      />
     </Suspense>
   );
 }

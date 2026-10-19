@@ -9,9 +9,6 @@ import {
   Users,
   Key,
   ShieldAlert,
-  LogIn,
-  Server,
-  Lock,
   BookOpen,
   type LucideIcon,
 } from 'lucide-react';
@@ -72,27 +69,27 @@ export const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
-    title: 'Konfigurasi',
+    title: 'Pengelolaan',
     items: [
-      { href: '/config/cameras', label: 'Kamera', sub: 'Manajemen Stream & Zona', Icon: Camera, minRole: 'MANAGER' },
-      { href: '/config/models', label: 'Model AI', sub: 'Deteksi & Ambang Batas', Icon: Cpu, minRole: 'MANAGER' },
-      { href: '/config/users', label: 'Pengguna', sub: 'Akun & Hak Akses', Icon: Users, minRole: 'MANAGER' },
-      { href: '/config/api-tokens', label: 'Token API', sub: 'Integrasi Eksternal', Icon: Key, minRole: 'SUPERADMIN' },
+      { href: '/config/cameras', label: 'Kamera', sub: 'Zona, versi, dan pengaturan', Icon: Camera, minRole: 'MANAGER' },
+      { href: '/config/models', label: 'Model AI', sub: 'Model deteksi', Icon: Cpu, minRole: 'MANAGER' },
+      { href: '/config/users', label: 'Pengguna', sub: 'Akun dan peran', Icon: Users, minRole: 'MANAGER' },
     ],
   },
   {
-    title: 'Log Sistem',
+    // Audit, riwayat login, and kejadian sistem are tabs of one page group (same routes as before).
+    title: 'Sistem',
     items: [
-      { href: '/system-log/audit', label: 'Audit', sub: 'Jejak Perubahan Sistem', Icon: ShieldAlert, minRole: 'MANAGER' },
-      { href: '/system-log/logins', label: 'Riwayat Login', sub: 'Sesi & Autentikasi', Icon: LogIn, minRole: 'MANAGER' },
-      { href: '/system-log/system-events', label: 'Kejadian Sistem', sub: 'Log Layanan & API', Icon: Server, minRole: 'MANAGER' },
-    ],
-  },
-  {
-    title: 'Akun',
-    items: [
-      { href: '/account/password', label: 'Ganti Kata Sandi', sub: 'Keamanan Akun', Icon: Lock, minRole: 'USER' },
-      { href: '/api/docs', label: 'API Docs', sub: 'Dokumentasi Swagger API', Icon: BookOpen, minRole: 'SUPERADMIN', external: true },
+      {
+        href: '/system-log/audit',
+        label: 'Log sistem',
+        sub: 'Audit, riwayat login, kejadian sistem',
+        Icon: ShieldAlert,
+        minRole: 'MANAGER',
+        match: ['/system-log'],
+      },
+      { href: '/config/api-tokens', label: 'Token API', sub: 'Integrasi sistem lain', Icon: Key, minRole: 'SUPERADMIN' },
+      { href: '/api/docs', label: 'Dokumentasi API', sub: 'Swagger', Icon: BookOpen, minRole: 'SUPERADMIN', external: true },
     ],
   },
 ];

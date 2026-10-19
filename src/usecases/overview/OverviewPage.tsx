@@ -12,6 +12,8 @@ import { useEventsList } from "@/api/generated/events/events";
 import { useCamerasList } from "@/api/generated/cameras/cameras";
 import type { EventRowDto } from "@/api/generated/zooVisionAPI.schemas";
 import { useMe } from "@/auth/AuthProvider";
+import { roleAtLeast, type Role } from "@/auth/roles";
+import { ManagementPanel } from "./ManagementPanel";
 import { useStatus } from "@/live";
 import { Card, Table, SeverityBadge } from "@/components/ui";
 import { DatePicker, HourlyBars } from "@/components/client";
@@ -334,6 +336,10 @@ export function OverviewPage({ date: picked }: { date?: string }) {
           </div>
         </div>
       </section>
+
+      {me && roleAtLeast(me.role as Role, "MANAGER") && (
+        <ManagementPanel cameras={camerasQuery.data ?? []} liveStatus={liveStatus} day={day} isToday={isToday} />
+      )}
 
       {/* Butuh perhatian: the one place for problems, most urgent first */}
       <section
