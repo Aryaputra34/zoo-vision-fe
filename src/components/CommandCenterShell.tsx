@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { ChevronsLeft, ChevronsRight, KeyRound, LogOut, Menu, Moon, Sun, X } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, KeyRound, LogOut, Menu, X } from "lucide-react";
 import { NAV_SECTIONS, visibleNav, isNavActive, type Role } from "./nav";
 import { useMe } from "@/auth/AuthProvider";
 import { useAuthLogout } from "@/api/generated/auth/auth";
@@ -108,6 +108,18 @@ function LiveStatusCard({ collapsed }: { collapsed: boolean }) {
   );
 }
 
+const SUB_PAGES: Record<string, string> = {
+  "/vehicles": "Gerbang kendaraan",
+  "/cashier": "Loket kasir",
+  "/restaurant": "Restoran",
+  "/rides": "Wahana kuda",
+  "/intervals": "Interval",
+  "/metrics": "Metrik",
+  "/system-log/audit": "Audit",
+  "/system-log/logins": "Riwayat login",
+  "/system-log/system-events": "Kejadian sistem",
+};
+
 export function CommandCenterShell({
   children,
 }: {
@@ -122,21 +134,6 @@ export function CommandCenterShell({
 
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark">(() => {
-    if (typeof window !== "undefined") {
-      return (localStorage.getItem("tamansafari_theme") as "light" | "dark") || "light";
-    }
-    return "light";
-  });
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-  }, [theme]);
-
-  const toggleTheme = (newTheme: "light" | "dark") => {
-    setTheme(newTheme);
-    localStorage.setItem("tamansafari_theme", newTheme);
-  };
 
   const handleLogout = async () => {
     try {
@@ -161,7 +158,11 @@ export function CommandCenterShell({
     if (path.startsWith("/account")) return { section: "Akun", label: "Ganti kata sandi" };
     for (const s of sections) {
       const item = s.items.find((i) => isNavActive(i, path));
-      if (item) return { section: s.title, label: item.label };
+      if (item) {
+        // Pages grouped under one menu item (area tabs, analytics, system log) show "item / page".
+        const sub = Object.entries(SUB_PAGES).find(([p]) => path === p || path.startsWith(`${p}/`));
+        return sub && item.match ? { section: item.label, label: sub[1] } : { section: s.title, label: item.label };
+      }
     }
     return { section: sections[0]?.title ?? "", label: sections[0]?.items[0]?.label ?? "" };
   })();
@@ -297,36 +298,8 @@ export function CommandCenterShell({
           ))}
         </nav>
 
-        {/* Bottom: theme toggle + user card with sign-out */}
+        {/* User card with sign-out */}
         <div className={`relative shrink-0 p-3 ${collapsed ? "flex flex-col items-center gap-2" : ""}`}>
-          {/* Theme toggle (preserved from HEAD) */}
-          {!collapsed && (
-            <div className="mb-2 flex items-center gap-1 rounded-full border border-white/10 bg-white/5 p-1">
-              <button
-                type="button"
-                onClick={() => toggleTheme("light")}
-                aria-pressed={theme === "light"}
-                title="Mode terang"
-                className={`flex size-7 items-center justify-center rounded-full transition-colors ${
-                  theme === "light" ? "bg-lime text-forest-dark" : "text-side-ink-2 hover:text-white"
-                }`}
-              >
-                <Sun className="size-3.5" />
-              </button>
-              <button
-                type="button"
-                onClick={() => toggleTheme("dark")}
-                aria-pressed={theme === "dark"}
-                title="Mode gelap"
-                className={`flex size-7 items-center justify-center rounded-full transition-colors ${
-                  theme === "dark" ? "bg-lime text-forest-dark" : "text-side-ink-2 hover:text-white"
-                }`}
-              >
-                <Moon className="size-3.5" />
-              </button>
-            </div>
-          )}
-
           {collapsed ? (
             <>
               <button

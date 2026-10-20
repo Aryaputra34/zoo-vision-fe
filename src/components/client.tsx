@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -16,7 +17,6 @@ import {
   YAxis,
 } from "recharts";
 import { NAV } from "./nav";
-import { Suspense } from "react";
 
 export function NavLinks() {
   const path = usePathname();
@@ -56,22 +56,23 @@ export function DatePicker({ date, today }: { date: string; today: string }) {
     const qs = p.toString();
     return qs ? `${path}?${qs}` : path;
   };
-  const btn = "grid size-9 place-items-center rounded-full border border-line bg-surface text-forest hover:bg-lime/20 hover:border-lime/60 shadow-sm transition-colors";
+  // Sits on the dark page hero band.
+  const btn = "grid size-9 place-items-center rounded-[10px] border border-white/25 bg-white/10 text-white hover:bg-white/20 transition-colors";
   return (
     <div className="flex items-center gap-1.5">
-      <Link href={href(addDays(date, -1))} className={btn} aria-label="Previous day">
+      <Link href={href(addDays(date, -1))} className={btn} aria-label="Hari sebelumnya">
         <ChevronLeft aria-hidden className="size-4" />
       </Link>
       <input
         type="date"
-        aria-label="Date"
+        aria-label="Tanggal"
         value={date}
         max={today}
         onChange={(e) => e.target.value && router.push(href(e.target.value))}
-        className="h-9 rounded-full border border-line bg-surface px-3 text-xs font-extrabold text-forest shadow-sm focus:outline-none focus:ring-2 focus:ring-lime"
+        className="h-9 rounded-[10px] border border-white/25 bg-white px-3 text-[13px] font-semibold text-ink focus:outline-none focus:ring-2 focus:ring-lime"
       />
       {date < today ? (
-        <Link href={href(addDays(date, 1))} className={btn} aria-label="Next day">
+        <Link href={href(addDays(date, 1))} className={btn} aria-label="Hari berikutnya">
           <ChevronRight aria-hidden className="size-4" />
         </Link>
       ) : (
@@ -82,38 +83,38 @@ export function DatePicker({ date, today }: { date: string; today: string }) {
       {date !== today && (
         <Link
           href={href(today)}
-          className="h-9 rounded-full bg-forest text-lime px-4 text-xs leading-9 font-extrabold shadow-sm hover:bg-forest-dark transition-colors"
+          className="h-9 rounded-[10px] bg-lime px-3.5 text-[13px] leading-9 font-bold text-forest-dark hover:bg-lime-2 transition-colors"
         >
-          Today · Hari Ini
+          Hari ini
         </Link>
       )}
     </div>
   );
 }
 
-const axis = { fontSize: 11, fill: "var(--muted)", fontWeight: 600 };
+const axis = { fontSize: 11, fill: "var(--muted)", fontWeight: 500 };
 const tooltipStyle = {
   contentStyle: {
-    background: "#0d542e",
-    border: "1px solid rgba(130, 187, 58, 0.4)",
-    borderRadius: 14,
+    background: "#0c3520",
+    border: "1px solid rgba(140, 198, 63, 0.35)",
+    borderRadius: 12,
     fontSize: 12,
     color: "#ffffff",
     boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.3)",
     padding: "8px 12px",
   },
-  labelStyle: { color: "#82bb3a", fontWeight: "bold", marginBottom: "4px" },
+  labelStyle: { color: "#8cc63f", fontWeight: "bold", marginBottom: "4px" },
   itemStyle: { color: "#ffffff", fontSize: "11px", fontWeight: "bold" },
-  cursor: { fill: "rgba(130, 187, 58, 0.08)" },
+  cursor: { fill: "rgba(140, 198, 63, 0.08)" },
 };
 
 function Legend({ series }: { series: { label: string; color: string }[] }) {
   if (series.length < 2) return null;
   return (
-    <div className="mb-3 flex flex-wrap gap-4 text-xs font-extrabold text-forest">
+    <div className="mb-3 flex flex-wrap gap-4 text-xs font-semibold text-muted">
       {series.map((s) => (
-        <span key={s.label} className="flex items-center gap-1.5 rounded-full bg-surface-2 px-2.5 py-1 border border-line">
-          <span className="size-2.5 rounded-full shadow-sm" style={{ background: s.color }} aria-hidden />
+        <span key={s.label} className="flex items-center gap-1.5">
+          <span className="size-2.5 rounded-[3px]" style={{ background: s.color }} aria-hidden />
           {s.label}
         </span>
       ))}
@@ -122,7 +123,7 @@ function Legend({ series }: { series: { label: string; color: string }[] }) {
 }
 
 // Fixed categorical order with official Taman Safari brand colors
-const SERIES_COLORS = ["#0d542e", "#82bb3a", "#f5a623", "#2080c4"];
+const SERIES_COLORS = ["#0d542e", "#8cc63f", "#e9a23b", "#3b78b8"];
 
 export function HourlyBars({
   data,
@@ -130,10 +131,10 @@ export function HourlyBars({
   unit = "",
 }: {
   data: Record<string, string | number>[];
-  series: { key: string; label: string }[];
+  series: { key: string; label: string; color?: string }[];
   unit?: string;
 }) {
-  const s = series.map((x, i) => ({ ...x, color: SERIES_COLORS[i % SERIES_COLORS.length] }));
+  const s = series.map((x, i) => ({ ...x, color: x.color ?? SERIES_COLORS[i % SERIES_COLORS.length] }));
   return (
     <div>
       <Legend series={s} />
@@ -161,7 +162,7 @@ export function HourlyBars({
                 name={x.label}
                 fill={x.color}
                 maxBarSize={28}
-                radius={[6, 6, 0, 0]}
+                radius={[5, 5, 0, 0]}
                 isAnimationActive={false}
               />
             ))}
@@ -188,7 +189,7 @@ export function OccupancyChart({
         <AreaChart data={data} margin={{ top: 12, right: 12, bottom: 0, left: -12 }}>
           <defs>
             <linearGradient id="safariGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#82bb3a" stopOpacity={0.4} />
+              <stop offset="5%" stopColor="#8cc63f" stopOpacity={0.4} />
               <stop offset="95%" stopColor="#0d542e" stopOpacity={0.02} />
             </linearGradient>
           </defs>
@@ -198,15 +199,15 @@ export function OccupancyChart({
           <Tooltip {...tooltipStyle} cursor={{ stroke: "var(--axis)" }} labelFormatter={(t) => `${t} WIB (5-min peak)`} />
           <ReferenceLine
             y={warning}
-            stroke="#f5a623"
+            stroke="#e9a23b"
             strokeDasharray="4 4"
-            label={{ value: `Warning ${warning}`, position: "insideTopLeft", fontSize: 11, fill: "#f5a623", fontWeight: 700 }}
+            label={{ value: `Warning ${warning}`, position: "insideTopLeft", fontSize: 11, fill: "#74470a", fontWeight: 700 }}
           />
           <ReferenceLine
             y={max}
-            stroke="#d9383a"
+            stroke="#b42318"
             strokeDasharray="4 4"
-            label={{ value: `Max Limit ${max}`, position: "insideTopLeft", fontSize: 11, fill: "#d9383a", fontWeight: 700 }}
+            label={{ value: `Max Limit ${max}`, position: "insideTopLeft", fontSize: 11, fill: "#b42318", fontWeight: 700 }}
           />
           <Area
             type="monotone"
@@ -216,7 +217,7 @@ export function OccupancyChart({
             strokeWidth={3}
             fill="url(#safariGradient)"
             dot={false}
-            activeDot={{ r: 5, stroke: "#ffffff", strokeWidth: 2, fill: "#82bb3a" }}
+            activeDot={{ r: 5, stroke: "#ffffff", strokeWidth: 2, fill: "#8cc63f" }}
             isAnimationActive={false}
           />
         </AreaChart>

@@ -2,13 +2,14 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Car, ArrowRightLeft, Clock, ShieldCheck, Filter } from "lucide-react";
+import { Car, ArrowRightLeft, Clock, ShieldCheck } from "lucide-react";
 import { useReportsEventStats } from "@/api/generated/reports/reports";
 import { useEventsList } from "@/api/generated/events/events";
 import { Card, PageHeader, Table, Tile, Tiles, Mono } from "@/components/ui";
-import { HourlyBars } from "@/components/client";
+import { HourlyBars, AreaTabs } from "@/components/client";
 import { CsvLink } from "@/components/CsvLink";
 import { EvidenceButton } from "@/components/EvidenceButton";
+import { AreaNow, AreaSection, AREA_SUBTITLE, AREA_TITLE } from "@/components/area";
 import { fillBuckets } from "@/lib/buckets";
 import { fmtLocalTime, localDayRange, localDaysRange, localHour } from "@/lib/time";
 import { useToday } from "@/lib/useToday";
@@ -16,6 +17,7 @@ import { fmtNum } from "@/lib/util";
 
 const TYPE = "vehicle_crossing";
 const LIST_LIMIT = 200;
+const VEHICLE_LABEL: Record<string, string> = { car: "Mobil", bus: "Bus", motorcycle: "Motor", truck: "Truk / logistik" };
 
 export function VehiclesPage({ date: picked }: { date?: string }) {
   const today = useToday();
@@ -150,90 +152,98 @@ export function VehiclesPage({ date: picked }: { date?: string }) {
   return (
     <>
       <PageHeader
-        tag="Taman Safari Bogor · Koridor Utama"
-        title="Gerbang Lalu Lintas Kendaraan"
-        subtitle="Penghitungan AI tripwire kendaraan pengunjung, bus safari, dan armada staf di gerbang masuk & keluar"
+        title={AREA_TITLE}
+        subtitle={AREA_SUBTITLE}
         date={date}
       >
         <CsvLink path="/api/v1/exports/events.csv" params={{ ...day, types: TYPE }} />
       </PageHeader>
 
+      <AreaTabs />
+
+      {isToday && (
+        <AreaSection title="Sekarang">
+          <AreaNow useCases={["vehicle_gate"]} />
+        </AreaSection>
+      )}
+
+      <AreaSection title={isToday ? "Hari ini" : `Tanggal ${date}`}>
       <Tiles>
         <Tile
-          label="Kendaraan Masuk (Inbound)"
+          label="Masuk"
           icon={<Car aria-hidden />}
           value={hoursQuery.isLoading ? "…" : fmtNum(totals.entries)}
-          sub="Melintasi tripwire gerbang masuk"
+          sub="melintasi garis hitung masuk"
         />
         <Tile
-          label="Kendaraan Keluar (Outbound)"
+          label="Keluar"
           icon={<ArrowRightLeft aria-hidden />}
           value={hoursQuery.isLoading ? "…" : fmtNum(totals.exits)}
-          sub="Melintasi tripwire gerbang keluar"
+          sub="melintasi garis hitung keluar"
         />
         <Tile
-          label={isToday ? "Di Dalam Koridor Safari" : "Selisih Bersih Hari"}
+          label={isToday ? "Di dalam taman" : "Selisih hari itu"}
           icon={<ShieldCheck aria-hidden />}
           value={hoursQuery.isLoading ? "…" : fmtNum(totals.inside)}
-          sub={isToday ? "Estimasi unit aktif di area taman" : "Selisih masuk dikurangi keluar"}
+          sub="masuk − keluar"
         />
         <Tile
-          label="Jam Kedatangan Terpadat"
+          label="Jam tersibuk"
           icon={<Clock aria-hidden />}
           value={totals.peakHour !== null ? `${totals.peakHour}:00 WIB` : "—"}
           sub={
             totals.peakHour !== null
-              ? `${totals.peakCount} kendaraan masuk pada jam tersebut`
-              : "Belum ada lalu lintas"
+              ? `${fmtNum(totals.peakCount)} kendaraan masuk`
+              : "belum ada lalu lintas"
           }
         />
       </Tiles>
 
       <div className="mb-6 grid items-start gap-6 lg:grid-cols-3">
         <Card
-          title="Lalu Lintas Kendaraan per Jam"
-          subtitle="Distribusi kedatangan vs kepulangan per jam operasional"
+          title="Kendaraan per jam"
           className="lg:col-span-2"
         >
           <HourlyBars
             data={hourlyData}
             series={[
-              { key: "entry", label: "Masuk (Entry)" },
-              { key: "exit", label: "Keluar (Exit)" },
+              { key: "entry", label: "Masuk" },
+              { key: "exit", label: "Keluar" },
             ]}
           />
         </Card>
 
         <Card
-          title="Klasifikasi Jenis Kendaraan"
-          subtitle="Distribusi kategori armada berdasarkan deteksi sensor AI"
+          title="Jenis kendaraan"
         >
           <Table
             head={["Jenis", "Masuk", "Keluar"]}
             align={["left", "right", "right"]}
             rows={Object.entries(vehicleMatrix).map(([vType, counts]) => [
-              <span key="t" className="font-bold uppercase text-forest text-xs">
-                {vType}
+              <span key="t" className="font-bold text-forest capitalize">
+                {VEHICLE_LABEL[vType] ?? vType}
               </span>,
               fmtNum(counts.entry),
               fmtNum(counts.exit),
             ])}
             empty={
               typeDirQuery.isLoading
-                ? "Memuat klasifikasi..."
+                ? "Memuat…"
                 : Object.keys(vehicleMatrix).length === 0
-                ? "Tidak ada data klasifikasi."
+                ? "Belum ada kendaraan."
                 : undefined
             }
           />
         </Card>
       </div>
+      </AreaSection>
 
-      <div className="mb-6 grid items-start gap-6 lg:grid-cols-3">
+      <AreaSection title="Riwayat">
+      <div className="grid items-start gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           {/* Stream Crossing Log Table with Filters */}
           <Card
-            title="Log Lintasan Kendaraan Real-Time"
+            title="Log lintasan"
             subtitle={
               listQuery.data?.nextCursor
                 ? `Menampilkan ${LIST_LIMIT} kendaraan terbaru`
@@ -242,44 +252,42 @@ export function VehiclesPage({ date: picked }: { date?: string }) {
             actions={
               <div className="flex flex-wrap items-center gap-2">
                 <select
+                  aria-label="Arah"
                   value={filterDirection}
                   onChange={(e) => setFilterDirection(e.target.value)}
-                  className="rounded-xl border border-line bg-surface px-2.5 py-1 text-xs font-bold text-ink focus:border-lime focus:outline-none"
+                  className="h-9 rounded-[10px] border border-[#cfc9b8] bg-surface px-2.5 text-[13px] font-semibold text-ink focus:border-forest focus:ring-2 focus:ring-lime/40 focus:outline-none"
                 >
-                  <option value="ALL">Semua Arah</option>
-                  <option value="ENTRY">Masuk (Entry)</option>
-                  <option value="EXIT">Keluar (Exit)</option>
+                  <option value="ALL">Semua arah</option>
+                  <option value="ENTRY">Masuk</option>
+                  <option value="EXIT">Keluar</option>
                 </select>
 
                 <select
+                  aria-label="Jenis"
                   value={filterVehicleType}
                   onChange={(e) => setFilterVehicleType(e.target.value)}
-                  className="rounded-xl border border-line bg-surface px-2.5 py-1 text-xs font-bold text-ink focus:border-lime focus:outline-none"
+                  className="h-9 rounded-[10px] border border-[#cfc9b8] bg-surface px-2.5 text-[13px] font-semibold text-ink focus:border-forest focus:ring-2 focus:ring-lime/40 focus:outline-none"
                 >
-                  <option value="ALL">Semua Jenis</option>
-                  <option value="car">Mobil (Car)</option>
-                  <option value="bus">Bus Safari</option>
+                  <option value="ALL">Semua jenis</option>
+                  <option value="car">Mobil</option>
+                  <option value="bus">Bus</option>
                   <option value="motorcycle">Motor</option>
-                  <option value="truck">Truk / Logistik</option>
+                  <option value="truck">Truk / logistik</option>
                 </select>
               </div>
             }
           >
             <Table
-              head={["Waktu", "Arah", "Jenis", "Kamera CCTV", "Tracker ID", "Bukti Visual"]}
+              head={["Waktu", "Arah", "Jenis", "Kamera", "Tracker", "Bukti"]}
               rows={(listQuery.data?.rows ?? []).map((e) => [
                 fmtLocalTime(e.time),
                 e.data.direction === "ENTRY" ? (
-                  <span key="dir" className="inline-flex items-center gap-1 font-bold text-forest">
-                    ↗ Masuk
-                  </span>
+                  <span key="dir" className="rounded-full bg-good-bg px-2 py-0.5 text-[11px] font-extrabold text-good">Masuk</span>
                 ) : (
-                  <span key="dir" className="inline-flex items-center gap-1 font-bold text-amber-600">
-                    ↙ Keluar
-                  </span>
+                  <span key="dir" className="rounded-full bg-warn-bg px-2 py-0.5 text-[11px] font-extrabold text-gold-ink">Keluar</span>
                 ),
-                <span key="vtype" className="font-mono text-xs font-bold uppercase text-ink">
-                  {(e.data.vehicleType as string) || "—"}
+                <span key="vtype" className="font-semibold text-ink">
+                  {VEHICLE_LABEL[e.data.vehicleType as string] ?? ((e.data.vehicleType as string) || "—")}
                 </span>,
                 e.cameraName ?? e.cameraId ?? "—",
                 <span key="tr" className="text-xs">
@@ -305,8 +313,8 @@ export function VehiclesPage({ date: picked }: { date?: string }) {
 
         <div>
           <Card
-            title="Rekapitulasi 14 Hari Terakhir"
-            subtitle="Tren total harian untuk rekonsiliasi karcis masuk"
+            title="14 hari terakhir"
+            subtitle="Untuk rekonsiliasi karcis masuk"
           >
             <Table
               head={["Tanggal", "Masuk", "Keluar"]}
@@ -329,6 +337,7 @@ export function VehiclesPage({ date: picked }: { date?: string }) {
           </Card>
         </div>
       </div>
+      </AreaSection>
     </>
   );
 }

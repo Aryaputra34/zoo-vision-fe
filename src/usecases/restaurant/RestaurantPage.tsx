@@ -21,10 +21,11 @@ import {
   Badge,
   Mono,
 } from "@/components/ui";
-import { OccupancyChart } from "@/components/client";
+import { OccupancyChart, AreaTabs } from "@/components/client";
 import { CsvLink } from "@/components/CsvLink";
 import { EvidenceButton } from "@/components/EvidenceButton";
 import { LivePausedBadge } from "@/components/LivePausedBadge";
+import { AreaNow, AreaSection, AREA_SUBTITLE, AREA_TITLE } from "@/components/area";
 import { fmtLocalTime, localDayRange } from "@/lib/time";
 import { useToday } from "@/lib/useToday";
 import { fmtNum } from "@/lib/util";
@@ -161,135 +162,123 @@ export function RestaurantPage({ date: picked }: { date?: string }) {
 
   return (
     <>
-      <PageHeader
-        tag="Taman Safari Bogor · Rainforest Dining"
-        title="Safari Dining Hall & Okupansi Restoran"
-        subtitle="Analisis sensor kapasitas pengunjung, durasi makan tamu di meja, dan peringatan batas daya tampung"
-        date={date}
-      >
-        <CsvLink
-          path="/api/v1/exports/events.csv"
-          params={{ ...day, types: "capacity_alert" }}
-        />
+      <PageHeader title={AREA_TITLE} subtitle={AREA_SUBTITLE} date={date}>
+        <CsvLink path="/api/v1/exports/events.csv" params={{ ...day, types: "capacity_alert" }} />
       </PageHeader>
 
-      <Tiles>
-        <Tile
-          label="Puncak Tamu Bersamaan"
-          icon={<Users aria-hidden />}
-          value={occupancyQuery.isLoading ? "…" : `${totals.peakGuests} Orang`}
-          sub={totals.peakTime !== "—" ? `Tercatat pada ${totals.peakTime} WIB` : "Belum ada kunjungan"}
-        />
-        <Tile
-          label="Durasi Kapasitas Padat"
-          icon={<Clock aria-hidden />}
-          value={busyMinutesQuery.isLoading ? "…" : `${totals.busyMinutes} Menit`}
-          sub={`Okupansi di atas ambang batas ${WARNING_CAPACITY} tamu`}
-        />
-        <Tile
-          label="Total Meja Terlayani"
-          icon={<Utensils aria-hidden />}
-          value={tableSessionQuery.isLoading ? "…" : fmtNum(totals.tablesSeated)}
-          sub="Sesi meja dining hall tercatat hari ini"
-        />
-        <Tile
-          label="Rata-Rata Waktu Makan"
-          icon={<Clock aria-hidden />}
-          value={totals.avgStayMinutes > 0 ? `${totals.avgStayMinutes} Menit` : "—"}
-          sub="Estimasi perputaran tamu di meja"
-        />
-      </Tiles>
+      <AreaTabs />
 
-      {/* Occupancy Curve Chart */}
-      <div className="mb-6">
-        <Card
-          title="Kurva Okupansi & Kapasitas Restoran (5-Minute Peaks)"
-          subtitle={`Grafik jumlah tamu realtime dengan garis batas peringatan (${WARNING_CAPACITY} tamu) dan batas maksimal (${MAX_CAPACITY} tamu)`}
-        >
-          {chartData.length > 0 ? (
-            <OccupancyChart
-              data={chartData}
-              warning={WARNING_CAPACITY}
-              max={MAX_CAPACITY}
-            />
-          ) : (
-            <div className="py-16 text-center text-xs font-bold text-muted">
-              Tidak ada data okupansi pada tanggal {date}.
-            </div>
-          )}
-        </Card>
-      </div>
-
-      {/* Live Table Monitor (if today) */}
-      {isToday && liveTables.length > 0 && (
-        <div className="mb-6">
-          <Card
-            title="Denah Meja Restoran Real-Time (Live Tables)"
-            subtitle="Status keterisian meja makan dari sensor kamera AI CCTV"
-            actions={<LivePausedBadge />}
-          >
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-              {liveTables.map((t) => {
-                const isOccupied = t.state === "OCCUPIED" || t.state === "SEATED";
-                return (
-                  <div
-                    key={t.id}
-                    className={`rounded-2xl border p-3 text-center transition ${
-                      isOccupied
-                        ? "border-emerald-300 bg-emerald-50 text-emerald-900"
-                        : "border-line bg-surface text-muted"
-                    }`}
-                  >
-                    <div className="text-xs font-extrabold">{t.name}</div>
-                    <div
-                      className={`mt-1.5 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-black ${
-                        isOccupied ? "bg-emerald-200/60 text-emerald-800" : "bg-zinc-100 text-zinc-500"
-                      }`}
-                    >
-                      {isOccupied ? "Terisi" : "Kosong"}
-                    </div>
+      {isToday && (
+        <AreaSection title="Sekarang" note={<LivePausedBadge />}>
+          <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
+            <AreaNow stacked useCases={["restaurant_counter", "restaurant_table"]} />
+            <Card title="Denah meja">
+              {liveTables.length === 0 ? (
+                <p className="text-sm text-muted">Belum ada data meja dari kamera.</p>
+              ) : (
+                <>
+                  <div className="mb-3 flex flex-wrap gap-4 text-xs font-semibold text-ink-2">
+                    <span className="inline-flex items-center gap-1.5"><span className="size-2.5 rounded-[3px] bg-forest" />Terisi</span>
+                    <span className="inline-flex items-center gap-1.5"><span className="size-2.5 rounded-[3px] border-[1.5px] border-lime bg-surface" />Kosong</span>
                   </div>
-                );
-              })}
-            </div>
-          </Card>
-        </div>
+                  <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">
+                    {liveTables.map((t) => {
+                      const isOccupied = t.state === "OCCUPIED" || t.state === "SEATED";
+                      return (
+                        <div
+                          key={t.id}
+                          className={`flex flex-col items-center rounded-[10px] px-2 py-2.5 text-center ${
+                            isOccupied ? "bg-forest text-white" : "border-[1.5px] border-lime bg-surface text-forest"
+                          }`}
+                        >
+                          <span className="text-[13px] font-extrabold">{t.name}</span>
+                          <span className={`text-[11px] font-semibold ${isOccupied ? "text-[#cfe3d4]" : "text-muted"}`}>
+                            {isOccupied ? "Terisi" : "Kosong"}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </Card>
+          </div>
+        </AreaSection>
       )}
 
-      {/* Alert Log */}
-      <Card
-        title="Log Peringatan Kapasitas (Capacity Alerts)"
-        subtitle={
-          listQuery.data?.nextCursor
-            ? `Menampilkan ${LIST_LIMIT} peringatan terbaru`
-            : "Diurutkan dari yang terbaru"
-        }
-      >
-        <Table
-          head={["Waktu", "Tingkat Peringatan", "Kamera CCTV", "Tingkat (Severity)", "Bukti"]}
-          rows={(listQuery.data?.rows ?? []).map((e) => [
-            fmtLocalTime(e.time),
-            <span key="lvl" className="font-extrabold text-forest uppercase text-xs">
-              {(e.data.level as string) || "Kapasitas Melebihi Batas"}
-            </span>,
-            e.cameraName ?? e.cameraId ?? "—",
-            <SeverityBadge key="sev" severity={e.severity} />,
-            <EvidenceButton
-              key="ev"
-              snapshotUrl={e.snapshotUrl}
-              clipUrl={e.clipUrl}
-              title={`${e.cameraName ?? e.cameraId ?? "Resto"} · ${date} ${fmtLocalTime(e.time)} WIB`}
-            />,
-          ])}
-          empty={
-            listQuery.isLoading
-              ? "Memuat log kapasitas..."
-              : (listQuery.data?.rows ?? []).length === 0
-              ? `Tidak ada peringatan kapasitas restoran pada ${date}.`
-              : undefined
-          }
-        />
-      </Card>
+      <AreaSection title={isToday ? "Hari ini" : `Tanggal ${date}`}>
+        <Tiles>
+          <Tile
+            label="Puncak tamu"
+            icon={<Users aria-hidden />}
+            value={occupancyQuery.isLoading ? "…" : `${fmtNum(totals.peakGuests)} orang`}
+            sub={totals.peakTime !== "—" ? `pukul ${totals.peakTime} WIB` : "belum ada kunjungan"}
+          />
+          <Tile
+            label="Durasi padat"
+            icon={<Clock aria-hidden />}
+            value={busyMinutesQuery.isLoading ? "…" : `${fmtNum(totals.busyMinutes)} mnt`}
+            sub={`di atas ${WARNING_CAPACITY} tamu`}
+          />
+          <Tile
+            label="Meja terlayani"
+            icon={<Utensils aria-hidden />}
+            value={tableSessionQuery.isLoading ? "…" : fmtNum(totals.tablesSeated)}
+            sub="sesi meja tercatat"
+          />
+          <Tile
+            label="Rata-rata makan"
+            icon={<Clock aria-hidden />}
+            value={totals.avgStayMinutes > 0 ? `${totals.avgStayMinutes} mnt` : "—"}
+            sub="per sesi meja"
+          />
+        </Tiles>
+
+        <div className="grid items-start gap-6 lg:grid-cols-3">
+          <Card
+            title="Kurva okupansi"
+            subtitle={`Puncak per 5 menit · batas peringatan ${WARNING_CAPACITY}, maksimal ${MAX_CAPACITY} tamu`}
+            className="lg:col-span-2"
+          >
+            {chartData.length > 0 ? (
+              <OccupancyChart data={chartData} warning={WARNING_CAPACITY} max={MAX_CAPACITY} />
+            ) : (
+              <div className="py-16 text-center text-sm text-muted">Tidak ada data okupansi pada tanggal {date}.</div>
+            )}
+          </Card>
+
+          <Card
+            title="Peringatan kapasitas"
+            subtitle={listQuery.data?.nextCursor ? `${LIST_LIMIT} peringatan terbaru` : undefined}
+            actions={
+              <Link href="/events" className="text-[13px] font-bold text-forest hover:underline">
+                Semua →
+              </Link>
+            }
+          >
+            <Table
+              head={["Waktu", "Severity", "Bukti"]}
+              rows={(listQuery.data?.rows ?? []).map((e) => [
+                fmtLocalTime(e.time),
+                <SeverityBadge key="sev" severity={e.severity} />,
+                <EvidenceButton
+                  key="ev"
+                  snapshotUrl={e.snapshotUrl}
+                  clipUrl={e.clipUrl}
+                  title={`${e.cameraName ?? e.cameraId ?? "Resto"} · ${date} ${fmtLocalTime(e.time)} WIB`}
+                />,
+              ])}
+              empty={
+                listQuery.isLoading
+                  ? "Memuat peringatan…"
+                  : (listQuery.data?.rows ?? []).length === 0
+                    ? `Tidak ada peringatan kapasitas pada ${date}.`
+                    : undefined
+              }
+            />
+          </Card>
+        </div>
+      </AreaSection>
     </>
   );
 }

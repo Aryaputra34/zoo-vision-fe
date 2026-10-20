@@ -1,26 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import Link from "next/link";
-import { 
-  Camera, 
-  Plus, 
-  Trash2, 
-  Sliders, 
-  Edit3, 
-  AlertTriangle, 
-  CheckCircle2, 
-  Clock, 
-  Search, 
-  Filter
-} from "lucide-react";
+import { Plus, Trash2, Sliders, Edit3, AlertTriangle, Search } from "lucide-react";
 import { useCamerasList, useCamerasRemove } from "@/api/generated/cameras/cameras";
 import { useUsecasesList } from "@/api/generated/usecases/usecases";
 import { useStatus } from "@/live";
 import { useMe } from "@/auth/AuthProvider";
 import { roleAtLeast } from "@/auth/roles";
 import { RequireRole } from "@/auth/RequireRole";
-import { PageHeader, Card, Table, OnlineBadge, Badge, Mono } from "@/components/ui";
+import { PageHeader } from "@/components/ui";
 import { ApiError } from "@/api/http";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -66,203 +55,232 @@ export function CamerasListPage() {
   const cameras = camerasQuery.data ?? [];
   const areas = Array.from(new Set(cameras.map((c) => c.area).filter(Boolean))) as string[];
 
+  // Status of one camera from the live stream (null = not reporting).
+  type St = "on" | "lag" | "off" | "rej" | "dis";
+  const stOf = (cam: (typeof cameras)[number]): St => {
+    if (!cam.enabled) return "dis";
+    const s = liveStatus[cam.id];
+    if (!s) return "off";
+    if (s.configError) return "rej";
+    return s.state === "RUNNING" ? "on" : "lag";
+  };
+  const [selectedStatus, setSelectedStatus] = useState<"ALL" | St>("ALL");
+
   const filteredCameras = cameras.filter((cam) => {
+    const q = search.toLowerCase();
     const matchSearch =
-      cam.name.toLowerCase().includes(search.toLowerCase()) ||
-      cam.id.toLowerCase().includes(search.toLowerCase()) ||
-      (cam.area ?? "").toLowerCase().includes(search.toLowerCase());
+      cam.name.toLowerCase().includes(q) ||
+      cam.id.toLowerCase().includes(q) ||
+      (cam.area ?? "").toLowerCase().includes(q);
     const matchArea = selectedArea === "ALL" || cam.area === selectedArea;
     const matchUsecase = selectedUsecase === "ALL" || cam.useCase === selectedUsecase;
-    return matchSearch && matchArea && matchUsecase;
+    const matchStatus = selectedStatus === "ALL" || stOf(cam) === selectedStatus;
+    return matchSearch && matchArea && matchUsecase && matchStatus;
   });
+
+  const groups = Array.from(new Set(filteredCameras.map((c) => c.area || "Lainnya"))).map((area) => ({
+    area,
+    cams: filteredCameras.filter((c) => (c.area || "Lainnya") === area),
+  }));
+
+  const STATUS: Record<St, { t: string; dot: string; chip: string }> = {
+    on: { t: "Online", dot: "bg-[#1e8e3e]", chip: "bg-good-bg text-good" },
+    lag: { t: "Terjeda", dot: "bg-warn", chip: "bg-warn-bg text-gold-ink" },
+    off: { t: "Offline", dot: "bg-off", chip: "bg-off-bg text-[#4b5550]" },
+    rej: { t: "Config ditolak", dot: "bg-crit", chip: "bg-crit-bg text-crit-ink" },
+    dis: { t: "Nonaktif", dot: "bg-[#b8b2a2]", chip: "bg-surface-2 text-muted" },
+  };
+  const chips: { id: "ALL" | St; t: string; dot: string }[] = [
+    { id: "ALL", t: "Semua", dot: "bg-ink" },
+    ...(Object.keys(STATUS) as St[]).map((k) => ({ id: k, t: STATUS[k].t, dot: STATUS[k].dot })),
+  ];
+  const active = cameras.filter((c) => c.enabled).length;
+  const selectCls =
+    "h-9 cursor-pointer rounded-[10px] border border-[#cfc9b8] bg-surface px-2.5 text-[13px] font-semibold text-ink focus:border-forest focus:ring-2 focus:ring-lime/40 focus:outline-none";
 
   return (
     <RequireRole min="MANAGER">
       <PageHeader
         title="Kamera"
-        subtitle="Semua kamera beserta use case, versi konfigurasi, dan statusnya. Buka kamera untuk mengatur zona."
+        subtitle={
+          camerasQuery.isLoading
+            ? "Memuat kamera…"
+            : `${cameras.length} terdaftar · ${active} aktif. Klik kamera untuk mengatur zona, versi, dan pengaturan.`
+        }
       >
-        {isSuperadmin && (
+        {isSuperadmin ? (
           <Link
             href="/config/cameras/new"
-            className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-[10px] bg-lime px-4 text-[13px] font-extrabold text-forest-dark transition-colors hover:bg-lime-2"
+            className="inline-flex h-[42px] cursor-pointer items-center gap-2 rounded-[10px] bg-lime px-4 text-sm font-bold text-forest-dark transition-colors hover:bg-lime-2"
           >
             <Plus className="size-4" />
-            Tambah Kamera
+            Tambah kamera
           </Link>
+        ) : (
+          <span className="inline-flex min-h-[38px] items-center rounded-[10px] bg-surface-2 px-3 text-xs font-semibold text-ink-2">
+            Tambah/hapus kamera: superadmin
+          </span>
         )}
       </PageHeader>
 
-      {/* Filter and Search Bar */}
-      <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <div className="relative">
-          <Search className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Cari ID, nama, atau area kamera..."
-            className="w-full rounded-2xl border border-line bg-surface py-2.5 pl-10 pr-4 text-xs font-semibold text-ink placeholder:text-muted focus:border-lime focus:outline-none focus:ring-2 focus:ring-lime/20"
-          />
+      {/* Status chips, search and filters */}
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <div role="group" aria-label="Filter status" className="flex flex-wrap gap-1.5">
+          {chips.map((c) => {
+            const on = selectedStatus === c.id;
+            const n = c.id === "ALL" ? cameras.length : cameras.filter((x) => stOf(x) === c.id).length;
+            return (
+              <button
+                key={c.id}
+                type="button"
+                aria-pressed={on}
+                onClick={() => setSelectedStatus(c.id)}
+                className={`inline-flex h-9 cursor-pointer items-center gap-2 rounded-full px-3 text-[13px] font-semibold ${
+                  on ? "border-[1.5px] border-lime bg-[#eaf3dc] text-forest" : "border border-[#cfc9b8] bg-surface text-ink hover:bg-surface-2"
+                }`}
+              >
+                <span aria-hidden className={`size-2 rounded-full ${c.dot}`} />
+                {c.t}
+                <span className="text-xs font-bold text-muted">{n}</span>
+              </button>
+            );
+          })}
         </div>
-
-        <div className="relative">
-          <Filter className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted" />
-          <select
-            value={selectedArea}
-            onChange={(e) => setSelectedArea(e.target.value)}
-            aria-label="Filter berdasarkan Area Kamera"
-            className="w-full appearance-none rounded-2xl border border-line bg-surface py-2.5 pl-10 pr-4 text-xs font-semibold text-ink focus:border-lime focus:outline-none focus:ring-2 focus:ring-lime/20"
-          >
-            <option value="ALL">Semua Area Operasional</option>
+        <div className="ml-auto flex flex-wrap items-center gap-2">
+          <select value={selectedArea} onChange={(e) => setSelectedArea(e.target.value)} aria-label="Filter berdasarkan Area Kamera" className={selectCls}>
+            <option value="ALL">Semua area</option>
             {areas.map((a) => (
               <option key={a} value={a}>
                 {a}
               </option>
             ))}
           </select>
-        </div>
-
-        <div className="relative">
-          <select
-            value={selectedUsecase}
-            onChange={(e) => setSelectedUsecase(e.target.value)}
-            aria-label="Filter berdasarkan Use Case Analitik"
-            className="w-full appearance-none rounded-2xl border border-line bg-surface py-2.5 px-4 text-xs font-semibold text-ink focus:border-lime focus:outline-none focus:ring-2 focus:ring-lime/20"
-          >
-            <option value="ALL">Semua Use-Case Analitik</option>
+          <select value={selectedUsecase} onChange={(e) => setSelectedUsecase(e.target.value)} aria-label="Filter berdasarkan Use Case Analitik" className={selectCls}>
+            <option value="ALL">Semua use case</option>
             {(usecasesQuery.data ?? []).map((u) => (
               <option key={u.id} value={u.id}>
-                {u.label} ({u.id})
+                {u.label}
               </option>
             ))}
           </select>
+          <div className="flex h-9 items-center gap-2 rounded-[10px] border border-[#cfc9b8] bg-surface px-2.5 focus-within:border-forest focus-within:ring-2 focus-within:ring-lime/40">
+            <Search aria-hidden className="size-4 text-muted" />
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              aria-label="Cari kamera"
+              placeholder="Cari nama atau ID"
+              className="w-40 bg-transparent text-[13px] font-medium text-ink outline-none placeholder:text-muted"
+            />
+          </div>
         </div>
       </div>
 
-      <Card
-        title={`Daftar Kamera CCTV (${filteredCameras.length} Kamera)`}
-        subtitle="Status online, use case, dan sinkronisasi versi mesin AI vision"
-      >
-        <Table
-          head={[
-            "ID & Nama Kamera",
-            "Area & Use Case",
-            "Status Sensor",
-            "Versi Konfigurasi",
-            "Aksi",
-          ]}
-          rows={filteredCameras.map((cam) => {
-            const status = liveStatus[cam.id];
-            const isOnline = status !== undefined && status !== null;
-            const appliedVer = status?.appliedVersion;
-            const activeVer = cam.activeVersion;
-            const isSynced = appliedVer === activeVer;
-
-            return [
-              <div key="name" className="flex flex-col">
-                <div className="flex items-center gap-2">
-                  <span className="font-extrabold text-forest">{cam.name}</span>
-                  {!cam.enabled && (
-                    <span className="rounded-md bg-off-bg px-1.5 py-0.5 text-[10px] font-bold text-muted">
-                      Nonaktif
-                    </span>
-                  )}
-                  {cam.auditCamera && (
-                    <span className="rounded-md bg-warn-bg px-1.5 py-0.5 text-[10px] font-bold text-gold-ink">
-                      Audit
-                    </span>
-                  )}
-                </div>
-                <span className="text-[11px] text-muted">
-                  <Mono>{cam.id}</Mono>
-                </span>
-              </div>,
-
-              <div key="meta" className="flex flex-col">
-                <span className="font-semibold text-ink">{cam.area ?? "—"}</span>
-                <span className="text-[11px] text-muted">
-                  {usecasesMap.get(cam.useCase) ?? cam.useCase}
-                </span>
-              </div>,
-
-              <div key="status" className="flex flex-col gap-1">
-                <OnlineBadge online={isOnline} />
-                {isOnline && status?.fps !== undefined && (
-                  <span className="text-[10px] font-semibold text-muted">
-                    {status.fps.toFixed(1)} FPS
-                  </span>
-                )}
-              </div>,
-
-              <div key="ver" className="flex flex-col">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-bold text-ink">v{activeVer}</span>
-                  {appliedVer !== undefined ? (
-                    isSynced ? (
-                      <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-good">
-                        <CheckCircle2 className="size-3" /> Diterapkan (v{appliedVer})
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-gold-ink">
-                        <Clock className="size-3" /> Menerapkan (v{appliedVer ?? 0} → v{activeVer})
-                      </span>
-                    )
-                  ) : (
-                    <span className="text-[10px] text-muted">—</span>
-                  )}
-                </div>
-                {status?.configError && (
-                  <span className="text-[10px] font-semibold text-crit">
-                    Ditolak: {status.configError}
-                  </span>
-                )}
-              </div>,
-
-              <div key="actions" className="flex items-center gap-1.5">
-                <Link
-                  href={`/config/cameras/${cam.id}/zones`}
-                  title="Editor Zona & Parameter"
-                  className="inline-flex items-center gap-1 rounded-xl border border-line bg-surface px-2.5 py-1.5 text-xs font-bold text-forest transition hover:border-lime hover:bg-lime/10"
-                >
-                  <Sliders className="size-3.5" />
-                  <span>Zona</span>
-                </Link>
-
-                <Link
-                  href={`/config/cameras/${cam.id}`}
-                  title="Edit Pengaturan Kamera"
-                  className="inline-flex items-center gap-1 rounded-xl border border-line bg-surface px-2.5 py-1.5 text-xs font-bold text-ink-2 transition hover:border-lime hover:bg-lime/10"
-                >
-                  <Edit3 className="size-3.5" />
-                  <span>Edit</span>
-                </Link>
-
-                {isSuperadmin && (
-                  <button
-                    type="button"
-                    title="Hapus Kamera"
-                    onClick={() => {
-                      setDeletingCamera({ id: cam.id, name: cam.name });
-                      setDeleteError(null);
-                    }}
-                    className="grid size-8 place-items-center rounded-xl text-muted transition hover:bg-crit-bg hover:text-crit"
-                  >
-                    <Trash2 className="size-3.5" />
-                  </button>
-                )}
-              </div>,
-            ];
-          })}
-          empty={
-            camerasQuery.isLoading
-              ? "Memuat daftar kamera..."
-              : filteredCameras.length === 0
-              ? "Tidak ada kamera yang cocok dengan kriteria pencarian."
-              : undefined
-          }
-        />
-      </Card>
+      <section className="overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_1px_2px_rgba(19,36,26,0.04)]">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[820px] text-left text-sm">
+            <thead>
+              <tr className="border-b border-line bg-surface-2 text-xs font-bold text-muted">
+                <th className="px-4 py-2.5">Kamera</th>
+                <th className="px-4 py-2.5">Use case</th>
+                <th className="px-4 py-2.5">Status</th>
+                <th className="px-4 py-2.5">Konfigurasi</th>
+                <th className="px-4 py-2.5 text-right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {groups.map((g) => (
+                <Fragment key={g.area}>
+                  <tr>
+                    <td colSpan={5} className="border-t border-line bg-bg px-4 py-2 text-[11px] font-bold tracking-[0.08em] text-muted uppercase">
+                      {g.area} · {g.cams.length} kamera
+                    </td>
+                  </tr>
+                  {g.cams.map((cam) => {
+                    const status = liveStatus[cam.id];
+                    const st = stOf(cam);
+                    const appliedVer = status?.appliedVersion;
+                    const activeVer = cam.activeVersion;
+                    const cfg =
+                      !status || appliedVer == null
+                        ? { t: `Tersimpan · v${activeVer}`, cls: "bg-surface-2 text-muted" }
+                        : status.configError
+                          ? { t: `Ditolak · v${activeVer}`, cls: "bg-crit-bg text-crit-ink" }
+                          : appliedVer === activeVer
+                            ? { t: `Diterapkan · v${activeVer}`, cls: "bg-good-bg text-good" }
+                            : { t: `Menunggu engine · v${appliedVer} → v${activeVer}`, cls: "bg-info-bg text-info" };
+                    return (
+                      <tr key={cam.id} className={`border-t border-line-soft ${cam.enabled ? "" : "opacity-65"}`}>
+                        <td className="px-4 py-3">
+                          <Link href={`/config/cameras/${cam.id}/zones`} className="flex flex-col hover:underline">
+                            <span className="flex items-center gap-2">
+                              <span className="font-bold text-ink">{cam.name}</span>
+                              {cam.auditCamera && (
+                                <span className="rounded-full bg-warn-bg px-2 py-0.5 text-[10px] font-extrabold text-gold-ink">Kamera audit</span>
+                              )}
+                            </span>
+                            <span className="font-mono text-xs text-muted">{cam.id}</span>
+                          </Link>
+                        </td>
+                        <td className="px-4 py-3 text-ink-2">{usecasesMap.get(cam.useCase) ?? cam.useCase}</td>
+                        <td className="px-4 py-3">
+                          <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold ${STATUS[st].chip}`}>
+                            <span aria-hidden className={`size-1.5 rounded-full ${STATUS[st].dot}`} />
+                            {STATUS[st].t}
+                            {status && typeof status.fps === "number" ? ` · ${status.fps.toFixed(1)} fps` : ""}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span title={status?.configError ?? undefined} className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold ${cfg.cls}`}>
+                            {cfg.t}
+                          </span>
+                          {status?.configError && <p className="mt-1 max-w-[280px] truncate text-xs text-crit">{status.configError}</p>}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <Link
+                              href={`/config/cameras/${cam.id}/zones`}
+                              className="inline-flex h-8 items-center gap-1 rounded-[9px] bg-forest px-2.5 text-xs font-bold text-white hover:bg-accent-hover"
+                            >
+                              <Sliders aria-hidden className="size-3.5" /> Zona
+                            </Link>
+                            <Link
+                              href={`/config/cameras/${cam.id}`}
+                              className="inline-flex h-8 items-center gap-1 rounded-[9px] border border-[#cfc9b8] px-2.5 text-xs font-bold text-ink hover:bg-surface-2"
+                            >
+                              <Edit3 aria-hidden className="size-3.5" /> Pengaturan
+                            </Link>
+                            {isSuperadmin && (
+                              <button
+                                type="button"
+                                title="Hapus kamera"
+                                aria-label={`Hapus ${cam.name}`}
+                                onClick={() => {
+                                  setDeletingCamera({ id: cam.id, name: cam.name });
+                                  setDeleteError(null);
+                                }}
+                                className="grid size-8 cursor-pointer place-items-center rounded-[9px] text-muted transition hover:bg-crit-bg hover:text-crit"
+                              >
+                                <Trash2 aria-hidden className="size-3.5" />
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </Fragment>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {groups.length === 0 && (
+          <p className="px-4 py-10 text-center text-sm text-muted">
+            {camerasQuery.isLoading ? "Memuat daftar kamera…" : "Tidak ada kamera yang cocok dengan filter."}
+          </p>
+        )}
+      </section>
 
       {/* Delete Confirmation Modal */}
       {deletingCamera && (

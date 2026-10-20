@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { Store, UserX, Clock, Users, ShieldAlert, AlertTriangle } from "lucide-react";
+import { Store, UserX, Clock, Users } from "lucide-react";
 import {
   useReportsEventStats,
   useReportsIntervalStats,
@@ -17,13 +17,12 @@ import {
   Tile,
   Tiles,
   SeverityBadge,
-  Badge,
-  Mono,
 } from "@/components/ui";
-import { HourlyBars } from "@/components/client";
+import { HourlyBars, AreaTabs } from "@/components/client";
 import { CsvLink } from "@/components/CsvLink";
 import { EvidenceButton } from "@/components/EvidenceButton";
 import { LivePausedBadge } from "@/components/LivePausedBadge";
+import { AreaSection, AREA_SUBTITLE, AREA_TITLE } from "@/components/area";
 import { fillBuckets } from "@/lib/buckets";
 import { fmtLocalTime, localDayRange, localHour } from "@/lib/time";
 import { useToday } from "@/lib/useToday";
@@ -185,202 +184,138 @@ export function CashierPage({ date: picked }: { date?: string }) {
     };
   }, [unattendedDayQuery.data, maxAbsenceQuery.data, maxWaitQuery.data]);
 
+  const fmtDur = (sec: number) => (sec > 0 ? `${Math.floor(sec / 60)} mnt ${sec % 60} dtk` : "—");
+
   return (
     <>
-      <PageHeader
-        tag="Taman Safari Bogor · Loket Tiket"
-        title="Pengawasan Kasir & Waktu Antre Loket"
-        subtitle="Analitik AI sensor kehadiran staf kasir loket, durasi loket tak berpenjaga, dan kepuasan antrean pengunjung"
-        date={date}
-      >
+      <PageHeader title={AREA_TITLE} subtitle={AREA_SUBTITLE} date={date}>
         <CsvLink path="/api/v1/exports/events.csv" params={{ ...day, types: TYPES }} />
       </PageHeader>
 
-      <Tiles>
-        <Tile
-          label="Total Kasir Tak Berpenjaga"
-          icon={<UserX aria-hidden />}
-          value={unattendedDayQuery.isLoading ? "…" : `${totals.unattendedMinutes} Menit`}
-          sub="Akumulasi seluruh loket aktif"
-        />
-        <Tile
-          label="Absen Staf Terlama"
-          icon={<Clock aria-hidden />}
-          value={
-            totals.maxAbsentSec > 0
-              ? `${Math.floor(totals.maxAbsentSec / 60)}m ${totals.maxAbsentSec % 60}s`
-              : "—"
-          }
-          sub="Durasi tunggal loket kosong terpanjang"
-        />
-        <Tile
-          label="Waktu Antre Pengunjung Terlama"
-          icon={<Users aria-hidden />}
-          value={
-            totals.maxWaitSec > 0
-              ? `${Math.floor(totals.maxWaitSec / 60)}m ${totals.maxWaitSec % 60}s`
-              : "—"
-          }
-          sub="Batas toleransi antre di depan kasir"
-        />
-        <Tile
-          label="Status Operasional Kasir"
-          icon={<Store aria-hidden />}
-          value={cashierCameras.length > 0 ? `${cashierCameras.length} Loket` : "Semua Kasir"}
-          sub="Terhubung ke sensor AI CCTV"
-        />
-      </Tiles>
+      <AreaTabs />
 
-      {/* Live Cashier Desks Real-Time Monitor */}
       {isToday && cashierCameras.length > 0 && (
-        <div className="mb-6">
-          <Card
-            title="Status Langsung Loket Kasir (Live State)"
-            subtitle="Telemetri kehadiran staf loket dan antrean saat ini"
-            actions={<LivePausedBadge />}
-          >
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {cashierCameras.map((cam) => {
-                const status = liveStatus[cam.id];
-                const live = (status?.live as {
-                  state?: string;
-                  clerkCount?: number;
-                  visitorCount?: number;
-                }) ?? null;
-
-                if (!status || !live) {
-                  return (
-                    <div
-                      key={cam.id}
-                      className="rounded-2xl border border-line bg-surface p-4 shadow-sm"
-                    >
-                      <div className="text-xs font-bold text-ink">{cam.name}</div>
-                      <div className="mt-2 text-xl font-black text-muted">—</div>
-                      <div className="mt-1 text-[11px] font-bold text-zinc-400">Kamera offline</div>
-                    </div>
-                  );
-                }
-
-                const isManned = live.state === "MANNED" || (live.clerkCount ?? 0) > 0;
-
-                return (
-                  <div
-                    key={cam.id}
-                    className={`rounded-2xl border p-4 shadow-sm transition ${
-                      isManned
-                        ? "border-emerald-200 bg-emerald-50/50"
-                        : "border-amber-200 bg-amber-50/50"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-black text-ink">{cam.name}</span>
-                      {isManned ? (
-                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-black text-emerald-800">
-                          Berpenjaga
-                        </span>
-                      ) : (
-                        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-black text-amber-800">
-                          Kasir Kosong
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="mt-3 flex items-center justify-between text-xs">
-                      <div>
-                        <span className="text-muted block text-[10px] uppercase font-bold">Staf</span>
-                        <span className="text-base font-black text-forest">{live.clerkCount ?? 0} Orang</span>
-                      </div>
-                      <div>
-                        <span className="text-muted block text-[10px] uppercase font-bold">Antrean</span>
-                        <span className="text-base font-black text-ink">{live.visitorCount ?? 0} Orang</span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </Card>
-        </div>
+        <AreaSection title="Sekarang" note={<LivePausedBadge />}>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            {cashierCameras.map((cam) => {
+              const status = liveStatus[cam.id];
+              const live = (status?.live as { state?: string; clerkCount?: number; visitorCount?: number }) ?? null;
+              const offline = !status || !live;
+              const isManned = !offline && (live.state === "MANNED" || (live.clerkCount ?? 0) > 0);
+              return (
+                <Link
+                  key={cam.id}
+                  href={`/live?cam=${encodeURIComponent(cam.id)}`}
+                  className={`flex flex-col gap-3 rounded-[14px] bg-surface p-4 transition-transform hover:-translate-y-0.5 ${
+                    offline ? "border border-[#cfc9b8]" : isManned ? "border border-line" : "border-2 border-[#e5483d]"
+                  }`}
+                >
+                  <span className="flex items-center justify-between gap-2">
+                    <span className="truncate text-[15px] font-extrabold text-ink">{cam.name}</span>
+                    {offline ? (
+                      <span className="rounded-full bg-off-bg px-2.5 py-0.5 text-[11px] font-extrabold text-[#4b5550]">Kamera offline</span>
+                    ) : isManned ? (
+                      <span className="rounded-full bg-good-bg px-2.5 py-0.5 text-[11px] font-extrabold text-good">Dijaga</span>
+                    ) : (
+                      <span className="rounded-full bg-crit-bg px-2.5 py-0.5 text-[11px] font-extrabold text-crit-ink">Kasir Kosong</span>
+                    )}
+                  </span>
+                  <span className="flex gap-6 text-sm">
+                    <span>
+                      <span className="text-muted">Staf</span>{" "}
+                      <span className="text-lg font-extrabold tabular-nums">{offline ? "—" : live.clerkCount ?? 0}</span>
+                    </span>
+                    <span>
+                      <span className="text-muted">Antre</span>{" "}
+                      <span className="text-lg font-extrabold tabular-nums">{offline ? "—" : live.visitorCount ?? 0}</span>
+                    </span>
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </AreaSection>
       )}
 
-      {/* Hourly Chart and Desk Breakdown */}
-      <div className="mb-6 grid items-start gap-6 lg:grid-cols-3">
-        <Card
-          title="Durasi Kasir Kosong per Jam"
-          subtitle="Distribusi waktu ketiadaan staf kasir per jam operasional (Menit)"
-          className="lg:col-span-2"
-        >
-          <HourlyBars
-            data={hourlyData}
-            unit=" m"
-            series={[{ key: "unattendedMin", label: "Menit Kosong" }]}
+      <AreaSection title={isToday ? "Hari ini" : `Tanggal ${date}`}>
+        <Tiles>
+          <Tile
+            label="Total loket kosong"
+            icon={<UserX aria-hidden />}
+            value={unattendedDayQuery.isLoading ? "…" : `${fmtNum(totals.unattendedMinutes)} mnt`}
+            sub="semua loket"
           />
-        </Card>
+          <Tile label="Kosong terlama" icon={<Clock aria-hidden />} value={fmtDur(totals.maxAbsentSec)} sub="satu kali loket tanpa petugas" />
+          <Tile label="Tunggu terlama" icon={<Users aria-hidden />} value={fmtDur(totals.maxWaitSec)} sub="pengunjung di depan loket" />
+          <Tile
+            label="Loket dipantau"
+            icon={<Store aria-hidden />}
+            value={camerasQuery.isLoading ? "…" : fmtNum(cashierCameras.length)}
+            sub="kamera kehadiran kasir"
+          />
+        </Tiles>
 
+        <div className="grid items-start gap-6 lg:grid-cols-3">
+          <Card title="Menit loket kosong per jam" className="lg:col-span-2">
+            <HourlyBars data={hourlyData} unit=" m" series={[{ key: "unattendedMin", label: "Menit kosong" }]} />
+          </Card>
+
+          <Card title="Per loket" subtitle="Menit kosong dan jumlah peringatan">
+            <Table
+              head={["Loket", "Kosong", "Peringatan"]}
+              align={["left", "right", "right"]}
+              rows={deskSummary.map((d) => [
+                <span key="c" className="font-bold text-forest">
+                  {d.cameraName}
+                </span>,
+                `${fmtNum(d.unattendedMinutes)} mnt`,
+                fmtNum(d.unattendedAlerts + d.waitingAlerts),
+              ])}
+              empty={unattendedDayQuery.isLoading ? "Memuat loket…" : deskSummary.length === 0 ? "Tidak ada data loket." : undefined}
+            />
+          </Card>
+        </div>
+      </AreaSection>
+
+      <AreaSection title="Riwayat">
         <Card
-          title="Rekapitulasi per Loket Kasir"
-          subtitle="Total menit kosong & jumlah peringatan antre"
+          title="Peringatan loket"
+          subtitle={listQuery.data?.nextCursor ? `Menampilkan ${LIST_LIMIT} peringatan terbaru` : "Diurutkan dari yang terbaru"}
+          actions={
+            <Link href="/events" className="text-[13px] font-bold text-forest hover:underline">
+              Semua →
+            </Link>
+          }
         >
           <Table
-            head={["Loket", "Kosong", "Peringatan"]}
-            align={["left", "right", "right"]}
-            rows={deskSummary.map((d) => [
-              <span key="c" className="font-bold text-xs text-forest">
-                {d.cameraName}
+            head={["Waktu", "Peringatan", "Loket", "Durasi", "Severity", "Bukti"]}
+            rows={(listQuery.data?.rows ?? []).map((e) => [
+              fmtLocalTime(e.time),
+              <span key="t" className="font-bold text-ink">
+                {e.type === "cashier_unattended" ? "Kasir kosong" : "Pengunjung menunggu"}
               </span>,
-              `${d.unattendedMinutes} m`,
-              fmtNum(d.unattendedAlerts + d.waitingAlerts),
+              e.cameraName ?? e.cameraId ?? "—",
+              <span key="d" className="font-mono text-xs font-semibold text-ink">
+                {fmtDur(Number(e.type === "cashier_unattended" ? e.data.absentSec ?? 0 : e.data.waitingSec ?? 0))}
+              </span>,
+              <SeverityBadge key="sev" severity={e.severity} />,
+              <EvidenceButton
+                key="ev"
+                snapshotUrl={e.snapshotUrl}
+                clipUrl={e.clipUrl}
+                title={`${e.cameraName ?? e.cameraId ?? "Loket"} · ${date} ${fmtLocalTime(e.time)} WIB`}
+              />,
             ])}
             empty={
-              unattendedDayQuery.isLoading
-                ? "Memuat loket..."
-                : deskSummary.length === 0
-                ? "Tidak ada data loket."
-                : undefined
+              listQuery.isLoading
+                ? "Memuat peringatan…"
+                : (listQuery.data?.rows ?? []).length === 0
+                  ? `Tidak ada peringatan loket pada ${date}.`
+                  : undefined
             }
           />
         </Card>
-      </div>
-
-      {/* Incident List */}
-      <Card
-        title="Log Peringatan Insiden Kasir & Antrean"
-        subtitle={
-          listQuery.data?.nextCursor
-            ? `Menampilkan ${LIST_LIMIT} peringatan terbaru`
-            : "Diurutkan dari yang terbaru"
-        }
-      >
-        <Table
-          head={["Waktu", "Jenis Peringatan", "Loket Kasir", "Durasi", "Tingkat (Severity)", "Bukti"]}
-          rows={(listQuery.data?.rows ?? []).map((e) => [
-            fmtLocalTime(e.time),
-            <span key="t" className="font-extrabold text-forest">
-              {e.type === "cashier_unattended" ? "Kasir Tak Berpenjaga" : "Pengunjung Menunggu Lama"}
-            </span>,
-            e.cameraName ?? e.cameraId ?? "—",
-            <span key="d" className="font-mono text-xs font-bold text-ink">
-              {e.type === "cashier_unattended"
-                ? `${e.data.absentSec ?? 0}s`
-                : `${e.data.waitingSec ?? 0}s`}
-            </span>,
-            <SeverityBadge key="sev" severity={e.severity} />,
-            <EvidenceButton
-              key="ev"
-              snapshotUrl={e.snapshotUrl}
-              clipUrl={e.clipUrl}
-              title={`${e.cameraName ?? e.cameraId ?? "Loket"} · ${date} ${fmtLocalTime(e.time)} WIB`}
-            />,
-          ])}
-          empty={
-            listQuery.isLoading
-              ? "Memuat insiden..."
-              : (listQuery.data?.rows ?? []).length === 0
-              ? `Tidak ada peringatan insiden kasir pada ${date}.`
-              : undefined
-          }
-        />
-      </Card>
+      </AreaSection>
     </>
   );
 }
