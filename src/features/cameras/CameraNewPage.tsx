@@ -115,15 +115,14 @@ export function CameraNewPage() {
       </div>
 
       <PageHeader
-        tag="Superadmin Only"
-        title="Tambah Kamera CCTV Baru"
-        subtitle="Registrasikan stream video RTSP sensor AI dan asosiasikan dengan use-case analitik"
+        title="Tambah kamera"
+        subtitle="Daftarkan sumber stream dan pilih use case. Zona diatur setelah kamera dibuat."
       />
 
       {generalError && (
-        <div role="alert" className="mb-6 rounded-2xl border border-red-300 bg-red-50 p-4 text-xs font-bold text-red-800">
+        <div role="alert" className="mb-6 rounded-2xl border border-crit/25 bg-crit-bg p-4 text-xs font-bold text-crit-ink">
           <div className="flex items-center gap-2">
-            <AlertCircle className="size-4 text-red-600" />
+            <AlertCircle className="size-4 text-crit" />
             <span>{generalError}</span>
           </div>
         </div>
@@ -134,7 +133,7 @@ export function CameraNewPage() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="cam-id" className="block text-xs font-extrabold uppercase tracking-wider text-ink-2">
-                ID Kamera <span className="text-red-500">*</span>
+                ID Kamera <span className="text-crit">*</span>
               </label>
               <p className="mb-1.5 text-[11px] text-muted">Huruf kecil, angka, garis bawah (misal: gate_car_1)</p>
               <input
@@ -148,13 +147,13 @@ export function CameraNewPage() {
                 className="w-full rounded-xl border border-line bg-surface px-3 py-2 text-xs font-bold text-ink focus:border-lime focus:outline-none focus:ring-2 focus:ring-lime/20"
               />
               {fieldErrors["id"] && (
-                <p className="mt-1 text-[11px] font-bold text-red-600">{fieldErrors["id"]}</p>
+                <p className="mt-1 text-[11px] font-bold text-crit">{fieldErrors["id"]}</p>
               )}
             </div>
 
             <div>
               <label htmlFor="cam-name" className="block text-xs font-extrabold uppercase tracking-wider text-ink-2">
-                Nama Kamera <span className="text-red-500">*</span>
+                Nama Kamera <span className="text-crit">*</span>
               </label>
               <p className="mb-1.5 text-[11px] text-muted">Label deskriptif (misal: Gerbang Masuk Mobil 1)</p>
               <input
@@ -168,7 +167,7 @@ export function CameraNewPage() {
                 className="w-full rounded-xl border border-line bg-surface px-3 py-2 text-xs font-bold text-ink focus:border-lime focus:outline-none focus:ring-2 focus:ring-lime/20"
               />
               {fieldErrors["name"] && (
-                <p className="mt-1 text-[11px] font-bold text-red-600">{fieldErrors["name"]}</p>
+                <p className="mt-1 text-[11px] font-bold text-crit">{fieldErrors["name"]}</p>
               )}
             </div>
 
@@ -187,13 +186,13 @@ export function CameraNewPage() {
                 className="w-full rounded-xl border border-line bg-surface px-3 py-2 text-xs font-bold text-ink focus:border-lime focus:outline-none focus:ring-2 focus:ring-lime/20"
               />
               {fieldErrors["area"] && (
-                <p className="mt-1 text-[11px] font-bold text-red-600">{fieldErrors["area"]}</p>
+                <p className="mt-1 text-[11px] font-bold text-crit">{fieldErrors["area"]}</p>
               )}
             </div>
 
             <div>
               <label htmlFor="cam-usecase" className="block text-xs font-extrabold uppercase tracking-wider text-ink-2">
-                Use-Case Analitik AI <span className="text-red-500">*</span>
+                Use-Case Analitik AI <span className="text-crit">*</span>
               </label>
               <p className="mb-1.5 text-[11px] text-muted">Model logika analitik dan penghitungan visual</p>
               <select
@@ -209,7 +208,7 @@ export function CameraNewPage() {
                 ))}
               </select>
               {fieldErrors["useCase"] && (
-                <p className="mt-1 text-[11px] font-bold text-red-600">{fieldErrors["useCase"]}</p>
+                <p className="mt-1 text-[11px] font-bold text-crit">{fieldErrors["useCase"]}</p>
               )}
             </div>
           </div>
@@ -248,13 +247,13 @@ export function CameraNewPage() {
                 className="mt-1.5 w-full rounded-xl border border-line bg-surface px-3 py-2 text-xs font-bold text-ink focus:border-lime focus:outline-none focus:ring-2 focus:ring-lime/20"
               />
               {fieldErrors["engineGroup"] && (
-                <p className="mt-1 text-[11px] font-bold text-red-600">{fieldErrors["engineGroup"]}</p>
+                <p className="mt-1 text-[11px] font-bold text-crit">{fieldErrors["engineGroup"]}</p>
               )}
             </div>
 
             <div className="sm:col-span-2">
               <label htmlFor="cam-mainstream" className="block text-xs font-extrabold uppercase tracking-wider text-ink-2">
-                Main Stream URL <span className="text-red-500">*</span>
+                Main Stream URL <span className="text-crit">*</span>
               </label>
               <p className="mb-1 text-[11px] text-muted">Contoh: rtsp://admin:password@192.168.1.100:554/stream1</p>
               <input
@@ -267,7 +266,7 @@ export function CameraNewPage() {
                 className="w-full rounded-xl border border-line bg-surface px-3 py-2 text-xs font-mono font-bold text-ink focus:border-lime focus:outline-none focus:ring-2 focus:ring-lime/20"
               />
               {fieldErrors["mainStreamUrl"] && (
-                <p className="mt-1 text-[11px] font-bold text-red-600">{fieldErrors["mainStreamUrl"]}</p>
+                <p className="mt-1 text-[11px] font-bold text-crit">{fieldErrors["mainStreamUrl"]}</p>
               )}
             </div>
 
@@ -285,7 +284,7 @@ export function CameraNewPage() {
                 className="w-full rounded-xl border border-line bg-surface px-3 py-2 text-xs font-mono font-bold text-ink focus:border-lime focus:outline-none focus:ring-2 focus:ring-lime/20"
               />
               {fieldErrors["subStreamUrl"] && (
-                <p className="mt-1 text-[11px] font-bold text-red-600">{fieldErrors["subStreamUrl"]}</p>
+                <p className="mt-1 text-[11px] font-bold text-crit">{fieldErrors["subStreamUrl"]}</p>
               )}
             </div>
 
@@ -303,7 +302,7 @@ export function CameraNewPage() {
                 className="mt-1.5 w-full rounded-xl border border-line bg-surface px-3 py-2 text-xs font-bold text-ink focus:border-lime focus:outline-none focus:ring-2 focus:ring-lime/20"
               />
               {fieldErrors["targetFps"] && (
-                <p className="mt-1 text-[11px] font-bold text-red-600">{fieldErrors["targetFps"]}</p>
+                <p className="mt-1 text-[11px] font-bold text-crit">{fieldErrors["targetFps"]}</p>
               )}
             </div>
 
@@ -418,7 +417,7 @@ export function CameraNewPage() {
           <button
             type="submit"
             disabled={createMutation.isPending}
-            className="inline-flex items-center gap-2 rounded-xl bg-forest px-6 py-2.5 text-xs font-black text-white shadow-md hover:bg-forest-dark hover:shadow-lg disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-xl bg-forest px-6 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-forest-dark hover:shadow-lg disabled:opacity-50"
           >
             <Save className="size-4" />
             {createMutation.isPending ? "Menyimpan Kamera..." : "Simpan & Lanjutkan ke Zona"}

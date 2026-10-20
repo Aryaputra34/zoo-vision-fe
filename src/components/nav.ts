@@ -4,6 +4,7 @@ export {
   NAV_SECTIONS,
   visibleNav,
   roleAtLeast,
+  isNavActive,
   type Role,
   type NavItem,
   type NavSection,

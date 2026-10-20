@@ -1,18 +1,15 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import Link from "next/link";
 import {
+  ArrowRight,
   Car,
   Ticket,
   Store,
   Utensils,
-  AlertTriangle,
-  Clock,
-  Users,
-  ShieldAlert,
-  ArrowUpRight,
-  TrendingUp,
+  Video,
+  WifiOff,
 } from "lucide-react";
 import {
   useReportsEventStats,
@@ -21,6 +18,10 @@ import {
 } from "@/api/generated/reports/reports";
 import { useEventsList } from "@/api/generated/events/events";
 import { useCamerasList } from "@/api/generated/cameras/cameras";
+import type { EventRowDto } from "@/api/generated/zooVisionAPI.schemas";
+import { useMe } from "@/auth/AuthProvider";
+import { roleAtLeast, type Role } from "@/auth/roles";
+import { ManagementPanel } from "./ManagementPanel";
 import { useStatus } from "@/live";
 import {
   PageHeader,
@@ -30,19 +31,26 @@ import {
   Tiles,
   Table,
   SeverityBadge,
-  Mono,
 } from "@/components/ui";
 import { CsvLink } from "@/components/CsvLink";
 import { EvidenceButton } from "@/components/EvidenceButton";
-import { fmtLocalTime, localDayRange, localHour } from "@/lib/time";
+import { fmtLocalTime, localDayRange } from "@/lib/time";
 import { useToday } from "@/lib/useToday";
 import { fmtNum } from "@/lib/util";
+
+const ATTENTION_LIMIT = 5;
+const typeLabel = (t: string) => t.replace(/_/g, " ");
+const isCrit = (s: string) => s === "critical" || s === "CRITICAL";
+const isWarn = (s: string) => s === "warning" || s === "WARNING";
 
 export function OverviewPage({ date: picked }: { date?: string }) {
   const today = useToday();
   const date = picked ?? today;
   const isToday = date === today;
   const day = localDayRange(date);
+  // Links to a sibling page keep the chosen date, except for today (the default of every page).
+  const withDate = (href: string) => (isToday ? href : `${href}?date=${date}`);
+  const { me } = useMe();
 
   // Crossings
   const crossingsQuery = useReportsEventStats({
@@ -173,6 +181,24 @@ export function OverviewPage({ date: picked }: { date?: string }) {
 
   const recentEvents = recentEventsQuery.data?.rows ?? [];
 
+  // "Butuh perhatian": warning/critical events of the day (critical first), then the cameras that
+  // stopped reporting (today only). The one place where the operator looks first.
+  const attention = useMemo(() => {
+    const events = recentEvents
+      .filter((e) => isCrit(e.severity) || isWarn(e.severity))
+      .sort((a, b) => Number(isCrit(b.severity)) - Number(isCrit(a.severity)) || b.time.localeCompare(a.time))
+      .slice(0, ATTENTION_LIMIT);
+    const offline = isToday
+      ? (camerasQuery.data ?? []).filter((c) => c.enabled && liveStatus[c.id] === null)
+      : [];
+    return { events, offline };
+  }, [recentEvents, camerasQuery.data, liveStatus, isToday]);
+
+  const attentionCount = attention.events.length + attention.offline.length;
+  const attentionCards = attention.events.slice(0, 3);
+  const attentionRows = attention.events.slice(3);
+  const loadingAttention = recentEventsQuery.isLoading;
+
   return (
     <>
       <PageHeader
@@ -190,6 +216,86 @@ export function OverviewPage({ date: picked }: { date?: string }) {
         totalEvents={metrics.totalEvents}
         todayVehicles={metrics.vehicleEntries}
       />
+
+      {/* MANAGER and up: the configuration state of the cameras (only rendered for those roles). */}
+      {me && roleAtLeast(me.role as Role, "MANAGER") && (
+        <ManagementPanel cameras={camerasQuery.data ?? []} liveStatus={liveStatus} day={day} isToday={isToday} />
+      )}
+
+      {/* Butuh perhatian: the one place for problems, most urgent first */}
+      <section
+        id="perhatian"
+        aria-label="Butuh perhatian"
+        className="mb-5 scroll-mt-20 overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_1px_2px_rgba(19,36,26,0.04)]"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-2 px-5 py-4 sm:px-[18px]">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h2 className="text-[17px] font-extrabold">Butuh perhatian</h2>
+            {attentionCount > 0 && (
+              <span className="rounded-full bg-crit px-2.5 py-0.5 text-xs font-extrabold text-white">{attentionCount}</span>
+            )}
+            <span className="text-xs font-semibold text-muted">diurutkan dari yang paling mendesak</span>
+          </div>
+          <Link href={withDate("/events")} className="inline-flex items-center gap-1 text-[13px] font-bold text-forest hover:underline">
+            Semua kejadian <ArrowRight aria-hidden className="size-3.5" />
+          </Link>
+        </div>
+
+        {loadingAttention ? (
+          <p className="px-5 pb-6 text-sm text-muted sm:px-[18px]">Memuat kejadian…</p>
+        ) : attentionCount === 0 ? (
+          <p className="px-5 pb-6 text-sm text-muted sm:px-[18px]">
+            Tidak ada kejadian warning atau kritis{isToday ? " dan semua kamera melapor" : ` pada ${date}`}
+          </p>
+        ) : (
+          <>
+            {attentionCards.length > 0 && (
+              <div className="grid grid-cols-1 gap-3.5 px-5 pb-4 sm:grid-cols-2 sm:px-[18px] xl:grid-cols-3">
+                {attentionCards.map((e) => (
+                  <AttentionCard key={e.id} event={e} date={date} />
+                ))}
+              </div>
+            )}
+            {attention.offline.map((c) => (
+              <AttentionRow
+                key={`off-${c.id}`}
+                stripe="bg-off"
+                badge={
+                  <span className="inline-flex items-center gap-1 rounded-full bg-off-bg px-2 py-0.5 text-[11px] font-extrabold text-[#4b5550]">
+                    <WifiOff aria-hidden className="size-3" /> Offline
+                  </span>
+                }
+                title="Kamera tidak melapor"
+                meta={c.name}
+                action={
+                  <Link
+                    href={`/live?cam=${encodeURIComponent(c.id)}`}
+                    className="inline-flex h-[34px] items-center rounded-[9px] border border-[#cfc9b8] px-3 text-[13px] font-bold text-ink hover:bg-surface-2"
+                  >
+                    Detail kamera
+                  </Link>
+                }
+              />
+            ))}
+            {attentionRows.map((e) => (
+              <AttentionRow
+                key={e.id}
+                stripe={isCrit(e.severity) ? "bg-crit" : "bg-warn"}
+                badge={<SeverityBadge severity={e.severity} />}
+                title={typeLabel(e.type)}
+                meta={`${e.cameraName ?? e.cameraId ?? "—"} · ${fmtLocalTime(e.time)}`}
+                action={
+                  <EvidenceButton
+                    snapshotUrl={e.snapshotUrl}
+                    clipUrl={e.clipUrl}
+                    title={`${e.cameraName ?? e.cameraId ?? "CCTV"} · ${date} ${fmtLocalTime(e.time)} WIB`}
+                  />
+                }
+              />
+            ))}
+          </>
+        )}
+      </section>
 
       {/* Primary KPI Tiles */}
       <Tiles>
@@ -357,5 +463,73 @@ export function OverviewPage({ date: picked }: { date?: string }) {
         />
       </Card>
     </>
+  );
+}
+
+function AttentionCard({ event: e, date }: { event: EventRowDto; date: string }) {
+  const crit = isCrit(e.severity);
+  const title = `${e.cameraName ?? e.cameraId ?? "CCTV"} · ${date} ${fmtLocalTime(e.time)} WIB`;
+  return (
+    <article
+      className={`flex flex-col overflow-hidden rounded-[14px] border bg-surface transition-shadow hover:shadow-[0_14px_30px_rgba(12,53,32,0.16)] ${
+        crit ? "border-[#f3c7c1]" : "border-line"
+      }`}
+    >
+      <div className="relative aspect-video bg-[#1b2822] 2xl:aspect-[21/9]">
+        {e.snapshotUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element -- a session-protected JPEG from the API
+          <img src={e.snapshotUrl} alt={`Snapshot ${title}`} loading="lazy" className="size-full object-cover" />
+        ) : (
+          <span className="grid size-full place-items-center text-xs font-semibold text-white/60">Tanpa snapshot</span>
+        )}
+        <span className="absolute right-2 bottom-1.5 rounded bg-black/55 px-1.5 py-0.5 font-mono text-[11px] text-white">
+          {fmtLocalTime(e.time)}
+        </span>
+      </div>
+      <div className="flex flex-1 flex-col gap-2 p-3.5">
+        <span className="flex flex-wrap items-center gap-2">
+          <SeverityBadge severity={e.severity} />
+          <span className="text-xs font-semibold text-muted">{e.cameraName ?? e.cameraId ?? "—"}</span>
+        </span>
+        <span className="text-[15px] leading-snug font-extrabold capitalize">{typeLabel(e.type)}</span>
+        <div className="mt-auto flex items-center gap-2 pt-1">
+          {e.cameraId && (
+            <Link
+              href={`/live?cam=${encodeURIComponent(e.cameraId)}`}
+              className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-forest px-3 text-[13px] font-bold text-white hover:bg-accent-hover"
+            >
+              <Video aria-hidden className="size-3.5" /> Lihat live
+            </Link>
+          )}
+          <EvidenceButton snapshotUrl={e.snapshotUrl} clipUrl={e.clipUrl} title={title} />
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function AttentionRow({
+  stripe,
+  badge,
+  title,
+  meta,
+  action,
+}: {
+  stripe: string;
+  badge: ReactNode;
+  title: string;
+  meta: string;
+  action: ReactNode;
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-3.5 border-t border-line-soft py-3 pr-5 transition-colors hover:bg-[#faf8f2] sm:pr-[18px]">
+      <span className={`w-1 self-stretch rounded-r ${stripe}`} />
+      <span className="shrink-0">{badge}</span>
+      <span className="flex min-w-[200px] flex-1 flex-wrap items-baseline gap-x-2.5 gap-y-1">
+        <span className="text-sm font-bold capitalize">{title}</span>
+        <span className="text-[13px] text-muted">{meta}</span>
+      </span>
+      {action}
+    </div>
   );
 }

@@ -5,21 +5,108 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Cpu,
-  LogOut,
-  Menu,
-  Moon,
-  Sun,
-  X,
-} from "lucide-react";
-import { NAV_SECTIONS, visibleNav, type Role } from "./nav";
+import { ChevronsLeft, ChevronsRight, KeyRound, LogOut, Menu, Moon, Sun, X } from "lucide-react";
+import { NAV_SECTIONS, visibleNav, isNavActive, type Role } from "./nav";
 import { useMe } from "@/auth/AuthProvider";
 import { useAuthLogout } from "@/api/generated/auth/auth";
+import { useStatus } from "@/live";
 import { BackendBanner } from "./BackendBanner";
 import { LivePausedBadge } from "./LivePausedBadge";
+
+const ROLE_CHIP: Record<string, string> = {
+  USER: "bg-lime/20 text-[#d9f0b8]",
+  MANAGER: "bg-warn-bg text-gold-ink",
+  SUPERADMIN: "bg-lime text-forest-dark",
+};
+
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase())
+    .join("") || "?";
+
+// Clock in the site time zone, rendered client-side only so server and client markup match.
+function useClockWib(): string | null {
+  const [now, setNow] = useState<string | null>(null);
+  useEffect(() => {
+    const fmt = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Jakarta",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    });
+    const tick = () => setNow(`${fmt.format(new Date())} WIB`);
+    tick();
+    const timer = setInterval(tick, 30_000);
+    return () => clearInterval(timer);
+  }, []);
+  return now;
+}
+
+// The one place that shows live connection, cameras reporting and the time (the top bar does not repeat it).
+function LiveStatusCard({ collapsed }: { collapsed: boolean }) {
+  const { cameras, paused } = useStatus();
+  const clock = useClockWib();
+  const all = Object.entries(cameras);
+  const online = all.filter(([, c]) => c !== null).length;
+  const waiting = all.length === 0 && !paused;
+
+  const dot = paused ? "bg-warn" : waiting ? "bg-white/40" : "bg-lime camera-pulse";
+  const label = paused ? "Data live terhenti" : waiting ? "Menghubungkan…" : "Live tersambung";
+  const labelCls = paused ? "text-[#f2c46e]" : "text-[#d9f0b8]";
+
+  if (collapsed) {
+    return (
+      <Link
+        href="/live"
+        title={`${label}${all.length ? ` · ${online}/${all.length} kamera melapor` : ""}`}
+        className="mx-auto grid size-11 place-items-center rounded-xl border border-white/10 bg-white/5"
+      >
+        <span className={`size-2.5 rounded-full ${dot}`} />
+      </Link>
+    );
+  }
+
+  return (
+    <Link
+      href="/live"
+      role="status"
+      className="mx-3 flex flex-col gap-2.5 rounded-2xl border border-white/10 bg-white/[0.06] p-3 text-white transition-colors hover:bg-white/[0.09]"
+    >
+      <span className="flex items-center justify-between gap-2">
+        <span className={`inline-flex items-center gap-2 text-xs font-bold ${labelCls}`}>
+          <span className={`size-2 rounded-full ${dot}`} />
+          {label}
+        </span>
+        <span className="font-mono text-[11px] font-semibold text-[#94bca0]" suppressHydrationWarning>
+          {clock ?? ""}
+        </span>
+      </span>
+      {all.length > 0 && (
+        <>
+          <span className="flex items-baseline justify-between">
+            <span className="text-xs font-semibold text-side-ink-2">Kamera melapor</span>
+            <span className="text-[15px] font-extrabold tabular-nums">
+              {online}
+              <span className="font-semibold text-[#94bca0]">/{all.length}</span>
+            </span>
+          </span>
+          <span aria-hidden className="flex h-1.5 gap-[3px]">
+            {all.map(([id, c]) => (
+              <span key={id} className={`flex-1 rounded-full ${c ? "bg-lime" : "bg-white/25"}`} />
+            ))}
+          </span>
+          <span className="flex gap-3 text-[11px] font-semibold text-side-ink-2">
+            <span>{online} online</span>
+            {all.length - online > 0 && <span className="text-[#a8b2ac]">{all.length - online} offline</span>}
+          </span>
+        </>
+      )}
+    </Link>
+  );
+}
 
 export function CommandCenterShell({
   children,
@@ -61,336 +148,285 @@ export function CommandCenterShell({
     router.replace("/login");
   };
 
+  // The login screen has its own full-page layout: no menu before signing in.
+  if (path === "/login") {
+    return <>{children}</>;
+  }
+
   const currentRole = (me?.role as Role) || "USER";
   const sections = visibleNav(NAV_SECTIONS, currentRole);
 
-  // Find active label for the breadcrumb in top bar
-  const allItems = sections.flatMap((s) => s.items);
-  const currentItem = allItems.find((item) =>
-    item.href === "/" ? path === "/" : path.startsWith(item.href)
-  ) ?? allItems[0] ?? { label: "Command Center" };
+  const crumb = (() => {
+    // The account page is reached from the user card, not the menu.
+    if (path.startsWith("/account")) return { section: "Akun", label: "Ganti kata sandi" };
+    for (const s of sections) {
+      const item = s.items.find((i) => isNavActive(i, path));
+      if (item) return { section: s.title, label: item.label };
+    }
+    return { section: sections[0]?.title ?? "", label: sections[0]?.items[0]?.label ?? "" };
+  })();
 
   return (
-    <div className="flex min-h-screen bg-bg text-ink selection:bg-lime selection:text-forest transition-colors duration-200">
-      {/* Mobile Drawer Backdrop */}
+    <div className="flex min-h-screen bg-bg text-ink selection:bg-lime selection:text-forest">
+      {/* Mobile drawer backdrop */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden transition-opacity"
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
           onClick={() => setMobileOpen(false)}
           aria-hidden
         />
       )}
 
-      {/* ─────────────────────────────────────────────────────────────
-          SIDEBAR: Desktop (collapsible) & Mobile Drawer
-      ─────────────────────────────────────────────────────────────── */}
+      {/* ── Sidebar: desktop (collapsible) and mobile drawer ── */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex flex-col border-r border-white/10 bg-forest-dark text-white transition-all duration-300 ease-in-out lg:static ${
-          collapsed ? "lg:w-20" : "lg:w-72"
-        } ${mobileOpen ? "translate-x-0 w-72" : "-translate-x-full lg:translate-x-0"}`}
+        className={`fixed inset-y-0 left-0 z-50 flex flex-col overflow-hidden bg-gradient-to-b from-[#0e3b23] via-side to-[#0a2c1a] text-white transition-[width,transform] duration-300 ease-in-out lg:sticky lg:top-0 lg:h-screen ${
+          collapsed ? "lg:w-[84px]" : "lg:w-[264px]"
+        } ${mobileOpen ? "w-[264px] translate-x-0" : "w-[264px] -translate-x-full lg:translate-x-0"}`}
       >
-        {/* Brand / Logo Header */}
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-white/10 px-4">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -left-16 -top-20 size-60 rounded-full bg-[radial-gradient(circle,rgba(140,198,63,0.2),transparent_70%)]"
+        />
+
+        {/* Brand */}
+        <div className={`relative flex shrink-0 items-center gap-2.5 pt-[18px] pb-3.5 ${collapsed ? "justify-center px-3" : "px-4"}`}>
           <Link
             href="/"
-            className="flex items-center gap-3 overflow-hidden"
-            title="Taman Safari Indonesia · AI Command Center"
+            className="flex min-w-0 flex-1 items-center gap-2.5"
+            title="Elangvision · Taman Safari Bogor"
+            onClick={() => setMobileOpen(false)}
           >
-            <div className="relative grid size-10 shrink-0 place-items-center rounded-2xl bg-white p-1.5 shadow-md shadow-black/20">
-              <Image
-                src="/logo_safari.svg"
-                alt="Logo Taman Safari"
-                width={32}
-                height={32}
-                className="size-8 object-contain"
-                priority
-              />
-            </div>
+            {/* The logo is white artwork: it sits directly on the canopy green. */}
+            <Image src="/logo_safari.svg" alt="Logo Taman Safari" width={38} height={38} className="size-[38px] shrink-0 object-contain" priority />
             {!collapsed && (
-              <div className="flex flex-col min-w-0">
-                <span className="text-sm font-black tracking-tight text-white truncate">
-                  TAMAN SAFARI
+              <span className="flex min-w-0 flex-col">
+                <span className="text-base leading-tight tracking-tight">
+                  <span className="font-extrabold">Elang</span>
+                  <span className="font-medium">vision</span>
                 </span>
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-lime truncate">
-                  AI Command Center
-                </span>
-              </div>
+                <span className="truncate text-[11px] font-semibold text-[#94bca0]">Taman Safari Bogor</span>
+              </span>
             )}
           </Link>
-
-          {/* Close drawer on mobile */}
           <button
             type="button"
             onClick={() => setMobileOpen(false)}
-            className="flex size-9 items-center justify-center rounded-xl text-white/70 hover:bg-white/10 hover:text-white lg:hidden"
-            aria-label="Tutup Menu"
+            className="grid size-8 place-items-center rounded-lg border border-white/15 text-side-ink-2 hover:bg-white/10 lg:hidden"
+            aria-label="Tutup menu"
           >
-            <X className="size-4.5" />
+            <X className="size-4" />
           </button>
+          {!collapsed && (
+            <button
+              type="button"
+              onClick={() => setCollapsed(true)}
+              className="hidden size-8 place-items-center rounded-lg border border-white/15 text-side-ink-2 hover:bg-white/10 hover:text-white lg:grid"
+              aria-label="Ciutkan sidebar"
+              title="Ciutkan sidebar"
+            >
+              <ChevronsLeft className="size-4" />
+            </button>
+          )}
         </div>
 
-        {/* Live Status Pill under header (visible when expanded) */}
-        {!collapsed && (
-          <div className="border-b border-white/10 bg-forest/30 px-4 py-2">
-            <div className="flex items-center justify-between text-[11px] font-extrabold">
-              <span className="flex items-center gap-1.5 text-lime">
-                <span className="size-2 rounded-full bg-lime camera-pulse" />
-                LIVE TELEMETRY
-              </span>
-              <span className="text-white/60 font-semibold">Cisarua Bogor</span>
-            </div>
-          </div>
-        )}
+        <LiveStatusCard collapsed={collapsed} />
 
-        {/* Nav Sections */}
+        {/* Nav sections */}
         <nav
-          aria-label="Pusat Kendali"
-          className="flex-1 overflow-y-auto px-3 py-4 space-y-6 [scrollbar-width:thin]"
+          aria-label="Navigasi utama"
+          className={`relative mt-4 flex-1 space-y-4 overflow-y-auto pb-4 [scrollbar-width:thin] ${collapsed ? "px-3" : "px-3"}`}
         >
           {sections.map((sec) => (
-            <div key={sec.title}>
+            <div key={sec.title} className="space-y-0.5">
               {!collapsed && (
-                <div className="mb-2 px-3 text-[10px] font-black uppercase tracking-widest text-lime/70">
+                <div className="flex items-center gap-2 px-2.5 pb-1.5 text-[10px] font-extrabold uppercase tracking-[0.1em] text-[#7fa88c]">
                   {sec.title}
+                  <span className="h-px flex-1 bg-white/10" />
                 </div>
               )}
-              <div className="space-y-1">
-                {sec.items.map(({ href, label, sub, Icon, external }) => {
-                  const active = href === "/" ? path === "/" : path.startsWith(href);
-                  const className = `group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-xs font-bold transition-all ${
-                    active
-                      ? "bg-lime text-forest font-black shadow-md shadow-lime/20"
-                      : "text-white/80 hover:bg-white/10 hover:text-white"
-                  }`;
-
-                  const content = (
-                    <>
-                      <Icon
-                        className={`size-4.5 shrink-0 transition-transform group-hover:scale-110 ${
-                          active ? "text-forest" : "text-lime"
-                        }`}
+              {sec.items.map((item) => {
+                const { href, label, sub, Icon, external } = item;
+                const active = isNavActive(item, path);
+                const className = `group relative flex items-center gap-3 rounded-xl text-sm transition-colors ${
+                  collapsed ? "justify-center px-0 py-2" : "min-h-10 px-3 py-1.5"
+                } ${
+                  active
+                    ? "bg-gradient-to-r from-lime/25 to-lime/[0.06] font-bold text-white"
+                    : "font-medium text-[#c9ddcf] hover:bg-white/[0.07] hover:text-white"
+                }`;
+                const content = (
+                  <>
+                    {active && (
+                      <span
+                        aria-hidden
+                        className="absolute top-2 bottom-2 left-0 w-[3px] rounded-r bg-lime shadow-[0_0_10px_rgba(140,198,63,0.8)]"
                       />
-                      {!collapsed && (
-                        <div className="flex flex-1 items-center justify-between min-w-0">
-                          <div className="truncate">
-                            <div>{label}</div>
-                            {sub && (
-                              <div
-                                className={`text-[10px] font-semibold truncate ${
-                                  active ? "text-forest/75" : "text-white/50"
-                                }`}
-                              >
-                                {sub}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </>
-                  );
-
-                  if (external) {
-                    return (
-                      <a
-                        key={href}
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title={collapsed ? `${label} (${sub})` : undefined}
-                        className={className}
-                      >
-                        {content}
-                      </a>
-                    );
-                  }
-
-                  return (
-                    <Link
-                      key={href}
-                      href={href}
-                      onClick={() => setMobileOpen(false)}
-                      title={collapsed ? `${label} (${sub})` : undefined}
-                      className={className}
+                    )}
+                    <span
+                      className={`grid size-7 shrink-0 place-items-center rounded-lg ${
+                        active ? "bg-lime/30 text-white" : "bg-white/5 text-[#c9ddcf] group-hover:text-white"
+                      }`}
                     >
+                      <Icon aria-hidden className="size-4" />
+                    </span>
+                    {!collapsed && <span className="min-w-0 flex-1 truncate">{label}</span>}
+                  </>
+                );
+                const title = collapsed ? `${label}${sub ? ` · ${sub}` : ""}` : sub;
+                if (external) {
+                  return (
+                    <a key={href} href={href} target="_blank" rel="noopener noreferrer" title={title} className={className}>
                       {content}
-                    </Link>
+                    </a>
                   );
-                })}
-              </div>
+                }
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    aria-current={active ? "page" : undefined}
+                    onClick={() => setMobileOpen(false)}
+                    title={title}
+                    className={className}
+                  >
+                    {content}
+                  </Link>
+                );
+              })}
             </div>
           ))}
         </nav>
 
-        {/* Edge Infrastructure Status Card */}
-        {!collapsed ? (
-          <div className="m-3 rounded-2xl border border-white/10 bg-white/5 p-3 text-xs backdrop-blur-sm">
-            <div className="flex items-center justify-between text-[10px] font-extrabold text-lime uppercase tracking-wider">
-              <span>Sensor Edge Core</span>
-              <span className="flex items-center gap-1 text-emerald-400">
-                <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Online
-              </span>
-            </div>
-            <div className="mt-2 space-y-1 text-[11px] text-white/70">
-              <div className="flex justify-between">
-                <span>AI Vision:</span>
-                <span className="font-mono text-white/90">YOLOv8 (:8000)</span>
-              </div>
-              <div className="flex justify-between">
-                <span>MediaMTX:</span>
-                <span className="font-mono text-white/90">MP4 Clip (:9996)</span>
-              </div>
-              <div className="flex justify-between">
-                <span>API Session:</span>
-                <span className="font-mono text-white/90">{me ? `${me.name} (${currentRole})` : "Session Ready"}</span>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="my-3 flex justify-center">
-            <div
-              className="flex size-9 items-center justify-center rounded-xl bg-white/5 text-lime"
-              title="Edge AI Connected"
-            >
-              <Cpu className="size-4" />
-            </div>
-          </div>
-        )}
-
-        {/* Collapse Toggle on Desktop */}
-        <div className="hidden border-t border-white/10 p-3 lg:block">
-          <button
-            type="button"
-            onClick={() => setCollapsed(!collapsed)}
-            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-2 text-xs font-extrabold text-white/70 hover:bg-white/10 hover:text-white transition-colors"
-            title={collapsed ? "Perluas Sidebar" : "Ciutkan Sidebar"}
-          >
-            {collapsed ? (
-              <ChevronRight className="size-4" />
-            ) : (
-              <>
-                <ChevronLeft className="size-4" />
-                <span>Ciutkan Sidebar</span>
-              </>
-            )}
-          </button>
-        </div>
-      </aside>
-
-      {/* ─────────────────────────────────────────────────────────────
-          MAIN CONTENT AREA with Top Telemetry Header
-      ─────────────────────────────────────────────────────────────── */}
-      <div className="flex flex-1 flex-col min-w-0">
-        {/* Compact Top Telemetry Header */}
-        <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between border-b border-line bg-surface/90 px-4 sm:px-6 backdrop-blur-md transition-colors">
-          {/* Left: Mobile Toggle & Breadcrumb / Live Status */}
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setMobileOpen(true)}
-              className="flex size-9 items-center justify-center rounded-xl border border-line bg-surface-2 text-forest lg:hidden"
-              aria-label="Buka Menu"
-            >
-              <Menu className="size-4.5" />
-            </button>
-
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-black uppercase tracking-wider text-muted hidden sm:inline">
-                Pusat Kendali
-              </span>
-              <span className="text-muted/40 hidden sm:inline">/</span>
-              <span className="text-sm font-black text-forest">
-                {currentItem.label}
-              </span>
-            </div>
-
-            {path !== "/login" && <LivePausedBadge />}
-          </div>
-
-          {/* Right: Controls (Sync, Theme, User, Logout) */}
-          <div className="flex items-center gap-2 sm:gap-2.5">
-
-            {/* Theme Toggle Button */}
-            <div className="flex items-center rounded-full border border-line bg-surface-2 p-0.5 text-[11px] font-bold">
+        {/* Bottom: theme toggle + user card with sign-out */}
+        <div className={`relative shrink-0 p-3 ${collapsed ? "flex flex-col items-center gap-2" : ""}`}>
+          {/* Theme toggle (preserved from HEAD) */}
+          {!collapsed && (
+            <div className="mb-2 flex items-center gap-1 rounded-full border border-white/10 bg-white/5 p-1">
               <button
                 type="button"
                 onClick={() => toggleTheme("light")}
-                className={`flex items-center gap-1 cursor-pointer rounded-full px-2 py-0.5 transition-colors ${
-                  theme === "light"
-                    ? "bg-lime text-forest font-black shadow-sm"
-                    : "text-muted hover:text-ink"
+                aria-pressed={theme === "light"}
+                title="Mode terang"
+                className={`flex size-7 items-center justify-center rounded-full transition-colors ${
+                  theme === "light" ? "bg-lime text-forest-dark" : "text-side-ink-2 hover:text-white"
                 }`}
-                title="Mode Siang"
               >
-                <Sun className="size-3" />
-                <span className="hidden sm:inline">Day</span>
+                <Sun className="size-3.5" />
               </button>
               <button
                 type="button"
                 onClick={() => toggleTheme("dark")}
-                className={`flex items-center gap-1 cursor-pointer rounded-full px-2 py-0.5 transition-colors ${
-                  theme === "dark"
-                    ? "bg-lime text-forest font-black shadow-sm"
-                    : "text-muted hover:text-ink"
+                aria-pressed={theme === "dark"}
+                title="Mode gelap"
+                className={`flex size-7 items-center justify-center rounded-full transition-colors ${
+                  theme === "dark" ? "bg-lime text-forest-dark" : "text-side-ink-2 hover:text-white"
                 }`}
-                title="Mode Night Safari"
               >
-                <Moon className="size-3" />
-                <span className="hidden sm:inline">Night</span>
+                <Moon className="size-3.5" />
               </button>
             </div>
+          )}
 
-            {/* User display */}
-            {path !== "/login" && me && (
-              <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-line text-[11px]">
-                <span className="font-black text-forest">{me.name}</span>
-                <span className="rounded-full bg-lime/20 px-2 py-0.5 text-[9px] font-extrabold text-forest uppercase">
-                  {me.role}
-                </span>
-              </div>
-            )}
-
-            {/* Logout (if authenticated) */}
-            {path !== "/login" && (
+          {collapsed ? (
+            <>
+              <button
+                type="button"
+                onClick={() => setCollapsed(false)}
+                className="hidden size-9 place-items-center rounded-lg border border-white/15 text-side-ink-2 hover:bg-white/10 lg:grid"
+                aria-label="Perluas sidebar"
+                title="Perluas sidebar"
+              >
+                <ChevronsRight className="size-4" />
+              </button>
+              <Link
+                href="/account/password"
+                className="grid size-9 place-items-center rounded-lg border border-white/15 text-side-ink-2 hover:bg-white/10"
+                aria-label="Ganti kata sandi"
+                title="Ganti kata sandi"
+              >
+                <KeyRound className="size-4" />
+              </Link>
               <button
                 type="button"
                 onClick={handleLogout}
                 disabled={logoutMutation.isPending}
-                className="flex items-center gap-1 rounded-full border border-line bg-surface-2 px-2.5 py-1 text-[11px] font-black text-muted hover:text-forest transition-colors cursor-pointer"
+                className="grid size-9 place-items-center rounded-lg border border-white/15 text-side-ink-2 hover:bg-white/10"
+                aria-label="Keluar"
                 title="Keluar"
               >
-                <LogOut className="size-3" />
-                <span className="hidden sm:inline">Keluar</span>
+                <LogOut className="size-4" />
               </button>
-            )}
-          </div>
+            </>
+          ) : (
+            <div className="flex items-center gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.06] p-2.5">
+              <span className="relative grid size-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-lime to-[#1d6a36] text-xs font-extrabold text-forest-dark">
+                {me ? initials(me.name) : "…"}
+              </span>
+              <span className="flex min-w-0 flex-1 flex-col gap-1">
+                <span className="truncate text-[13px] font-bold">{me?.name ?? "Memuat akun…"}</span>
+                {me && (
+                  <span
+                    className={`self-start rounded-full px-2 py-0.5 text-[10px] font-extrabold tracking-wide ${
+                      ROLE_CHIP[me.role] ?? ROLE_CHIP.USER
+                    }`}
+                  >
+                    {me.role}
+                  </span>
+                )}
+              </span>
+              <Link
+                href="/account/password"
+                onClick={() => setMobileOpen(false)}
+                aria-current={path.startsWith("/account") ? "page" : undefined}
+                className={`grid size-8 shrink-0 place-items-center rounded-lg border border-white/10 hover:bg-white/10 hover:text-white ${
+                  path.startsWith("/account") ? "bg-lime/25 text-white" : "text-side-ink-2"
+                }`}
+                aria-label="Ganti kata sandi"
+                title="Ganti kata sandi"
+              >
+                <KeyRound className="size-4" />
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={logoutMutation.isPending}
+                className="grid size-8 shrink-0 cursor-pointer place-items-center rounded-lg border border-white/10 text-side-ink-2 hover:bg-white/10 hover:text-white disabled:opacity-50"
+                aria-label="Keluar"
+                title="Keluar"
+              >
+                <LogOut className="size-4" />
+              </button>
+            </div>
+          )}
+        </div>
+      </aside>
+
+      {/* ── Main column ── */}
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b border-line bg-surface/90 px-4 backdrop-blur-md sm:px-6 2xl:px-8">
+          <button
+            type="button"
+            onClick={() => setMobileOpen(true)}
+            className="grid size-9 place-items-center rounded-xl border border-line bg-surface text-forest lg:hidden"
+            aria-label="Buka menu"
+          >
+            <Menu className="size-4" />
+          </button>
+          <nav aria-label="Breadcrumb" className="flex min-w-0 flex-1 items-center gap-1.5 text-[13px]">
+            <span className="hidden font-medium text-muted sm:inline">{crumb.section}</span>
+            <span aria-hidden className="hidden text-muted sm:inline">/</span>
+            <span className="truncate font-bold text-ink">{crumb.label}</span>
+          </nav>
+          {/* The sidebar status card is hidden on small screens: keep the live warning visible there. */}
+          <span className="lg:hidden">
+            <LivePausedBadge />
+          </span>
         </header>
 
-        {/* Main Work Area */}
-        <main className="flex-1 px-4 py-5 sm:px-6 lg:px-8 max-w-[1700px] w-full mx-auto">
+        <main className="w-full min-w-0 flex-1 px-4 py-6 sm:px-6 2xl:px-8">
           <BackendBanner />
           {children}
         </main>
-
-        {/* Streamlined Mission-Critical Operations Footer */}
-        <footer className="border-t border-line bg-surface px-4 py-3 text-xs text-muted">
-          <div className="mx-auto flex max-w-[1700px] flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="font-black text-forest">Taman Safari Indonesia</span>
-              <span>·</span>
-              <span>Pusat Kendali AI Cisarua Bogor</span>
-              <span>·</span>
-              <span className="font-semibold text-emerald-600 dark:text-emerald-400">
-                ● Seluruh Sistem Normal
-              </span>
-            </div>
-            <div className="flex items-center gap-3 text-[11px]">
-              <span>Waktu Operasional: 08:30 – 17:00 WIB (UTC+7)</span>
-              <span>·</span>
-              <span className="font-mono">v1.0.0-NOC</span>
-            </div>
-          </div>
-        </footer>
       </div>
     </div>
   );

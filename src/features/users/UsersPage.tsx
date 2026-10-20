@@ -157,9 +157,8 @@ export function UsersPage() {
   return (
     <RequireRole min="MANAGER">
       <PageHeader
-        tag="Hak Akses & Otorisasi"
-        title="Manajemen Pengguna"
-        subtitle="Daftar akun operator operasional, pengawas manajerial, dan administrator sistem"
+        title="Pengguna"
+        subtitle="Akun operator, pengawas, dan administrator beserta perannya."
       >
         <button
           type="button"
@@ -168,7 +167,7 @@ export function UsersPage() {
             setCreateFieldError({});
             setCreateGeneralError(null);
           }}
-          className="inline-flex items-center gap-2 rounded-xl bg-forest px-4 py-2.5 text-xs font-black text-white shadow-md transition-all hover:bg-forest-dark hover:shadow-lg active:scale-95"
+          className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-[10px] bg-lime px-4 text-[13px] font-extrabold text-forest-dark transition-colors hover:bg-lime-2"
         >
           <UserPlus className="size-4" />
           Tambah Pengguna
@@ -195,15 +194,15 @@ export function UsersPage() {
 
             <div key="role" className="flex items-center gap-1.5">
               {u.role === "SUPERADMIN" ? (
-                <span className="rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-black text-purple-800">
+                <span className="rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-extrabold text-purple-800">
                   SUPERADMIN
                 </span>
               ) : u.role === "MANAGER" ? (
-                <span className="rounded-full bg-forest/15 px-2.5 py-0.5 text-xs font-black text-forest">
+                <span className="rounded-full bg-forest/15 px-2.5 py-0.5 text-xs font-extrabold text-forest">
                   MANAGER
                 </span>
               ) : (
-                <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-bold text-zinc-600">
+                <span className="rounded-full bg-off-bg px-2.5 py-0.5 text-xs font-bold text-muted">
                   USER
                 </span>
               )}
@@ -211,11 +210,11 @@ export function UsersPage() {
 
             <div key="status">
               {u.active ? (
-                <span className="inline-flex items-center gap-1 text-xs font-black text-emerald-600">
+                <span className="inline-flex items-center gap-1 text-xs font-extrabold text-good">
                   <UserCheck className="size-3.5" /> Aktif
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 text-xs font-bold text-zinc-400">
+                <span className="inline-flex items-center gap-1 text-xs font-bold text-muted">
                   <UserX className="size-3.5" /> Nonaktif
                 </span>
               )}
@@ -249,11 +248,11 @@ export function UsersPage() {
       {/* Create User Modal */}
       {createOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-3xl border border-line bg-surface p-6 shadow-2xl">
+          <div className="w-full max-w-md rounded-2xl border border-line bg-surface p-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-line pb-3">
               <div className="flex items-center gap-2">
                 <UserPlus className="size-5 text-forest" />
-                <h3 className="text-base font-black text-ink">Tambah Akun Pengguna</h3>
+                <h3 className="text-base font-extrabold text-ink">Tambah Akun Pengguna</h3>
               </div>
               <button type="button" onClick={() => setCreateOpen(false)} className="text-muted hover:text-ink">
                 <X className="size-5" />
@@ -261,7 +260,7 @@ export function UsersPage() {
             </div>
 
             {createGeneralError && (
-              <div role="alert" className="mt-4 rounded-xl border border-red-300 bg-red-50 p-3 text-xs font-bold text-red-800">
+              <div role="alert" className="mt-4 rounded-xl border border-crit/25 bg-crit-bg p-3 text-xs font-bold text-crit-ink">
                 {createGeneralError}
               </div>
             )}
@@ -269,7 +268,7 @@ export function UsersPage() {
             <form onSubmit={handleCreateSubmit} className="mt-4 space-y-4">
               <div>
                 <label className="block text-xs font-extrabold uppercase tracking-wider text-ink-2">
-                  Username <span className="text-red-500">*</span>
+                  Username <span className="text-crit">*</span>
                 </label>
                 <input
                   type="text"
@@ -281,13 +280,13 @@ export function UsersPage() {
                   className="mt-1 w-full rounded-xl border border-line bg-surface px-3 py-2 text-xs font-bold text-ink focus:border-lime focus:outline-none"
                 />
                 {createFieldError["username"] && (
-                  <p className="mt-1 text-[11px] font-bold text-red-600">{createFieldError["username"]}</p>
+                  <p className="mt-1 text-[11px] font-bold text-crit">{createFieldError["username"]}</p>
                 )}
               </div>
 
               <div>
                 <label className="block text-xs font-extrabold uppercase tracking-wider text-ink-2">
-                  Nama Lengkap <span className="text-red-500">*</span>
+                  Nama Lengkap <span className="text-crit">*</span>
                 </label>
                 <input
                   type="text"
@@ -299,13 +298,13 @@ export function UsersPage() {
                   className="mt-1 w-full rounded-xl border border-line bg-surface px-3 py-2 text-xs font-bold text-ink focus:border-lime focus:outline-none"
                 />
                 {createFieldError["name"] && (
-                  <p className="mt-1 text-[11px] font-bold text-red-600">{createFieldError["name"]}</p>
+                  <p className="mt-1 text-[11px] font-bold text-crit">{createFieldError["name"]}</p>
                 )}
               </div>
 
               <div>
                 <label className="block text-xs font-extrabold uppercase tracking-wider text-ink-2">
-                  Kata Sandi Awal <span className="text-red-500">*</span>
+                  Kata Sandi Awal <span className="text-crit">*</span>
                 </label>
                 <input
                   type="password"
@@ -318,13 +317,13 @@ export function UsersPage() {
                   className="mt-1 w-full rounded-xl border border-line bg-surface px-3 py-2 text-xs font-mono font-bold text-ink focus:border-lime focus:outline-none"
                 />
                 {createFieldError["password"] && (
-                  <p className="mt-1 text-[11px] font-bold text-red-600">{createFieldError["password"]}</p>
+                  <p className="mt-1 text-[11px] font-bold text-crit">{createFieldError["password"]}</p>
                 )}
               </div>
 
               <div>
                 <label className="block text-xs font-extrabold uppercase tracking-wider text-ink-2">
-                  Peran Akses <span className="text-red-500">*</span>
+                  Peran Akses <span className="text-crit">*</span>
                 </label>
                 <select
                   value={newRole}
@@ -350,7 +349,7 @@ export function UsersPage() {
                 <button
                   type="submit"
                   disabled={createMutation.isPending}
-                  className="rounded-xl bg-forest px-5 py-2 text-xs font-black text-white hover:bg-forest-dark disabled:opacity-50"
+                  className="rounded-xl bg-forest px-5 py-2 text-xs font-extrabold text-white hover:bg-forest-dark disabled:opacity-50"
                 >
                   {createMutation.isPending ? "Menyimpan..." : "Buat Akun"}
                 </button>
@@ -363,11 +362,11 @@ export function UsersPage() {
       {/* Edit User Modal */}
       {editingUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-3xl border border-line bg-surface p-6 shadow-2xl">
+          <div className="w-full max-w-md rounded-2xl border border-line bg-surface p-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-line pb-3">
               <div className="flex items-center gap-2">
                 <Edit2 className="size-5 text-forest" />
-                <h3 className="text-base font-black text-ink">Edit Akun: {editingUser.username}</h3>
+                <h3 className="text-base font-extrabold text-ink">Edit Akun: {editingUser.username}</h3>
               </div>
               <button type="button" onClick={() => setEditingUser(null)} className="text-muted hover:text-ink">
                 <X className="size-5" />
@@ -375,7 +374,7 @@ export function UsersPage() {
             </div>
 
             {editError && (
-              <div role="alert" className="mt-4 rounded-xl border border-red-300 bg-red-50 p-3 text-xs font-bold text-red-800">
+              <div role="alert" className="mt-4 rounded-xl border border-crit/25 bg-crit-bg p-3 text-xs font-bold text-crit-ink">
                 {editError}
               </div>
             )}
@@ -450,7 +449,7 @@ export function UsersPage() {
                 <button
                   type="submit"
                   disabled={updateMutation.isPending}
-                  className="rounded-xl bg-forest px-5 py-2 text-xs font-black text-white hover:bg-forest-dark disabled:opacity-50"
+                  className="rounded-xl bg-forest px-5 py-2 text-xs font-extrabold text-white hover:bg-forest-dark disabled:opacity-50"
                 >
                   {updateMutation.isPending ? "Menyimpan..." : "Simpan Perubahan"}
                 </button>

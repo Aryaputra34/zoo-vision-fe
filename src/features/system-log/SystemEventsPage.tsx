@@ -1,5 +1,6 @@
 "use client";
 
+import { SystemLogTabs } from "@/components/client";
 import { useState, useMemo } from "react";
 import {
   Server,
@@ -89,9 +90,8 @@ export function SystemEventsPage() {
   return (
     <RequireRole min="MANAGER">
       <PageHeader
-        tag="Log Sistem & Mesin"
-        title="Kejadian Sistem & Downtime Kamera (System Events)"
-        subtitle="Log internal engine AI vision, error validasi model neural network, dan riwayat downtime konektivitas sensor"
+        title="Log sistem"
+        subtitle="Laporan engine AI: kamera terputus, error konfigurasi, dan masalah model."
         date={pickedDate}
       >
         <CsvLink
@@ -103,6 +103,7 @@ export function SystemEventsPage() {
           }}
         />
       </PageHeader>
+      <SystemLogTabs />
 
       {/* Filter toolbar */}
       <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2">

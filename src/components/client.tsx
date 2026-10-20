@@ -16,6 +16,7 @@ import {
   YAxis,
 } from "recharts";
 import { NAV } from "./nav";
+import { Suspense } from "react";
 
 export function NavLinks() {
   const path = usePathname();
@@ -221,5 +222,91 @@ export function OccupancyChart({
         </AreaChart>
       </ResponsiveContainer>
     </div>
+  );
+}
+
+const AREA_TABS = [
+  { href: "/vehicles", label: "Gerbang", sub: "Kendaraan masuk & keluar" },
+  { href: "/cashier", label: "Loket", sub: "Kehadiran kasir & antrean" },
+  { href: "/restaurant", label: "Restoran", sub: "Okupansi & meja" },
+  { href: "/rides", label: "Wahana kuda", sub: "Keberangkatan & kembali" },
+];
+const ANALYTICS_TABS = [
+  { href: "/intervals", label: "Interval", sub: "Durasi per kamera" },
+  { href: "/metrics", label: "Metrik", sub: "Deret waktu" },
+];
+
+// Tabs between sibling pages that share one menu item. Each tab is its existing route; the chosen date is kept.
+type Tab = { href: string; label: string; sub: string; exact?: boolean };
+
+function SectionTabs({ label, tabs }: { label: string; tabs: Tab[] }) {
+  const path = usePathname();
+  const sp = useSearchParams();
+  const date = sp.get("date");
+  return (
+    <nav aria-label={label} className="mb-5 flex gap-1 overflow-x-auto border-b border-line [scrollbar-width:none]">
+      {tabs.map((t) => {
+        const active = path === t.href || (!t.exact && path.startsWith(`${t.href}/`));
+        return (
+          <Link
+            key={t.href}
+            href={date ? `${t.href}?date=${encodeURIComponent(date)}` : t.href}
+            aria-current={active ? "page" : undefined}
+            className={`-mb-px flex shrink-0 flex-col border-b-[3px] px-3.5 pt-2 pb-2.5 transition-colors ${
+              active ? "border-lime text-ink" : "border-transparent text-ink-2 hover:text-ink"
+            }`}
+          >
+            <span className={`text-sm ${active ? "font-extrabold" : "font-semibold"}`}>{t.label}</span>
+            <span className="text-xs text-muted">{t.sub}</span>
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+export function AreaTabs() {
+  return (
+    <Suspense fallback={null}>
+      <SectionTabs label="Area operasional" tabs={AREA_TABS} />
+    </Suspense>
+  );
+}
+
+export function AnalyticsTabs() {
+  return (
+    <Suspense fallback={null}>
+      <SectionTabs label="Analitik" tabs={ANALYTICS_TABS} />
+    </Suspense>
+  );
+}
+
+const SYSTEM_LOG_TABS = [
+  { href: "/system-log/audit", label: "Audit", sub: "Jejak perubahan" },
+  { href: "/system-log/logins", label: "Riwayat login", sub: "Percobaan masuk" },
+  { href: "/system-log/system-events", label: "Kejadian sistem", sub: "Laporan engine" },
+];
+
+export function SystemLogTabs() {
+  return (
+    <Suspense fallback={null}>
+      <SectionTabs label="Log sistem" tabs={SYSTEM_LOG_TABS} />
+    </Suspense>
+  );
+}
+
+// The camera hub: zones/thresholds and settings of one camera are tabs (their existing routes).
+export function CameraTabs({ id }: { id: string }) {
+  const base = `/config/cameras/${encodeURIComponent(id)}`;
+  return (
+    <Suspense fallback={null}>
+      <SectionTabs
+        label="Pusat kamera"
+        tabs={[
+          { href: `${base}/zones`, label: "Zona & ambang", sub: "Area deteksi dan parameter" },
+          { href: base, label: "Pengaturan", sub: "Identitas, stream, rekaman", exact: true },
+        ]}
+      />
+    </Suspense>
   );
 }

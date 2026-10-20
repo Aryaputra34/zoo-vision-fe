@@ -103,9 +103,8 @@ export function ApiTokensPage() {
   return (
     <RequireRole min="SUPERADMIN">
       <PageHeader
-        tag="Integrasi Eksternal"
-        title="Token API (Programmatic Access)"
-        subtitle="Kelola kredensial token otentikasi Bearer untuk sinkronisasi sistem tiket POS, display luar, dan gateway analitik"
+        title="Token API"
+        subtitle="Kredensial Bearer untuk sistem lain seperti POS, layar informasi, atau BI."
       >
         <button
           type="button"
@@ -114,7 +113,7 @@ export function ApiTokensPage() {
             setGeneratedToken(null);
             setCreateError(null);
           }}
-          className="inline-flex items-center gap-2 rounded-xl bg-forest px-4 py-2.5 text-xs font-black text-white shadow-md transition-all hover:bg-forest-dark hover:shadow-lg active:scale-95"
+          className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-[10px] bg-lime px-4 text-[13px] font-extrabold text-forest-dark transition-colors hover:bg-lime-2"
         >
           <Plus className="size-4" />
           Buat Token API
@@ -144,15 +143,15 @@ export function ApiTokensPage() {
 
               <div key="role">
                 {t.role === "SUPERADMIN" ? (
-                  <span className="rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-black text-purple-800">
+                  <span className="rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-extrabold text-purple-800">
                     SUPERADMIN
                   </span>
                 ) : t.role === "MANAGER" ? (
-                  <span className="rounded-full bg-forest/15 px-2.5 py-0.5 text-xs font-black text-forest">
+                  <span className="rounded-full bg-forest/15 px-2.5 py-0.5 text-xs font-extrabold text-forest">
                     MANAGER
                   </span>
                 ) : (
-                  <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-bold text-zinc-600">
+                  <span className="rounded-full bg-off-bg px-2.5 py-0.5 text-xs font-bold text-muted">
                     USER
                   </span>
                 )}
@@ -160,11 +159,11 @@ export function ApiTokensPage() {
 
               <div key="status">
                 {isRevoked ? (
-                  <span className="inline-flex items-center gap-1 text-xs font-bold text-red-600">
+                  <span className="inline-flex items-center gap-1 text-xs font-bold text-crit">
                     <Ban className="size-3.5" /> Dicabut
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 text-xs font-black text-emerald-600">
+                  <span className="inline-flex items-center gap-1 text-xs font-extrabold text-good">
                     <ShieldCheck className="size-3.5" /> Aktif
                   </span>
                 )}
@@ -186,7 +185,7 @@ export function ApiTokensPage() {
                       setRevokingToken(t);
                       setRevokeError(null);
                     }}
-                    className="inline-flex items-center gap-1 rounded-xl border border-red-200 bg-red-50/50 px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-100"
+                    className="inline-flex items-center gap-1 rounded-xl border border-crit/25 bg-crit-bg px-2.5 py-1.5 text-xs font-bold text-crit hover:bg-crit-bg"
                   >
                     <Ban className="size-3.5" />
                     <span>Cabut Akses</span>
@@ -210,11 +209,11 @@ export function ApiTokensPage() {
       {/* Create Token Dialog */}
       {createOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-3xl border border-line bg-surface p-6 shadow-2xl">
+          <div className="w-full max-w-lg rounded-2xl border border-line bg-surface p-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-line pb-3">
               <div className="flex items-center gap-2">
                 <Key className="size-5 text-forest" />
-                <h3 className="text-base font-black text-ink">Buat Token API Baru</h3>
+                <h3 className="text-base font-extrabold text-ink">Buat Token API Baru</h3>
               </div>
               <button
                 type="button"
@@ -231,8 +230,8 @@ export function ApiTokensPage() {
             {/* Generated Token Revealed View */}
             {generatedToken ? (
               <div className="mt-4 space-y-4">
-                <div className="rounded-2xl border border-amber-300 bg-amber-50 p-4 text-xs font-bold text-amber-900 flex items-start gap-3">
-                  <ShieldAlert className="size-5 shrink-0 text-amber-600 mt-0.5" />
+                <div className="rounded-2xl border border-warn/25 bg-warn-bg p-4 text-xs font-bold text-gold-ink flex items-start gap-3">
+                  <ShieldAlert className="size-5 shrink-0 text-gold-ink mt-0.5" />
                   <div>
                     <p className="font-extrabold text-sm">Simpan Token Ini Sekarang!</p>
                     <p className="mt-1 font-semibold leading-relaxed">
@@ -250,12 +249,12 @@ export function ApiTokensPage() {
                       type="text"
                       readOnly
                       value={generatedToken}
-                      className="w-full rounded-xl border border-line bg-zinc-950 p-3 font-mono text-xs font-bold text-lime select-all focus:outline-none"
+                      className="w-full rounded-xl border border-line bg-forest-dark p-3 font-mono text-xs font-bold text-lime select-all focus:outline-none"
                     />
                     <button
                       type="button"
                       onClick={handleCopy}
-                      className="inline-flex items-center gap-1.5 rounded-xl bg-forest px-4 py-3 text-xs font-black text-white hover:bg-forest-dark"
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-forest px-4 py-3 text-xs font-extrabold text-white hover:bg-forest-dark"
                     >
                       {copied ? <Check className="size-4 text-lime" /> : <Copy className="size-4" />}
                       <span>{copied ? "Tersalin!" : "Salin"}</span>
@@ -270,7 +269,7 @@ export function ApiTokensPage() {
                       setCreateOpen(false);
                       setGeneratedToken(null);
                     }}
-                    className="rounded-xl bg-forest px-5 py-2 text-xs font-black text-white hover:bg-forest-dark"
+                    className="rounded-xl bg-forest px-5 py-2 text-xs font-extrabold text-white hover:bg-forest-dark"
                   >
                     Saya Sudah Menyimpan Token
                   </button>
@@ -280,14 +279,14 @@ export function ApiTokensPage() {
               /* Create Form */
               <form onSubmit={handleCreateSubmit} className="mt-4 space-y-4">
                 {createError && (
-                  <div role="alert" className="rounded-xl border border-red-300 bg-red-50 p-3 text-xs font-bold text-red-800">
+                  <div role="alert" className="rounded-xl border border-crit/25 bg-crit-bg p-3 text-xs font-bold text-crit-ink">
                     {createError}
                   </div>
                 )}
 
                 <div>
                   <label className="block text-xs font-extrabold uppercase tracking-wider text-ink-2">
-                    Nama Deskriptif Token <span className="text-red-500">*</span>
+                    Nama Deskriptif Token <span className="text-crit">*</span>
                   </label>
                   <p className="text-[11px] text-muted mb-1">Tujuan atau sistem klien (misal: POS Kasir Gerbang Barat)</p>
                   <input
@@ -327,7 +326,7 @@ export function ApiTokensPage() {
                   <button
                     type="submit"
                     disabled={createMutation.isPending}
-                    className="rounded-xl bg-forest px-5 py-2 text-xs font-black text-white hover:bg-forest-dark disabled:opacity-50"
+                    className="rounded-xl bg-forest px-5 py-2 text-xs font-extrabold text-white hover:bg-forest-dark disabled:opacity-50"
                   >
                     {createMutation.isPending ? "Membuat..." : "Buat & Tampilkan Token"}
                   </button>
@@ -341,10 +340,10 @@ export function ApiTokensPage() {
       {/* Revoke Confirmation Modal */}
       {revokingToken && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-3xl border border-line bg-surface p-6 shadow-2xl">
-            <div className="flex items-center gap-3 text-red-600">
-              <AlertTriangle className="size-6 text-red-600" />
-              <h3 className="text-base font-black text-ink">Konfirmasi Cabut Token API</h3>
+          <div className="w-full max-w-md rounded-2xl border border-line bg-surface p-6 shadow-2xl">
+            <div className="flex items-center gap-3 text-crit">
+              <AlertTriangle className="size-6 text-crit" />
+              <h3 className="text-base font-extrabold text-ink">Konfirmasi Cabut Token API</h3>
             </div>
 
             <p className="mt-4 text-xs font-semibold text-ink-2 leading-relaxed">
@@ -352,7 +351,7 @@ export function ApiTokensPage() {
             </p>
 
             {revokeError && (
-              <div role="alert" className="mt-3 rounded-xl border border-red-300 bg-red-50 p-3 text-xs font-bold text-red-800">
+              <div role="alert" className="mt-3 rounded-xl border border-crit/25 bg-crit-bg p-3 text-xs font-bold text-crit-ink">
                 {revokeError}
               </div>
             )}
@@ -369,7 +368,7 @@ export function ApiTokensPage() {
                 type="button"
                 disabled={revokeMutation.isPending}
                 onClick={() => revokeMutation.mutate({ id: revokingToken.id })}
-                className="rounded-xl bg-red-600 px-4 py-2 text-xs font-black text-white hover:bg-red-700 disabled:opacity-50"
+                className="rounded-xl bg-crit px-4 py-2 text-xs font-extrabold text-white hover:bg-crit disabled:opacity-50"
               >
                 {revokeMutation.isPending ? "Mencabut..." : "Cabut Token"}
               </button>

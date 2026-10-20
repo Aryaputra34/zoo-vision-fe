@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { Film, Play, X } from "lucide-react";
 
 const dialogCls =
-  "m-auto w-[min(960px,calc(100vw-2rem))] rounded-[24px] border border-line bg-surface p-0 text-ink shadow-2xl backdrop:bg-black/70";
+  "m-auto w-[min(960px,calc(100vw-2rem))] rounded-2xl border border-line bg-surface p-0 text-ink shadow-2xl backdrop:bg-black/70";
 const closeBtn =
   "grid size-9 shrink-0 cursor-pointer place-items-center rounded-full border border-line bg-surface text-forest hover:bg-lime/20";
 
@@ -60,7 +60,7 @@ export function EvidenceButton({
         {open && (
           <div className="grid gap-4 p-4 sm:p-5">
             <div className="flex items-center justify-between gap-3">
-              <h2 className="text-sm font-black text-forest">{title}</h2>
+              <h2 className="text-sm font-extrabold text-forest">{title}</h2>
               <button type="button" onClick={() => dialog.current?.close()} aria-label="Tutup" className={closeBtn}>
                 <X aria-hidden className="size-4" />
               </button>

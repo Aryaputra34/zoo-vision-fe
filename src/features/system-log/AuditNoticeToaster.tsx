@@ -33,20 +33,20 @@ export function AuditNoticeToaster() {
       {toasts.map((t) => (
         <div
           key={t.key}
-          className="pointer-events-auto flex items-start gap-3 rounded-2xl border border-amber-300 bg-amber-50 p-4 shadow-xl backdrop-blur-md transition-all animate-in slide-in-from-bottom-5"
+          className="pointer-events-auto flex items-start gap-3 rounded-2xl border border-warn/25 bg-warn-bg p-4 shadow-xl backdrop-blur-md transition-all animate-in slide-in-from-bottom-5"
         >
-          <div className="grid size-8 shrink-0 place-items-center rounded-xl bg-amber-200 text-amber-900 mt-0.5">
+          <div className="grid size-8 shrink-0 place-items-center rounded-xl bg-warn-bg text-gold-ink mt-0.5">
             <ShieldAlert className="size-4" />
           </div>
 
           <div className="flex-1 text-xs">
-            <p className="font-extrabold text-amber-950">Notifikasi Perubahan Kamera Audit</p>
-            <p className="mt-1 font-semibold text-amber-800 leading-relaxed">
+            <p className="font-extrabold text-gold-ink">Notifikasi Perubahan Kamera Audit</p>
+            <p className="mt-1 font-semibold text-gold-ink leading-relaxed">
               <strong>{t.actorName}</strong> mengubah kamera <strong>{t.cameraId}</strong> ({t.action})
             </p>
             <Link
               href="/system-log/audit"
-              className="mt-2 inline-flex items-center gap-1 font-black text-forest hover:underline"
+              className="mt-2 inline-flex items-center gap-1 font-extrabold text-forest hover:underline"
             >
               Lihat di Log Audit <ArrowRight className="size-3" />
             </Link>
@@ -55,7 +55,7 @@ export function AuditNoticeToaster() {
           <button
             type="button"
             onClick={() => setToasts((prev) => prev.filter((item) => item.key !== t.key))}
-            className="text-amber-700 hover:text-amber-950"
+            className="text-gold-ink hover:text-gold-ink"
           >
             <X className="size-4" />
           </button>
