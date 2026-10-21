@@ -6,10 +6,13 @@
 an Exports page makes PDFs and keeps the CSV downloads, a Site settings page edits the zone and retention
 defaults, the camera form sets evidence retention and shows evidence usage, an event's evidence can be kept by
 hand and shows its status, and managers see a banner when a disk fills. Ends with the joint laptop run (spec
-section 8). The FE team redesigns these pages later.
+section 8). The FE team's redesign (Elangvision) is already on `main`: everything new here is built from its
+primitives, so nothing has to be restyled later.
 
 **Architecture:** `src/lib/time.ts` keeps its functions but reads a module-level zone that a small gate sets from
-`GET /api/v1/site-settings` once after login; the formatters are built lazily per zone. New pages live in
+`GET /api/v1/site-settings` once after login; the formatters are built lazily per zone. The older fixed-UTC+7
+helpers in `src/lib/util.ts` (`todayWib`, `fmtHm`, `dayOf`, ...) are rebuilt on the same zone, so no page keeps its
+own Jakarta clock. New pages live in
 `src/features/{exports,site-settings}/` with thin `src/app/*/page.tsx` wrappers (Phase 3 decision 2). The disk
 banner hangs off `LiveProvider`'s socket like `audit.notice`. All API calls go through the orval hooks the
 contract pull generates.
@@ -26,7 +29,8 @@ files), ideally after its tag `contract-v0.6`.
 ## Global Constraints
 
 - Work in `D:\WORK\zoo-analytics-web` on branch `phase-4b-evidence`, cut from `main` after the 4a merge
-  (`bbcdab2`). Never commit to `main`. Push only after the repo owner says yes.
+  (`bbcdab2`); the redesign (`origin/main` at `d8de429`) was merged in at `6cb37d9`, so the file names and line
+  numbers below are those of the redesigned code. Never commit to `main`. Push only after the repo owner says yes.
 - No Claude attribution in commits or pull requests. No test-first steps, and no new tests in this plan: tests are risk-based (only where a bug loses or leaks data), and
   nothing here does. The existing suite still runs at every Check step. While fixing, run only the file you work on
   (`npx vitest run <file>`); run the full Check once, before the commit.
@@ -35,8 +39,12 @@ files), ideally after its tag `contract-v0.6`.
   `:3000`.
 - Never edit `src/contract/*` or `src/api/generated/*` by hand; `npm run contract:pull contract-v0.6` writes them
   (before the tag exists: `npm run contract:pull D:\WORK\zoo-vision`, then the tag before the pull request).
-- UI text in Indonesian, existing components from `src/components/ui.tsx`, light styling. The FE team still owns
-  T1–T8 from Phase 3: touch shared files only where a task names them.
+- UI text in Indonesian. Build from the redesign's primitives in `src/components/ui.tsx` (`PageHeader`, `Card`,
+  `Badge` with a `Tone` of `good | warn | crit | off | info`, `Table`, `Empty`, `Note`, `Mono`) and its colour tokens
+  (`bg-good-bg`, `text-good`, `bg-warn-bg`, `text-gold-ink`, `bg-crit-bg`, `text-crit-ink`, `bg-off-bg`, `text-muted`,
+  `border-line`, `bg-surface-2`); no raw `amber-*` / `emerald-*` / `zinc-*` classes. Form inputs copy the class
+  string of the inputs in `CameraEditPage.tsx`. Page layout: a `PageHeader` hero band, then `Card`s. The FE team
+  owns the redesign: touch shared files only where a task names them.
 - Hooks named after the backend's operation ids: `useSiteSettingsGet`, `useSiteSettingsUpdate`, `useEvidenceKeep`,
   `useExportJobsCreate`, `useExportJobsList`, `exportJobsFile` (a URL, not a fetch). If the pull names them
   differently, use the generated names.
@@ -58,8 +66,15 @@ files), ideally after its tag `contract-v0.6`.
 2. **"Simpan bukti" lives in `EvidenceButton`'s dialog**, with the status badge on the thumbnail, so all six pages
    that show event evidence get it by passing two props (`eventId`, `evidence`).
 3. **The PDF download is a plain link** to `fileUrl` (the session cookie goes with it), like `CsvLink`.
-4. **Site settings sit under Konfigurasi** (`/config/site`, MANAGER reads, SUPERADMIN edits); Exports under
-   Analitik (`/exports`, every role).
+4. **Site settings sit under Pengelolaan** (`/config/site`, MANAGER reads, SUPERADMIN edits). **Exports is a third
+   tab of Analitik** (`/exports`, every role), next to Interval and Metrik: the redesign groups sibling pages as
+   tabs under one menu item (`match` in `roles.ts`, `SectionTabs` in `client.tsx`), and a PDF/CSV page belongs
+   there. No new menu section.
+5. **The zone reaches the old helpers too.** The redesign left three kinds of fixed Jakarta time: `src/lib/util.ts`
+   (+07:00, used by `PageHeader`'s date picker and eight pages), a clock in `CommandCenterShell.tsx` and a greeting
+   hour in `OverviewPage.tsx` (both `timeZone: "Asia/Jakarta"`), and about 20 "WIB" text labels. W1 moves them all to
+   the site zone; the label becomes `siteZoneLabel()` ("WIB" for `Asia/Jakarta`, else the zone's short name).
+   The park's opening hours in `TamanSafariHeader/Footer` are static text about the park and stay.
 
 ## Review Focus
 
@@ -91,19 +106,35 @@ If a session's context gets long (many fix rounds), commit the finished task and
 ### Task W1: Contract v0.6 and the zone from site settings
 
 **Files:**
-- Modify: `src/contract/*`, `src/api/generated/*` (by the pull only), `src/lib/time.ts`,
-  `src/app/layout.tsx`
+- Modify: `src/contract/*`, `src/api/generated/*` (by the pull only), `src/lib/time.ts`, `src/lib/util.ts`,
+  `src/app/layout.tsx`, `src/components/CommandCenterShell.tsx` (the clock, `useClockWib`),
+  `src/usecases/overview/OverviewPage.tsx` (`greeting()`), and the files with a "WIB" label:
+  `src/components/client.tsx` (2 tooltips), `src/features/{api-tokens/ApiTokensPage,cameras/ZoneEditorPage,
+  explorer/EventsExplorerPage,explorer/IntervalsExplorerPage,users/UsersPage}.tsx`,
+  `src/usecases/{cashier_presence/CashierPage,horse_riding/RidesPage,overview/OverviewPage,restaurant/RestaurantPage,
+  vehicle_gate/VehiclesPage}.tsx`
 - Create: `src/lib/SiteZoneGate.tsx`
 
 **Interfaces:**
 - `time.ts`: `SITE_TZ` goes. `export function setSiteTimeZone(tz: string): void`, `export function siteTimeZone():
   string`; the two `Intl.DateTimeFormat`s are made on first use for the current zone and remade when it changes.
-  Every existing export keeps its signature.
+  Every existing export keeps its signature. New: `export function siteZoneLabel(): string` (`Asia/Jakarta` → "WIB",
+  `Asia/Makassar` → "WITA", `Asia/Jayapura` → "WIT", any other zone → its `Intl` short name).
+- `util.ts`: the fixed `WIB = 7 h` offset goes; `todayWib`, `fmtTime`, `fmtHm`, `fmtDateTime`, `dayOf`, `hourOf` and
+  `dayRange` keep their names and signatures but compute in `siteTimeZone()` (build them on `time.ts`, do not
+  duplicate its `Intl` code). `dateParam`, `shiftDate`, `operatingHours` need no change. Check that
+  `src/usecases/horse_riding/rides-view.ts` (its test names WIB) still gives the same numbers for `Asia/Jakarta`.
+- The clock (`useClockWib`) and `greeting()` use `siteTimeZone()`; the clock shows `siteZoneLabel()`. Every other
+  "WIB" label in the files above becomes `siteZoneLabel()`.
 - `<SiteZoneGate>{children}</SiteZoneGate>`: on `/login`, or with no `me`, renders children. With `me`:
   `useSiteSettingsGet()`; until it answers, a "Memuat…" line; then `setSiteTimeZone(data.timeZone)` (before the
   children render) and the children. When a later answer carries another zone: set it and
   `queryClient.invalidateQueries()`.
-- `layout.tsx`: `<AuthProvider><SiteZoneGate><LiveProvider>…</LiveProvider></SiteZoneGate></AuthProvider>`.
+- `layout.tsx` (today `<Providers><AuthProvider><LiveProvider><CommandCenterShell>{children}</CommandCenterShell>
+  <AuditNoticeToaster /></LiveProvider></AuthProvider></Providers>`): wrap `LiveProvider` in the gate:
+  `<AuthProvider><SiteZoneGate><LiveProvider>…</LiveProvider></SiteZoneGate></AuthProvider>`. `me` comes from
+  `useMe()` (`src/auth/AuthProvider.tsx`), the login path check is `usePathname() === "/login"` as in the shell.
+  The "Memuat…" line is a centred `text-sm font-semibold text-muted` paragraph on `bg-bg`.
 
 - [ ] **Step 1: Pull the contract**
 
@@ -119,8 +150,10 @@ site-settings, evidence and export-jobs hooks; `EventRowDto` has `evidence`.
 
 - [ ] **Step 4: Check**
 
-Run: `npm run lint && npx tsc --noEmit && npm test && npm run build`. Expected: pass; `grep -rn SITE_TZ src` finds
-nothing.
+Run: `npm run lint && npx tsc --noEmit && npm test && npm run build`. Expected: pass;
+`grep -rnE "SITE_TZ|Asia/Jakarta|\+07:00|WIB" src` finds only tests, `src/contract`, `src/api/generated`,
+`TamanSafari*`, the "WIB" branch of `siteZoneLabel` and the comment in `CsvLink.tsx`. `time.test.ts` and
+`rides-view.test.ts` still pass unchanged (the default zone before any setting is `Asia/Jakarta` in tests).
 
 - [ ] **Step 5: Commit**
 
@@ -134,12 +167,16 @@ git commit -m "feat: times follow the site time zone from site settings"
 ### Task W2: Site settings page
 
 **Files:**
-- Create: `src/features/site-settings/SiteSettingsPage.tsx`, `src/app/config/site/page.tsx`
+- Create: `src/features/site-settings/SiteSettingsPage.tsx`, `src/app/config/site/page.tsx` (a thin wrapper like
+  `src/app/config/models/page.tsx`)
 - Modify: `src/auth/roles.ts` (nav item)
 
 **Interfaces:**
-- Nav, section Konfigurasi: `{ href: '/config/site', label: 'Pengaturan Situs', sub: 'Zona Waktu & Retensi',
-  Icon: Settings, minRole: 'MANAGER' }`.
+- Nav, section **Pengelolaan** (after Pengguna): `{ href: '/config/site', label: 'Pengaturan situs', sub: 'Zona
+  waktu dan retensi', Icon: Settings, minRole: 'MANAGER' }` (`Settings` from lucide-react, added to the import).
+- Layout: `PageHeader` (title "Pengaturan situs") then one `Card` per group (Identitas dan zona waktu; Retensi data).
+  Inputs use the class string of `CameraEditPage.tsx`; the saved note is a `Badge tone="good"`, a 400's field errors
+  are `text-crit-ink` text under their fields; hints are `Note`.
 - Fields: Nama situs, Zona waktu (text input with a `<datalist>` of `Intl.supportedValuesOf('timeZone')`), Retensi
   rekaman (hari), Retensi snapshot (hari), Retensi snapshot kamera audit (hari), Retensi bukti (hari). A short
   hint under recording retention: "Berlaku untuk kamera tanpa pengaturan sendiri".
@@ -164,11 +201,16 @@ git commit -m "feat: site settings page (superadmin edits, managers read)"
 
 **Files:**
 - Create: `src/features/exports/ExportsPage.tsx`, `src/app/exports/page.tsx`
-- Modify: `src/auth/roles.ts` (nav item)
+- Modify: `src/components/client.tsx` (`ANALYTICS_TABS`), `src/auth/roles.ts` (the Analitik item's `match`),
+  `src/components/CommandCenterShell.tsx` (`SUB_PAGES`)
 
 **Interfaces:**
-- Nav, section Analitik: `{ href: '/exports', label: 'Ekspor', sub: 'Laporan PDF & CSV', Icon: FileDown,
-  minRole: 'USER' }`.
+- No new menu item: a third Analitik tab. `ANALYTICS_TABS` gains `{ href: "/exports", label: "Ekspor", sub: "Laporan
+  PDF dan CSV" }`; the Analitik nav item's `match` becomes `['/intervals', '/metrics', '/exports']`; `SUB_PAGES`
+  gains `"/exports": "Ekspor"` (the breadcrumb). The page renders `<PageHeader>` then `<AnalyticsTabs />` as the
+  Interval and Metrik pages do.
+- Status badges (`Badge`): Menunggu `info`, Selesai `good`, Gagal `crit`, Kedaluwarsa `off`. The job list is a
+  `Table`, its empty state `Empty`.
 - PDF form: Periode (Harian / Mingguan / Bulanan → `day`/`week`/`month`), Tanggal (`todayLocal()` default),
   either Kamera (checkboxes from `useCamerasList`, none = all) or Use case (select from `useUsecasesList`, empty =
   all). "Buat PDF" → `useExportJobsCreate`; a 503 shows "Layanan PDF tidak tersedia"; a 400 shows its message.
@@ -201,10 +243,15 @@ git commit -m "feat: exports page with PDF jobs and the CSV downloads"
 - Modify: `src/features/cameras/CameraEditPage.tsx`, `src/features/cameras/StreamPanel.tsx`
 
 **Interfaces:**
+- In `CameraEditPage.tsx` the recording fields are the card "Perekaman Klip Insiden" (state `retentionDays`,
+  `clipBeforeSec`, `clipAfterSec`; the SUPERADMIN-only `payload.recording = {...}` near line 106). Add the new field
+  right after "Masa Retensi (Hari)" with the same label/input classes, state `evidenceRetentionDays` (string, empty
+  = site default), `disabled={!isSuperadmin}`, and one more key in `payload.recording`.
 - Recording settings gain "Retensi bukti (hari)": empty = "ikut pengaturan situs" (sent as `null`), else 1–3650,
   sent as `recording.evidenceRetentionDays`, editable for SUPERADMIN like the other recording fields. A hint:
   "Menurunkan nilai ini menghapus klip bukti yang lebih lama pada pembersihan berikutnya (setiap jam)."
-- `StreamPanel`: one more line, "Bukti tersimpan: <evidenceCount> klip, <evidenceBytes in GB, 1 decimal> GB".
+- `StreamPanel`: one more line, "Bukti tersimpan: <evidenceCount> klip, <evidenceBytes in GB, 1 decimal> GB",
+  in the panel's existing text style (the redesign only changed its colours to tokens).
 
 - [ ] **Step 1: Implement**
 
@@ -222,23 +269,27 @@ git commit -m "feat: camera form sets evidence retention; stream panel shows kep
 ### Task W5: Keep evidence, its badge, and the disk banner
 
 **Files:**
-- Modify: `src/components/EvidenceButton.tsx`, the six callers (`src/features/explorer/EventsExplorerPage.tsx`,
+- Modify: `src/components/EvidenceButton.tsx`, the six callers (eight call sites after the redesign: `EventsExplorerPage.tsx` ~365, `CashierPage.tsx` ~302,
+  `RidesPage.tsx` ~128, `OverviewPage.tsx` ~407, ~488 and ~537, `RestaurantPage.tsx` ~264, `VehiclesPage.tsx` ~296:
+  `src/features/explorer/EventsExplorerPage.tsx`,
   `src/usecases/{cashier_presence/CashierPage,horse_riding/RidesPage,overview/OverviewPage,restaurant/RestaurantPage,vehicle_gate/VehiclesPage}.tsx`),
   `src/live/{LiveProvider.tsx,useLiveEvents.ts,index.ts}`, `src/components/CommandCenterShell.tsx`
 - Create: `src/components/DiskBanner.tsx`
 
 **Interfaces:**
 - `EvidenceButton` gains `eventId?: string` and `evidence?: { status: 'QUEUED'|'KEPT'|'NO_RECORDING'|'FAILED';
-  reason: string } | null`. Badge on the thumbnail: Disimpan (KEPT), Menyimpan… (QUEUED), Gagal (FAILED), Tanpa
-  rekaman (NO_RECORDING). In the dialog, for MANAGER and up (`useAuth().me.role`) when `eventId` is set and the
+  reason: string } | null`. Status: Disimpan (KEPT, tone `good`), Menyimpan… (QUEUED, `info`), Gagal (FAILED, `crit`), Tanpa
+  rekaman (NO_RECORDING, `off`). The thumbnail is only 64×40 px, so it gets a small corner chip (token classes, 10 px
+  text, an icon plus a short word, never colour alone); the dialog title row shows the full `Badge`. In the dialog, for MANAGER and up (`useAuth().me.role`) when `eventId` is set and the
   status is not `KEPT`/`QUEUED`: "Simpan bukti" → `useEvidenceKeep`; the answer's status replaces the shown one at
   once, and event list queries are invalidated.
 - Callers pass `eventId={e.id}` and `evidence={e.evidence}` where they have an event row.
 - `LiveProvider`: `socket.on('disk.warning', …)` to a `diskFns` set like `auditFns`; `useDiskWarnings(fn)` exported
   from `useLiveEvents.ts` and `src/live/index.ts`.
 - `DiskBanner` (MANAGER and up) keeps the latest message per `path` (a new one replaces the old in state): one line per path, amber for warning, red
-  for critical: "Disk <path> terisi <usedPercent>% (sisa <free GB> GB)", one dismiss button for the banner. Rendered at the top of
-  `CommandCenterShell`'s content.
+  for critical: "Disk <path> terisi <usedPercent>% (sisa <free GB> GB)", one dismiss button for the banner. Rendered in
+  `CommandCenterShell`'s `<main>`, right above `<BackendBanner />` and in its style; amber is the `warn` tone
+  (`bg-warn-bg`, `text-gold-ink`), red is `crit`.
 
 - [ ] **Step 1: Implement**
 
