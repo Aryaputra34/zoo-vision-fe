@@ -265,6 +265,8 @@ export function RestaurantPage({ date: picked }: { date?: string }) {
                   key="ev"
                   snapshotUrl={e.snapshotUrl}
                   clipUrl={e.clipUrl}
+                  eventId={e.id}
+                  evidence={e.evidence}
                   title={`${e.cameraName ?? e.cameraId ?? "Resto"} · ${date} ${fmtLocalTime(e.time)} ${siteZoneLabel()}`}
                 />,
               ])}

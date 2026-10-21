@@ -129,6 +129,8 @@ export function RidesPage({ date: picked }: { date?: string }) {
               key="v"
               snapshotUrl={e.snapshotUrl}
               clipUrl={e.clipUrl}
+              eventId={e.id}
+              evidence={e.evidence}
               title={`${e.cameraName ?? e.cameraId ?? "Kamera"} · ${date} ${fmtLocalTime(e.time)} ${siteZoneLabel()}`}
             />,
           ])}

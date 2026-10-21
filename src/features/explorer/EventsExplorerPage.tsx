@@ -362,7 +362,7 @@ function EventDetail({ event: e, usecaseLabel, date }: { event: EventRowDto; use
               <Video aria-hidden className="size-4" /> Buka live kamera
             </Link>
           )}
-          <EvidenceButton snapshotUrl={e.snapshotUrl} clipUrl={e.clipUrl} title={`${cam} · ${date} ${fmtLocalTime(e.time)} ${siteZoneLabel()}`} />
+          <EvidenceButton snapshotUrl={e.snapshotUrl} clipUrl={e.clipUrl} eventId={e.id} evidence={e.evidence} title={`${cam} · ${date} ${fmtLocalTime(e.time)} ${siteZoneLabel()}`} />
         </div>
         <div className="flex flex-col gap-1.5 text-[13px]">
           <span className="text-xs font-bold text-muted">Data teknis</span>

@@ -297,6 +297,8 @@ export function VehiclesPage({ date: picked }: { date?: string }) {
                   key="ev"
                   snapshotUrl={e.snapshotUrl}
                   clipUrl={e.clipUrl}
+                  eventId={e.id}
+                  evidence={e.evidence}
                   title={`${e.cameraName ?? e.cameraId ?? "Gerbang"} · ${date} ${fmtLocalTime(e.time)} ${siteZoneLabel()}`}
                 />,
               ])}

@@ -11,6 +11,7 @@ import { useMe } from "@/auth/AuthProvider";
 import { useAuthLogout } from "@/api/generated/auth/auth";
 import { useStatus } from "@/live";
 import { BackendBanner } from "./BackendBanner";
+import { DiskBanner } from "./DiskBanner";
 import { LivePausedBadge } from "./LivePausedBadge";
 import { siteTimeZone, siteZoneLabel } from "@/lib/time";
 
@@ -401,6 +402,7 @@ export function CommandCenterShell({
         </header>
 
         <main className="w-full min-w-0 flex-1 px-4 py-6 sm:px-6 2xl:px-8">
+          <DiskBanner />
           <BackendBanner />
           {children}
         </main>

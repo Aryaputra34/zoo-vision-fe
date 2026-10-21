@@ -407,6 +407,8 @@ export function OverviewPage({ date: picked }: { date?: string }) {
                   <EvidenceButton
                     snapshotUrl={e.snapshotUrl}
                     clipUrl={e.clipUrl}
+                    eventId={e.id}
+                    evidence={e.evidence}
                     title={`${e.cameraName ?? e.cameraId ?? "CCTV"} · ${date} ${fmtLocalTime(e.time)} ${siteZoneLabel()}`}
                   />
                 }
@@ -489,6 +491,8 @@ export function OverviewPage({ date: picked }: { date?: string }) {
               key="ev"
               snapshotUrl={e.snapshotUrl}
               clipUrl={e.clipUrl}
+              eventId={e.id}
+              evidence={e.evidence}
               title={`${e.cameraName ?? e.cameraId ?? "CCTV"} · ${date} ${fmtLocalTime(e.time)} ${siteZoneLabel()}`}
             />,
           ])}
@@ -534,7 +538,7 @@ function AttentionCard({ event: e, date }: { event: EventRowDto; date: string })
               <Video aria-hidden className="size-3.5" /> Lihat live
             </Link>
           )}
-          <EvidenceButton snapshotUrl={e.snapshotUrl} clipUrl={e.clipUrl} title={title} />
+          <EvidenceButton snapshotUrl={e.snapshotUrl} clipUrl={e.clipUrl} eventId={e.id} evidence={e.evidence} title={title} />
         </div>
       </div>
     </article>
