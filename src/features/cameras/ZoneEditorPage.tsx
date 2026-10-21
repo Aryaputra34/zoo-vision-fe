@@ -32,7 +32,7 @@ import { roleAtLeast, type Role } from "@/auth/roles";
 import { RequireRole } from "@/auth/RequireRole";
 import { PageHeader, Card } from "@/components/ui";
 import { ApiError } from "@/api/http";
-import { fmtLocalTime } from "@/lib/time";
+import { fmtLocalTime, siteZoneLabel } from "@/lib/time";
 import { useQueryClient } from "@tanstack/react-query";
 import type {
   CameraViewDto,
@@ -828,7 +828,7 @@ function ZoneEditorInner({
 
                       <div className="mt-2 text-xs text-muted flex items-center gap-4">
                         <span>Oleh: {ver.author?.name ?? "Sistem"}</span>
-                        <span>Waktu: {fmtLocalTime(ver.createdAt)} WIB</span>
+                        <span>Waktu: {fmtLocalTime(ver.createdAt)} {siteZoneLabel()}</span>
                       </div>
 
                       {ver.note && (

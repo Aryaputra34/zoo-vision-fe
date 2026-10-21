@@ -122,9 +122,8 @@ export const mediaClip = (
 ) => {
       
       
-      return apiFetch<Blob>(
-      {url: `/media/clips/${eventId}`, method: 'GET',
-        responseType: 'blob', signal
+      return apiFetch<Blob | Blob>(
+      {url: `/media/clips/${eventId}`, method: 'GET', signal
     },
       options);
     }

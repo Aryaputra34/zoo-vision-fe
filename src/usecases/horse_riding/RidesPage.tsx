@@ -9,7 +9,7 @@ import { AreaNow, AreaSection, AREA_SUBTITLE, AREA_TITLE } from "@/components/ar
 import { HourlyBars, AreaTabs } from "@/components/client";
 import { CsvLink } from "@/components/CsvLink";
 import { EvidenceButton } from "@/components/EvidenceButton";
-import { fmtLocalTime, localDayRange, localDaysRange } from "@/lib/time";
+import { fmtLocalTime, localDayRange, localDaysRange, siteZoneLabel } from "@/lib/time";
 import { useToday } from "@/lib/useToday";
 import { fmtNum } from "@/lib/util";
 import { DIRECTION, ridesView } from "./rides-view";
@@ -68,7 +68,7 @@ export function RidesPage({ date: picked }: { date?: string }) {
         <Tile
           label="Jam tersibuk"
           icon={<Clock aria-hidden />}
-          value={!view ? "…" : view.busiestHour ? `${view.busiestHour}:00 WIB` : "—"}
+          value={!view ? "…" : view.busiestHour ? `${view.busiestHour}:00 ${siteZoneLabel()}` : "—"}
           sub={
             view?.busiestHour
               ? `${view.hourly.find((h) => h.hour === view.busiestHour)?.departures ?? 0} kali berangkat`
@@ -129,7 +129,7 @@ export function RidesPage({ date: picked }: { date?: string }) {
               key="v"
               snapshotUrl={e.snapshotUrl}
               clipUrl={e.clipUrl}
-              title={`${e.cameraName ?? e.cameraId ?? "Kamera"} · ${date} ${fmtLocalTime(e.time)} WIB`}
+              title={`${e.cameraName ?? e.cameraId ?? "Kamera"} · ${date} ${fmtLocalTime(e.time)} ${siteZoneLabel()}`}
             />,
           ])}
           empty={list.isPending ? "Memuat…" : `Tidak ada lintasan wahana kuda pada ${date}.`}

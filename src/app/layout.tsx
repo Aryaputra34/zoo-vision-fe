@@ -3,6 +3,7 @@ import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import { CommandCenterShell } from "@/components/CommandCenterShell";
 import { Providers } from "@/app/providers";
 import { AuthProvider } from "@/auth/AuthProvider";
+import { SiteZoneGate } from "@/lib/SiteZoneGate";
 import { LiveProvider } from "@/live/LiveProvider";
 import { AuditNoticeToaster } from "@/features/system-log/AuditNoticeToaster";
 import "./globals.css";
@@ -34,12 +35,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-full bg-bg font-sans text-ink selection:bg-lime selection:text-forest">
         <Providers>
           <AuthProvider>
-            <LiveProvider>
-              <CommandCenterShell>
-                {children}
-              </CommandCenterShell>
-              <AuditNoticeToaster />
-            </LiveProvider>
+            <SiteZoneGate>
+              <LiveProvider>
+                <CommandCenterShell>
+                  {children}
+                </CommandCenterShell>
+                <AuditNoticeToaster />
+              </LiveProvider>
+            </SiteZoneGate>
           </AuthProvider>
         </Providers>
       </body>

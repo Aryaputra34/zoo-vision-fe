@@ -24,7 +24,7 @@ import { EvidenceButton } from "@/components/EvidenceButton";
 import { LivePausedBadge } from "@/components/LivePausedBadge";
 import { AreaSection, AREA_SUBTITLE, AREA_TITLE } from "@/components/area";
 import { fillBuckets } from "@/lib/buckets";
-import { fmtLocalTime, localDayRange, localHour } from "@/lib/time";
+import { fmtLocalTime, localDayRange, localHour, siteZoneLabel } from "@/lib/time";
 import { useToday } from "@/lib/useToday";
 import { fmtNum } from "@/lib/util";
 
@@ -303,7 +303,7 @@ export function CashierPage({ date: picked }: { date?: string }) {
                 key="ev"
                 snapshotUrl={e.snapshotUrl}
                 clipUrl={e.clipUrl}
-                title={`${e.cameraName ?? e.cameraId ?? "Loket"} · ${date} ${fmtLocalTime(e.time)} WIB`}
+                title={`${e.cameraName ?? e.cameraId ?? "Loket"} · ${date} ${fmtLocalTime(e.time)} ${siteZoneLabel()}`}
               />,
             ])}
             empty={

@@ -17,6 +17,7 @@ import {
   YAxis,
 } from "recharts";
 import { NAV } from "./nav";
+import { siteZoneLabel } from "@/lib/time";
 
 export function NavLinks() {
   const path = usePathname();
@@ -152,7 +153,7 @@ export function HourlyBars({
             <YAxis tick={axis} tickLine={false} axisLine={false} allowDecimals={false} />
             <Tooltip
               {...tooltipStyle}
-              labelFormatter={(h) => `${h}:00–${h}:59 WIB`}
+              labelFormatter={(h) => `${h}:00–${h}:59 ${siteZoneLabel()}`}
               formatter={(v) => `${Math.round(Number(v) * 10) / 10}${unit}`}
             />
             {s.map((x) => (
@@ -196,7 +197,7 @@ export function OccupancyChart({
           <CartesianGrid vertical={false} stroke="var(--grid)" strokeDasharray="3 3" />
           <XAxis dataKey="time" tick={axis} tickLine={false} axisLine={{ stroke: "var(--axis)" }} minTickGap={32} />
           <YAxis tick={axis} tickLine={false} axisLine={false} domain={[0, top]} allowDecimals={false} />
-          <Tooltip {...tooltipStyle} cursor={{ stroke: "var(--axis)" }} labelFormatter={(t) => `${t} WIB (5-min peak)`} />
+          <Tooltip {...tooltipStyle} cursor={{ stroke: "var(--axis)" }} labelFormatter={(t) => `${t} ${siteZoneLabel()} (5-min peak)`} />
           <ReferenceLine
             y={warning}
             stroke="#e9a23b"

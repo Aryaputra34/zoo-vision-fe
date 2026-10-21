@@ -10,7 +10,7 @@ import { useCamerasList } from "@/api/generated/cameras/cameras";
 import { PageHeader, SeverityBadge } from "@/components/ui";
 import { CsvLink } from "@/components/CsvLink";
 import { EvidenceButton } from "@/components/EvidenceButton";
-import { fmtLocalTime, localDayRange } from "@/lib/time";
+import { fmtLocalTime, localDayRange, siteZoneLabel } from "@/lib/time";
 import { fmtNum } from "@/lib/util";
 import { useToday } from "@/lib/useToday";
 import type { EventRowDto } from "@/api/generated/zooVisionAPI.schemas";
@@ -340,7 +340,7 @@ function EventDetail({ event: e, usecaseLabel, date }: { event: EventRowDto; use
           <SeverityBadge severity={e.severity} />
           <h2 className="text-lg font-extrabold capitalize">{e.type.replace(/_/g, " ")}</h2>
           <span className="text-[13px] text-muted">
-            {cam} · {date}, {fmtLocalTime(e.time)} WIB
+            {cam} · {date}, {fmtLocalTime(e.time)} {siteZoneLabel()}
           </span>
         </div>
         {entries.length > 0 && (
@@ -362,7 +362,7 @@ function EventDetail({ event: e, usecaseLabel, date }: { event: EventRowDto; use
               <Video aria-hidden className="size-4" /> Buka live kamera
             </Link>
           )}
-          <EvidenceButton snapshotUrl={e.snapshotUrl} clipUrl={e.clipUrl} title={`${cam} · ${date} ${fmtLocalTime(e.time)} WIB`} />
+          <EvidenceButton snapshotUrl={e.snapshotUrl} clipUrl={e.clipUrl} title={`${cam} · ${date} ${fmtLocalTime(e.time)} ${siteZoneLabel()}`} />
         </div>
         <div className="flex flex-col gap-1.5 text-[13px]">
           <span className="text-xs font-bold text-muted">Data teknis</span>

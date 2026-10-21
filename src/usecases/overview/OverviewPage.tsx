@@ -20,7 +20,7 @@ import { DatePicker, HourlyBars } from "@/components/client";
 import { CsvLink } from "@/components/CsvLink";
 import { EvidenceButton } from "@/components/EvidenceButton";
 import { fillBuckets } from "@/lib/buckets";
-import { fmtLocalTime, localDayRange, localHour } from "@/lib/time";
+import { fmtLocalTime, localDayRange, localHour, siteTimeZone, siteZoneLabel } from "@/lib/time";
 import { useToday } from "@/lib/useToday";
 import { fmtNum, operatingHours } from "@/lib/util";
 
@@ -32,7 +32,7 @@ const isWarn = (s: string) => s === "warning" || s === "WARNING";
 
 function greeting(): string {
   const h = Number(
-    new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Jakarta", hour: "2-digit", hourCycle: "h23" }).format(new Date()),
+    new Intl.DateTimeFormat("en-GB", { timeZone: siteTimeZone(), hour: "2-digit", hourCycle: "h23" }).format(new Date()),
   );
   if (h < 11) return "Selamat pagi";
   if (h < 15) return "Selamat siang";
@@ -407,7 +407,7 @@ export function OverviewPage({ date: picked }: { date?: string }) {
                   <EvidenceButton
                     snapshotUrl={e.snapshotUrl}
                     clipUrl={e.clipUrl}
-                    title={`${e.cameraName ?? e.cameraId ?? "CCTV"} · ${date} ${fmtLocalTime(e.time)} WIB`}
+                    title={`${e.cameraName ?? e.cameraId ?? "CCTV"} · ${date} ${fmtLocalTime(e.time)} ${siteZoneLabel()}`}
                   />
                 }
               />
@@ -489,7 +489,7 @@ export function OverviewPage({ date: picked }: { date?: string }) {
               key="ev"
               snapshotUrl={e.snapshotUrl}
               clipUrl={e.clipUrl}
-              title={`${e.cameraName ?? e.cameraId ?? "CCTV"} · ${date} ${fmtLocalTime(e.time)} WIB`}
+              title={`${e.cameraName ?? e.cameraId ?? "CCTV"} · ${date} ${fmtLocalTime(e.time)} ${siteZoneLabel()}`}
             />,
           ])}
           empty={recentEventsQuery.isLoading ? "Memuat kejadian…" : `Tidak ada kejadian tercatat pada tanggal ${date}.`}
@@ -501,7 +501,7 @@ export function OverviewPage({ date: picked }: { date?: string }) {
 
 function AttentionCard({ event: e, date }: { event: EventRowDto; date: string }) {
   const crit = isCrit(e.severity);
-  const title = `${e.cameraName ?? e.cameraId ?? "CCTV"} · ${date} ${fmtLocalTime(e.time)} WIB`;
+  const title = `${e.cameraName ?? e.cameraId ?? "CCTV"} · ${date} ${fmtLocalTime(e.time)} ${siteZoneLabel()}`;
   return (
     <article
       className={`flex flex-col overflow-hidden rounded-[14px] border bg-surface transition-shadow hover:shadow-[0_14px_30px_rgba(12,53,32,0.16)] ${
