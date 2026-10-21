@@ -65,7 +65,7 @@ export const NAV_SECTIONS: NavSection[] = [
         sub: 'Interval dan metrik',
         Icon: BarChart2,
         minRole: 'USER',
-        match: ['/intervals', '/metrics'],
+        match: ['/intervals', '/metrics', '/exports'],
       },
     ],
   },

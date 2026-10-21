@@ -118,6 +118,7 @@ const SUB_PAGES: Record<string, string> = {
   "/rides": "Wahana kuda",
   "/intervals": "Interval",
   "/metrics": "Metrik",
+  "/exports": "Ekspor",
   "/system-log/audit": "Audit",
   "/system-log/logins": "Riwayat login",
   "/system-log/system-events": "Kejadian sistem",

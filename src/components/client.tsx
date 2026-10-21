@@ -236,6 +236,7 @@ const AREA_TABS = [
 const ANALYTICS_TABS = [
   { href: "/intervals", label: "Interval", sub: "Durasi per kamera" },
   { href: "/metrics", label: "Metrik", sub: "Deret waktu" },
+  { href: "/exports", label: "Ekspor", sub: "Laporan PDF dan CSV" },
 ];
 
 // Tabs between sibling pages that share one menu item. Each tab is its existing route; the chosen date is kept.
