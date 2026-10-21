@@ -43,7 +43,8 @@ function PdfForm() {
   const usecasesQuery = useUsecasesList();
 
   const [period, setPeriod] = useState<CreateExportJobDto["period"]>(CreateExportJobDtoPeriod.week);
-  const [date, setDate] = useState(() => todayLocal());
+  // a week runs 7 days from `date`, so the default week is the last 7 days, like the CSV range below
+  const [date, setDate] = useState(() => addDays(todayLocal(), -6));
   const [scope, setScope] = useState<"cameras" | "usecase">("cameras");
   const [cameraIds, setCameraIds] = useState<string[]>([]);
   const [useCase, setUseCase] = useState("");
