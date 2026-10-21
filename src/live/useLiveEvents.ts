@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from 'react';
-import type { AuditNotice, EventCreated } from '@/contract/web';
+import type { AuditNotice, DiskWarning, EventCreated } from '@/contract/web';
 import { useLiveContext } from './LiveProvider';
 
 function useLatest<T>(value: T) {
@@ -24,4 +24,11 @@ export function useAuditNotices(handler: (n: AuditNotice) => void): void {
   const { onAudit } = useLiveContext();
   const latest = useLatest(handler);
   useEffect(() => onAudit((n) => latest.current(n)), [onAudit, latest]);
+}
+
+// MANAGER and SUPERADMIN only: a disk crossed 85% (warning) or 95% (critical).
+export function useDiskWarnings(handler: (w: DiskWarning) => void): void {
+  const { onDisk } = useLiveContext();
+  const latest = useLatest(handler);
+  useEffect(() => onDisk((w) => latest.current(w)), [onDisk, latest]);
 }

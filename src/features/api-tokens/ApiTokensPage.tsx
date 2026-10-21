@@ -21,7 +21,7 @@ import {
 import { RequireRole } from "@/auth/RequireRole";
 import { PageHeader, Card, Table, Mono } from "@/components/ui";
 import { ApiError } from "@/api/http";
-import { fmtLocalTime } from "@/lib/time";
+import { fmtLocalTime, siteZoneLabel } from "@/lib/time";
 import { useQueryClient } from "@tanstack/react-query";
 import type { Role } from "@/auth/roles";
 import type { ApiTokenDto } from "@/api/generated/zooVisionAPI.schemas";
@@ -170,11 +170,11 @@ export function ApiTokensPage() {
               </div>,
 
               <span key="lastUsed" className="text-xs text-muted">
-                {t.lastUsedAt ? `${fmtLocalTime(t.lastUsedAt)} WIB` : "Belum pernah"}
+                {t.lastUsedAt ? `${fmtLocalTime(t.lastUsedAt)} ${siteZoneLabel()}` : "Belum pernah"}
               </span>,
 
               <span key="created" className="text-xs text-muted">
-                {fmtLocalTime(t.createdAt)} WIB
+                {fmtLocalTime(t.createdAt)} {siteZoneLabel()}
               </span>,
 
               <div key="actions">

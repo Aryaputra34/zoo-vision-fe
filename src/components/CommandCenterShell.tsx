@@ -11,7 +11,9 @@ import { useMe } from "@/auth/AuthProvider";
 import { useAuthLogout } from "@/api/generated/auth/auth";
 import { useStatus } from "@/live";
 import { BackendBanner } from "./BackendBanner";
+import { DiskBanner } from "./DiskBanner";
 import { LivePausedBadge } from "./LivePausedBadge";
+import { siteTimeZone, siteZoneLabel } from "@/lib/time";
 
 const ROLE_CHIP: Record<string, string> = {
   USER: "bg-lime/20 text-[#d9f0b8]",
@@ -28,16 +30,18 @@ const initials = (name: string) =>
     .join("") || "?";
 
 // Clock in the site time zone, rendered client-side only so server and client markup match.
-function useClockWib(): string | null {
+function useClock(): string | null {
   const [now, setNow] = useState<string | null>(null);
   useEffect(() => {
-    const fmt = new Intl.DateTimeFormat("en-GB", {
-      timeZone: "Asia/Jakarta",
-      hour: "2-digit",
-      minute: "2-digit",
-      hourCycle: "h23",
-    });
-    const tick = () => setNow(`${fmt.format(new Date())} WIB`);
+    const tick = () => {
+      const fmt = new Intl.DateTimeFormat("en-GB", {
+        timeZone: siteTimeZone(),
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23",
+      });
+      setNow(`${fmt.format(new Date())} ${siteZoneLabel()}`);
+    };
     tick();
     const timer = setInterval(tick, 30_000);
     return () => clearInterval(timer);
@@ -48,7 +52,7 @@ function useClockWib(): string | null {
 // The one place that shows live connection, cameras reporting and the time (the top bar does not repeat it).
 function LiveStatusCard({ collapsed }: { collapsed: boolean }) {
   const { cameras, paused } = useStatus();
-  const clock = useClockWib();
+  const clock = useClock();
   const all = Object.entries(cameras);
   const online = all.filter(([, c]) => c !== null).length;
   const waiting = all.length === 0 && !paused;
@@ -115,6 +119,7 @@ const SUB_PAGES: Record<string, string> = {
   "/rides": "Wahana kuda",
   "/intervals": "Interval",
   "/metrics": "Metrik",
+  "/exports": "Ekspor",
   "/system-log/audit": "Audit",
   "/system-log/logins": "Riwayat login",
   "/system-log/system-events": "Kejadian sistem",
@@ -397,6 +402,7 @@ export function CommandCenterShell({
         </header>
 
         <main className="w-full min-w-0 flex-1 px-4 py-6 sm:px-6 2xl:px-8">
+          <DiskBanner />
           <BackendBanner />
           {children}
         </main>

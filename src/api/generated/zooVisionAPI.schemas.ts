@@ -4,6 +4,61 @@
  * Zoo Vision API
  * OpenAPI spec version: 1
  */
+export interface SiteSettingsDto {
+  siteName: string;
+  /** IANA zone */
+  timeZone: string;
+  /**
+   * @minimum 1
+   * @maximum 3650
+   */
+  recordingRetentionDays: number;
+  /**
+   * @minimum 1
+   * @maximum 3650
+   */
+  snapshotRetentionDays: number;
+  /**
+   * @minimum 1
+   * @maximum 3650
+   */
+  auditSnapshotRetentionDays: number;
+  /**
+   * @minimum 1
+   * @maximum 3650
+   */
+  evidenceRetentionDays: number;
+}
+
+export interface UpdateSiteSettingsDto {
+  /**
+   * @minLength 1
+   * @maxLength 100
+   */
+  siteName?: string;
+  timeZone?: string;
+  /**
+   * @minimum 1
+   * @maximum 3650
+   */
+  recordingRetentionDays?: number;
+  /**
+   * @minimum 1
+   * @maximum 3650
+   */
+  snapshotRetentionDays?: number;
+  /**
+   * @minimum 1
+   * @maximum 3650
+   */
+  auditSnapshotRetentionDays?: number;
+  /**
+   * @minimum 1
+   * @maximum 3650
+   */
+  evidenceRetentionDays?: number;
+}
+
 export interface LoginDto {
   username: string;
   password: string;
@@ -191,10 +246,42 @@ export const Severity = {
   critical: 'critical',
 } as const;
 
+export type EvidenceStatus = typeof EvidenceStatus[keyof typeof EvidenceStatus];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const EvidenceStatus = {
+  QUEUED: 'QUEUED',
+  KEPT: 'KEPT',
+  NO_RECORDING: 'NO_RECORDING',
+  FAILED: 'FAILED',
+} as const;
+
+export type EvidenceReason = typeof EvidenceReason[keyof typeof EvidenceReason];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const EvidenceReason = {
+  SEVERITY: 'SEVERITY',
+  AUDIT_CAMERA: 'AUDIT_CAMERA',
+  USER: 'USER',
+} as const;
+
+export interface EventEvidenceDto {
+  status: EvidenceStatus;
+  reason: EvidenceReason;
+}
+
 /**
  * The event's `data` (see its type's schema in /usecases)
  */
 export type EventRowDtoData = { [key: string]: unknown };
+
+/**
+ * The kept-clip row of this event; null when the clip is not (to be) kept
+ * @nullable
+ */
+export type EventRowDtoEvidence = EventEvidenceDto | null;
 
 export interface EventRowDto {
   /** UTC */
@@ -214,10 +301,15 @@ export interface EventRowDto {
    */
   snapshotUrl: string | null;
   /**
-   * A /media/clips URL; null when the camera has no recording path or recording is off. The clip itself can still be gone
+   * A /media/clips URL; null when the camera has no recording path or recording is off, unless the clip is kept. The clip itself can still be gone
    * @nullable
    */
   clipUrl: string | null;
+  /**
+   * The kept-clip row of this event; null when the clip is not (to be) kept
+   * @nullable
+   */
+  evidence: EventRowDtoEvidence;
   id: string;
   useCase: string;
   type: string;
@@ -335,6 +427,8 @@ export interface CameraRecordingDto {
   enabled: boolean;
   /** @nullable */
   retentionDays: number | null;
+  /** @nullable */
+  evidenceRetentionDays: number | null;
   clipBeforeSec: number;
   clipAfterSec: number;
 }
@@ -428,6 +522,10 @@ export type StreamInfoDtoDisk = DiskInfoDto | null;
 
 export interface StreamInfoDto {
   paths: StreamPathInfoDto[];
+  /** Bytes of this camera's kept clips */
+  evidenceBytes: number;
+  /** Number of this camera's kept clips */
+  evidenceCount: number;
   /**
    * The recordings volume; null when it cannot be read
    * @nullable
@@ -445,6 +543,13 @@ export interface RecordingDto {
    * @nullable
    */
   retentionDays?: number | null;
+  /**
+   * How long kept clips of this camera live; null = site default
+   * @minimum 1
+   * @maximum 3650
+   * @nullable
+   */
+  evidenceRetentionDays?: number | null;
   /**
    * @minimum 0
    * @maximum 300
@@ -717,6 +822,12 @@ export interface CameraOnlineDto {
   online: boolean;
 }
 
+export interface EvidenceDto {
+  eventId: string;
+  status: EvidenceStatus;
+  reason: EvidenceReason;
+}
+
 export type ModelFormat = typeof ModelFormat[keyof typeof ModelFormat];
 
 
@@ -929,6 +1040,74 @@ export interface IntervalPageDto {
    * @nullable
    */
   nextCursor: string | null;
+}
+
+export type CreateExportJobDtoPeriod = typeof CreateExportJobDtoPeriod[keyof typeof CreateExportJobDtoPeriod];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const CreateExportJobDtoPeriod = {
+  day: 'day',
+  week: 'week',
+  month: 'month',
+} as const;
+
+export interface CreateExportJobDto {
+  period: CreateExportJobDtoPeriod;
+  /** Local date on the site time zone: the day, the first day of the week, or any day of the month */
+  date: string;
+  /**
+   * @minItems 1
+   * @maxItems 50
+   */
+  cameraIds?: string[];
+  useCase?: string;
+}
+
+export type ExportJobParamsDtoPeriod = typeof ExportJobParamsDtoPeriod[keyof typeof ExportJobParamsDtoPeriod];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ExportJobParamsDtoPeriod = {
+  day: 'day',
+  week: 'week',
+  month: 'month',
+} as const;
+
+export interface ExportJobParamsDto {
+  period: ExportJobParamsDtoPeriod;
+  date: string;
+  cameraIds?: string[];
+  useCase?: string;
+}
+
+export type ExportJobDtoStatus = typeof ExportJobDtoStatus[keyof typeof ExportJobDtoStatus];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ExportJobDtoStatus = {
+  QUEUED: 'QUEUED',
+  DONE: 'DONE',
+  FAILED: 'FAILED',
+  EXPIRED: 'EXPIRED',
+} as const;
+
+export interface ExportJobDto {
+  id: string;
+  params: ExportJobParamsDto;
+  status: ExportJobDtoStatus;
+  /** @nullable */
+  error: string | null;
+  /** @nullable */
+  sizeBytes: number | null;
+  createdAt: string;
+  /** @nullable */
+  finishedAt: string | null;
+  /**
+   * Set when DONE: /api/v1/exports/jobs/<id>/file
+   * @nullable
+   */
+  fileUrl: string | null;
 }
 
 /**

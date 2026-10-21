@@ -11,7 +11,7 @@ import { CsvLink } from "@/components/CsvLink";
 import { EvidenceButton } from "@/components/EvidenceButton";
 import { AreaNow, AreaSection, AREA_SUBTITLE, AREA_TITLE } from "@/components/area";
 import { fillBuckets } from "@/lib/buckets";
-import { fmtLocalTime, localDayRange, localDaysRange, localHour } from "@/lib/time";
+import { fmtLocalTime, localDayRange, localDaysRange, localHour, siteZoneLabel } from "@/lib/time";
 import { useToday } from "@/lib/useToday";
 import { fmtNum } from "@/lib/util";
 
@@ -190,7 +190,7 @@ export function VehiclesPage({ date: picked }: { date?: string }) {
         <Tile
           label="Jam tersibuk"
           icon={<Clock aria-hidden />}
-          value={totals.peakHour !== null ? `${totals.peakHour}:00 WIB` : "—"}
+          value={totals.peakHour !== null ? `${totals.peakHour}:00 ${siteZoneLabel()}` : "—"}
           sub={
             totals.peakHour !== null
               ? `${fmtNum(totals.peakCount)} kendaraan masuk`
@@ -297,7 +297,9 @@ export function VehiclesPage({ date: picked }: { date?: string }) {
                   key="ev"
                   snapshotUrl={e.snapshotUrl}
                   clipUrl={e.clipUrl}
-                  title={`${e.cameraName ?? e.cameraId ?? "Gerbang"} · ${date} ${fmtLocalTime(e.time)} WIB`}
+                  eventId={e.id}
+                  evidence={e.evidence}
+                  title={`${e.cameraName ?? e.cameraId ?? "Gerbang"} · ${date} ${fmtLocalTime(e.time)} ${siteZoneLabel()}`}
                 />,
               ])}
               empty={

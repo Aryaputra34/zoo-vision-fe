@@ -26,7 +26,7 @@ import { CsvLink } from "@/components/CsvLink";
 import { EvidenceButton } from "@/components/EvidenceButton";
 import { LivePausedBadge } from "@/components/LivePausedBadge";
 import { AreaNow, AreaSection, AREA_SUBTITLE, AREA_TITLE } from "@/components/area";
-import { fmtLocalTime, localDayRange } from "@/lib/time";
+import { fmtLocalTime, localDayRange, siteZoneLabel } from "@/lib/time";
 import { useToday } from "@/lib/useToday";
 import { fmtNum } from "@/lib/util";
 
@@ -212,7 +212,7 @@ export function RestaurantPage({ date: picked }: { date?: string }) {
             label="Puncak tamu"
             icon={<Users aria-hidden />}
             value={occupancyQuery.isLoading ? "…" : `${fmtNum(totals.peakGuests)} orang`}
-            sub={totals.peakTime !== "—" ? `pukul ${totals.peakTime} WIB` : "belum ada kunjungan"}
+            sub={totals.peakTime !== "—" ? `pukul ${totals.peakTime} ${siteZoneLabel()}` : "belum ada kunjungan"}
           />
           <Tile
             label="Durasi padat"
@@ -265,7 +265,9 @@ export function RestaurantPage({ date: picked }: { date?: string }) {
                   key="ev"
                   snapshotUrl={e.snapshotUrl}
                   clipUrl={e.clipUrl}
-                  title={`${e.cameraName ?? e.cameraId ?? "Resto"} · ${date} ${fmtLocalTime(e.time)} WIB`}
+                  eventId={e.id}
+                  evidence={e.evidence}
+                  title={`${e.cameraName ?? e.cameraId ?? "Resto"} · ${date} ${fmtLocalTime(e.time)} ${siteZoneLabel()}`}
                 />,
               ])}
               empty={

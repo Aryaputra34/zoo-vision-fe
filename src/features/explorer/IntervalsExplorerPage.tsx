@@ -7,7 +7,7 @@ import { useCamerasList } from "@/api/generated/cameras/cameras";
 import { PageHeader, Card, Table } from "@/components/ui";
 import { AnalyticsTabs } from "@/components/client";
 import { CsvLink } from "@/components/CsvLink";
-import { fmtLocalTime, localDayRange } from "@/lib/time";
+import { fmtLocalTime, localDayRange, siteZoneLabel } from "@/lib/time";
 import { useToday } from "@/lib/useToday";
 
 export function IntervalsExplorerPage({ date: picked }: { date?: string } = {}) {
@@ -138,7 +138,7 @@ export function IntervalsExplorerPage({ date: picked }: { date?: string } = {}) 
       <div className="mb-6">
         <Card
           title={`Garis Waktu 24 Jam: ${selectedKind}`}
-          subtitle="Distribusi horizontal durasi kejadian dalam rentang jam operasional (00:00 - 24:00 WIB)"
+          subtitle={`Distribusi horizontal durasi kejadian dalam rentang jam operasional (00:00 - 24:00 ${siteZoneLabel()})`}
         >
           {cameraTimelineMap.size > 0 ? (
             <div className="space-y-4">
@@ -150,7 +150,7 @@ export function IntervalsExplorerPage({ date: picked }: { date?: string } = {}) 
                 <span>12:00</span>
                 <span>16:00</span>
                 <span>20:00</span>
-                <span>24:00 WIB</span>
+                <span>24:00 {siteZoneLabel()}</span>
               </div>
 
               {Array.from(cameraTimelineMap.entries()).map(([camName, invList]) => (

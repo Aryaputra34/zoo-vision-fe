@@ -19,7 +19,7 @@ import { roleAtLeast, type Role } from "@/auth/roles";
 import { RequireRole } from "@/auth/RequireRole";
 import { PageHeader, Card, Table, Badge, Mono } from "@/components/ui";
 import { ApiError } from "@/api/http";
-import { fmtLocalTime } from "@/lib/time";
+import { fmtLocalTime, siteZoneLabel } from "@/lib/time";
 import { useQueryClient } from "@tanstack/react-query";
 import type { UserDto } from "@/api/generated/zooVisionAPI.schemas";
 
@@ -221,7 +221,7 @@ export function UsersPage() {
             </div>,
 
             <span key="created" className="text-xs text-muted">
-              {fmtLocalTime(u.createdAt)} WIB
+              {fmtLocalTime(u.createdAt)} {siteZoneLabel()}
             </span>,
 
             <div key="actions" className="flex items-center gap-2">

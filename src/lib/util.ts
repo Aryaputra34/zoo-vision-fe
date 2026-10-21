@@ -1,18 +1,19 @@
-// ponytail: fixed UTC+7 — WIB has no DST.
-const WIB = 7 * 3_600_000;
+import { fmtLocalTime, localDate, localDayRange, localHour, todayLocal } from "./time";
+
 const DAY = 86_400_000;
 
-const wibIso = (ts: number) => new Date(ts + WIB).toISOString();
-export const todayWib = () => wibIso(Date.now()).slice(0, 10);
-export const fmtTime = (ts: number) => wibIso(ts).slice(11, 19);
-export const fmtHm = (ts: number) => wibIso(ts).slice(11, 16);
-export const fmtDateTime = (ts: number) => wibIso(ts).slice(0, 19).replace("T", " ");
-export const dayOf = (ts: number) => wibIso(ts).slice(0, 10);
-export const hourOf = (ts: number) => wibIso(ts).slice(11, 13);
+// All in the site time zone (src/lib/time.ts); the names are older than the zone setting.
+const iso = (ts: number) => new Date(ts).toISOString();
+export const todayWib = () => todayLocal();
+export const fmtTime = (ts: number) => fmtLocalTime(iso(ts));
+export const fmtHm = (ts: number) => fmtTime(ts).slice(0, 5);
+export const fmtDateTime = (ts: number) => `${dayOf(ts)} ${fmtTime(ts)}`;
+export const dayOf = (ts: number) => localDate(iso(ts));
+export const hourOf = (ts: number) => localHour(iso(ts));
 
 export function dayRange(date: string): [number, number] {
-  const from = Date.parse(`${date}T00:00:00+07:00`);
-  return [from, from + DAY - 1];
+  const { from, to } = localDayRange(date);
+  return [Date.parse(from), Date.parse(to) - 1];
 }
 
 export const str = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";

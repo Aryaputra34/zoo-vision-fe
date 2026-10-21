@@ -14,7 +14,7 @@ describe('visibleNav and roles', () => {
     const managerSections = visibleNav(NAV_SECTIONS, 'MANAGER');
     const managerConfig = managerSections.find((s) => s.title === 'Pengelolaan');
     expect(managerConfig).toBeDefined();
-    expect(managerConfig!.items.map((i) => i.label)).toEqual(['Kamera', 'Model AI', 'Pengguna']);
+    expect(managerConfig!.items.map((i) => i.label)).toEqual(['Kamera', 'Model AI', 'Pengguna', 'Pengaturan situs']);
     expect(labels('MANAGER')).toContain('Log sistem');
     expect(labels('MANAGER')).not.toContain('Token API');
     expect(labels('MANAGER')).not.toContain('Dokumentasi API');

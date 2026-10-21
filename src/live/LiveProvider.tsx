@@ -5,7 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { notifyUnauthenticated } from '@/api/http';
 import { getAuthMeQueryKey } from '@/api/generated/auth/auth';
 import { useMe } from '@/auth/AuthProvider';
-import type { AuditNotice, CameraStatus, EventCreated, StatusSnapshot } from '@/contract/web';
+import type { AuditNotice, CameraStatus, DiskWarning, EventCreated, StatusSnapshot } from '@/contract/web';
 import { createSocket, type LiveSocket } from './socket';
 import { isLiveDataKey } from './query-keys';
 
@@ -97,10 +97,11 @@ type LiveContextValue = {
   status: StatusStore | null;
   onEvent: (fn: (e: EventCreated) => void) => () => void;
   onAudit: (fn: (n: AuditNotice) => void) => () => void;
+  onDisk: (fn: (w: DiskWarning) => void) => () => void;
 };
 
 const noop = () => () => {};
-const LiveContext = createContext<LiveContextValue>({ socket: null, status: null, onEvent: noop, onAudit: noop });
+const LiveContext = createContext<LiveContextValue>({ socket: null, status: null, onEvent: noop, onAudit: noop, onDisk: noop });
 
 export function useLiveContext(): LiveContextValue {
   return useContext(LiveContext);
@@ -130,6 +131,7 @@ export function LiveProvider({ children }: { children: ReactNode }): ReactNode {
   const socketInstance = useSyncExternalStore(socketStore.subscribe, socketStore.get, () => null);
   const eventFns = useRef(new Set<(e: EventCreated) => void>());
   const auditFns = useRef(new Set<(n: AuditNotice) => void>());
+  const diskFns = useRef(new Set<(w: DiskWarning) => void>());
 
   useEffect(() => {
     if (!loggedIn) return;
@@ -174,6 +176,7 @@ export function LiveProvider({ children }: { children: ReactNode }): ReactNode {
     socket.on('status.snapshot', (s) => store.onSnapshot(s));
     socket.on('event.created', (e) => eventFns.current.forEach((fn) => fn(e)));
     socket.on('audit.notice', (n) => auditFns.current.forEach((fn) => fn(n)));
+    socket.on('disk.warning', (w) => diskFns.current.forEach((fn) => fn(w)));
 
     socket.on('session.ended', ({ reason }) => {
       socket.disconnect();
@@ -210,6 +213,10 @@ export function LiveProvider({ children }: { children: ReactNode }): ReactNode {
       onAudit: (fn) => {
         auditFns.current.add(fn);
         return () => auditFns.current.delete(fn);
+      },
+      onDisk: (fn) => {
+        diskFns.current.add(fn);
+        return () => diskFns.current.delete(fn);
       },
     }),
     [socketInstance, status],
