@@ -30,9 +30,9 @@ export function StreamPanel({ cameraId }: StreamPanelProps) {
 
   if (is503) {
     return (
-      <div className="rounded-2xl border border-amber-300/60 bg-amber-50 p-4 text-xs font-semibold text-amber-800">
+      <div className="rounded-2xl border border-warn/25 bg-warn-bg p-4 text-xs font-semibold text-gold-ink">
         <div className="flex items-center gap-2">
-          <AlertTriangle className="size-4 shrink-0 text-amber-600" />
+          <AlertTriangle className="size-4 shrink-0 text-gold-ink" />
           <span>MediaMTX tidak tersedia</span>
         </div>
       </div>
@@ -91,13 +91,13 @@ export function StreamPanel({ cameraId }: StreamPanelProps) {
                 <span
                   className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${
                     p.ready
-                      ? 'border border-emerald-200 bg-emerald-50 text-emerald-700'
-                      : 'border border-zinc-200 bg-zinc-100 text-zinc-500'
+                      ? 'border border-good/25 bg-good-bg text-good'
+                      : 'border border-line bg-off-bg text-muted'
                   }`}
                 >
                   <span
                     className={`size-1.5 rounded-full ${
-                      p.ready ? 'bg-emerald-500' : 'bg-zinc-400'
+                      p.ready ? 'bg-good' : 'bg-off'
                     }`}
                   />
                   {p.ready ? 'Terhubung' : 'Tidak terhubung'}
@@ -112,8 +112,8 @@ export function StreamPanel({ cameraId }: StreamPanelProps) {
                 </span>
 
                 {p.codecWarning === 'H265_BROWSER' && (
-                  <span className="inline-flex items-center gap-1 rounded-md border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[10px] font-bold text-amber-800">
-                    <AlertTriangle className="size-3 text-amber-600" />
+                  <span className="inline-flex items-center gap-1 rounded-md border border-warn/25 bg-warn-bg px-1.5 py-0.5 text-[10px] font-bold text-gold-ink">
+                    <AlertTriangle className="size-3 text-gold-ink" />
                     H.265: browser mungkin tidak bisa memutar
                   </span>
                 )}

@@ -1,5 +1,6 @@
 "use client";
 
+import { SystemLogTabs } from "@/components/client";
 import { useState, useMemo } from "react";
 import {
   Search,
@@ -83,9 +84,8 @@ export function AuditLogPage({ date: picked }: { date?: string } = {}) {
   return (
     <RequireRole min="MANAGER">
       <PageHeader
-        tag="Log Sistem & Audit"
-        title="Jejak Audit Perubahan Sistem (Audit Trail)"
-        subtitle="Catatan terverifikasi setiap perubahan konfigurasi kamera, parameter AI, akun pengguna, dan ekspor data"
+        title="Log sistem"
+        subtitle="Jejak perubahan konfigurasi kamera, model, akun, dan ekspor data."
         date={pickedDate}
       >
         <CsvLink
@@ -99,6 +99,7 @@ export function AuditLogPage({ date: picked }: { date?: string } = {}) {
           }}
         />
       </PageHeader>
+      <SystemLogTabs />
 
       {/* Filter toolbar */}
       <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -164,7 +165,7 @@ export function AuditLogPage({ date: picked }: { date?: string } = {}) {
               <div key="time" className="flex flex-col">
                 <span>{fmtLocalTime(r.time)}</span>
                 {r.auditCamera && (
-                  <span className="mt-1 w-fit rounded-full bg-amber-100 px-2 py-0.5 text-[9px] font-black text-amber-800 border border-amber-300">
+                  <span className="mt-1 w-fit rounded-full bg-warn-bg px-2 py-0.5 text-[9px] font-extrabold text-gold-ink border border-warn/25">
                     Kamera Audit
                   </span>
                 )}
@@ -216,7 +217,7 @@ export function AuditLogPage({ date: picked }: { date?: string } = {}) {
         {/* Expanded Diff Preview Modal / Drawer */}
         {expandedRowId && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-            <div className="w-full max-w-2xl rounded-3xl border border-line bg-surface p-6 shadow-2xl">
+            <div className="w-full max-w-2xl rounded-2xl border border-line bg-surface p-6 shadow-2xl">
               {(() => {
                 const item = rows.find((r) => r.id === expandedRowId);
                 if (!item) return null;
@@ -225,7 +226,7 @@ export function AuditLogPage({ date: picked }: { date?: string } = {}) {
                   <div>
                     <div className="flex items-center justify-between border-b border-line pb-3">
                       <div>
-                        <h3 className="text-base font-black text-ink">Perbandingan Nilai (Diff)</h3>
+                        <h3 className="text-base font-extrabold text-ink">Perbandingan Nilai (Diff)</h3>
                         <p className="text-xs text-muted">
                           {item.action} pada {item.entity} ({item.entityId ?? "—"}) oleh {item.actorName}
                         </p>
@@ -240,16 +241,16 @@ export function AuditLogPage({ date: picked }: { date?: string } = {}) {
                     </div>
 
                     <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 text-xs font-mono">
-                      <div className="rounded-2xl border border-red-200 bg-red-50/50 p-4">
-                        <div className="text-[11px] font-black text-red-800 uppercase mb-2">Sebelumnya (Before)</div>
-                        <pre className="text-zinc-800 whitespace-pre-wrap break-all text-[11px]">
+                      <div className="rounded-2xl border border-crit/25 bg-crit-bg p-4">
+                        <div className="text-[11px] font-extrabold text-crit-ink uppercase mb-2">Sebelumnya (Before)</div>
+                        <pre className="text-ink-2 whitespace-pre-wrap break-all text-[11px]">
                           {JSON.stringify(item.before, null, 2) || "Tidak ada data sebelumnya"}
                         </pre>
                       </div>
 
-                      <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-4">
-                        <div className="text-[11px] font-black text-emerald-800 uppercase mb-2">Sesudahnya (After)</div>
-                        <pre className="text-zinc-800 whitespace-pre-wrap break-all text-[11px]">
+                      <div className="rounded-2xl border border-good/25 bg-good-bg p-4">
+                        <div className="text-[11px] font-extrabold text-good uppercase mb-2">Sesudahnya (After)</div>
+                        <pre className="text-ink-2 whitespace-pre-wrap break-all text-[11px]">
                           {JSON.stringify(item.after, null, 2) || "Tidak ada data perubahan"}
                         </pre>
                       </div>
@@ -267,7 +268,7 @@ export function AuditLogPage({ date: picked }: { date?: string } = {}) {
               type="button"
               disabled={auditQuery.isFetching}
               onClick={handleLoadMore}
-              className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-5 py-2.5 text-xs font-black text-forest shadow-sm transition hover:border-lime hover:bg-lime/10 disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-5 py-2.5 text-xs font-extrabold text-forest shadow-sm transition hover:border-lime hover:bg-lime/10 disabled:opacity-50"
             >
               <RefreshCw className={`size-3.5 ${auditQuery.isFetching ? "animate-spin" : ""}`} />
               Muat Halaman Berikutnya

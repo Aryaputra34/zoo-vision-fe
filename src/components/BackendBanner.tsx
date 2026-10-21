@@ -11,7 +11,7 @@ export function BackendBanner() {
   return (
     <div
       role="alert"
-      className="mb-4 flex items-center gap-2 rounded-2xl border border-amber-400/50 bg-amber-50 px-4 py-2.5 text-xs font-extrabold text-amber-800 dark:bg-amber-900/30 dark:text-amber-200"
+      className="mb-5 flex items-center gap-2.5 rounded-xl border border-warn/40 bg-warn-bg px-4 py-2.5 text-[13px] font-semibold text-gold-ink"
     >
       <ServerCrash aria-hidden className="size-4 shrink-0" />
       Server tidak dapat dihubungi. Data mungkin tidak terbaru.

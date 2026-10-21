@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { CameraTabs } from "@/components/client";
 import { ArrowLeft, Save, Sliders, AlertCircle, Check } from "lucide-react";
 import { useCamerasGet, useCamerasUpdate } from "@/api/generated/cameras/cameras";
 import { useUsecasesList } from "@/api/generated/usecases/usecases";
@@ -117,16 +118,16 @@ function CameraEditForm({ id, camera, isSuperadmin, usecase }: CameraEditFormPro
   return (
     <>
       {saveSuccess && (
-        <div className="mb-6 inline-flex w-full items-center gap-2 rounded-2xl border border-emerald-300 bg-emerald-50 p-4 text-xs font-bold text-emerald-800">
-          <Check className="size-4 text-emerald-600" />
+        <div className="mb-6 inline-flex w-full items-center gap-2 rounded-2xl border border-good/25 bg-good-bg p-4 text-xs font-bold text-good">
+          <Check className="size-4 text-good" />
           <span>Pengaturan kamera berhasil diperbarui.</span>
         </div>
       )}
 
       {generalError && (
-        <div role="alert" className="mb-6 rounded-2xl border border-red-300 bg-red-50 p-4 text-xs font-bold text-red-800">
+        <div role="alert" className="mb-6 rounded-2xl border border-crit/25 bg-crit-bg p-4 text-xs font-bold text-crit-ink">
           <div className="flex items-center gap-2">
-            <AlertCircle className="size-4 text-red-600" />
+            <AlertCircle className="size-4 text-crit" />
             <span>{generalError}</span>
           </div>
         </div>
@@ -155,7 +156,7 @@ function CameraEditForm({ id, camera, isSuperadmin, usecase }: CameraEditFormPro
 
             <div>
               <label htmlFor="edit-name" className="block text-xs font-extrabold uppercase tracking-wider text-ink-2">
-                Nama Kamera <span className="text-red-500">*</span>
+                Nama Kamera <span className="text-crit">*</span>
               </label>
               <input
                 id="edit-name"
@@ -167,7 +168,7 @@ function CameraEditForm({ id, camera, isSuperadmin, usecase }: CameraEditFormPro
                 className="mt-1.5 w-full rounded-xl border border-line bg-surface px-3 py-2 text-xs font-bold text-ink focus:border-lime focus:outline-none focus:ring-2 focus:ring-lime/20"
               />
               {fieldErrors["name"] && (
-                <p className="mt-1 text-[11px] font-bold text-red-600">{fieldErrors["name"]}</p>
+                <p className="mt-1 text-[11px] font-bold text-crit">{fieldErrors["name"]}</p>
               )}
             </div>
 
@@ -185,7 +186,7 @@ function CameraEditForm({ id, camera, isSuperadmin, usecase }: CameraEditFormPro
                 className="mt-1.5 w-full rounded-xl border border-line bg-surface px-3 py-2 text-xs font-bold text-ink focus:border-lime focus:outline-none focus:ring-2 focus:ring-lime/20"
               />
               {fieldErrors["area"] && (
-                <p className="mt-1 text-[11px] font-bold text-red-600">{fieldErrors["area"]}</p>
+                <p className="mt-1 text-[11px] font-bold text-crit">{fieldErrors["area"]}</p>
               )}
             </div>
 
@@ -246,7 +247,7 @@ function CameraEditForm({ id, camera, isSuperadmin, usecase }: CameraEditFormPro
 
             <div className="sm:col-span-2">
               <label className="block text-xs font-extrabold uppercase tracking-wider text-ink-2">
-                Main Stream URL <span className="text-red-500">*</span>
+                Main Stream URL <span className="text-crit">*</span>
               </label>
               <input
                 disabled={!isSuperadmin}
@@ -258,7 +259,7 @@ function CameraEditForm({ id, camera, isSuperadmin, usecase }: CameraEditFormPro
                 className="mt-1.5 w-full rounded-xl border border-line bg-surface px-3 py-2 text-xs font-mono font-bold text-ink disabled:bg-surface-2 disabled:text-muted focus:border-lime focus:outline-none"
               />
               {fieldErrors["mainStreamUrl"] && (
-                <p className="mt-1 text-[11px] font-bold text-red-600">{fieldErrors["mainStreamUrl"]}</p>
+                <p className="mt-1 text-[11px] font-bold text-crit">{fieldErrors["mainStreamUrl"]}</p>
               )}
             </div>
 
@@ -402,7 +403,7 @@ function CameraEditForm({ id, camera, isSuperadmin, usecase }: CameraEditFormPro
           <button
             type="submit"
             disabled={updateMutation.isPending}
-            className="inline-flex items-center gap-2 rounded-xl bg-forest px-6 py-2.5 text-xs font-black text-white shadow-md hover:bg-forest-dark hover:shadow-lg disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-xl bg-forest px-6 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-forest-dark hover:shadow-lg disabled:opacity-50"
           >
             <Save className="size-4" />
             {updateMutation.isPending ? "Menyimpan..." : "Simpan Perubahan"}
@@ -425,29 +426,19 @@ export function CameraEditPage({ id }: { id: string }) {
 
   return (
     <RequireRole min="MANAGER">
-      <div className="mb-4 flex items-center justify-between">
-        <Link
-          href="/config/cameras"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-muted transition hover:text-forest"
-        >
-          <ArrowLeft className="size-4" />
-          Kembali ke Daftar Kamera
-        </Link>
-
-        <Link
-          href={`/config/cameras/${id}/zones`}
-          className="inline-flex items-center gap-1.5 rounded-xl border border-line bg-surface px-3 py-1.5 text-xs font-bold text-forest transition hover:border-lime hover:bg-lime/10"
-        >
-          <Sliders className="size-4" />
-          Buka Editor Zona & Ambang Batas
-        </Link>
-      </div>
+      <Link
+        href="/config/cameras"
+        className="mb-3 inline-flex items-center gap-1.5 text-[13px] font-bold text-muted transition hover:text-forest"
+      >
+        <ArrowLeft className="size-4" />
+        Semua kamera
+      </Link>
 
       <PageHeader
-        tag={isSuperadmin ? "Superadmin / Manager" : "Manager Mode"}
-        title={`Edit Kamera: ${camera?.name ?? id}`}
-        subtitle="Atur identitas kamera, parameter operasional, dan stream video"
+        title={camera?.name ?? id}
+        subtitle="Pengaturan kamera: identitas, status aktif, dan stream video."
       />
+      <CameraTabs id={id} />
 
       {cameraQuery.isLoading ? (
         <Card>
@@ -455,7 +446,7 @@ export function CameraEditPage({ id }: { id: string }) {
         </Card>
       ) : !camera ? (
         <Card>
-          <div className="py-12 text-center text-xs font-bold text-red-600">Kamera tidak ditemukan.</div>
+          <div className="py-12 text-center text-xs font-bold text-crit">Kamera tidak ditemukan.</div>
         </Card>
       ) : (
         <CameraEditForm

@@ -1,14 +1,17 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { RefreshCw } from "lucide-react";
+import { useState, useMemo, useRef, type KeyboardEvent } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { RefreshCw, Video } from "lucide-react";
 import { useEventsList } from "@/api/generated/events/events";
 import { useUsecasesList } from "@/api/generated/usecases/usecases";
 import { useCamerasList } from "@/api/generated/cameras/cameras";
-import { PageHeader, Card, Table, SeverityBadge } from "@/components/ui";
+import { PageHeader, SeverityBadge } from "@/components/ui";
 import { CsvLink } from "@/components/CsvLink";
 import { EvidenceButton } from "@/components/EvidenceButton";
 import { fmtLocalTime, localDayRange } from "@/lib/time";
+import { fmtNum } from "@/lib/util";
 import { useToday } from "@/lib/useToday";
 import type { EventRowDto } from "@/api/generated/zooVisionAPI.schemas";
 
@@ -97,32 +100,101 @@ export function EventsExplorerPage({ date: picked }: { date?: string } = {}) {
   }, [eventsQuery.data?.rows, cursor, accumulatedRows]);
 
   const usecaseMap = new Map((usecasesQuery.data ?? []).map((u) => [u.id, u.label]));
+  const router = useRouter();
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // Selected row for the detail panel (defaults to the first row).
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const selected = displayRows.find((r) => r.id === selectedId) ?? displayRows[0] ?? null;
+
+  // Quick filters only set the filters above; nothing is stored.
+  const resetTo = (useCase: string, severity: string) => {
+    setSelectedUseCase(useCase);
+    setSelectedType("ALL");
+    setSelectedCamera("ALL");
+    setSelectedSeverity(severity);
+    setCursor(undefined);
+    setAccumulatedRows([]);
+  };
+  const quick = [
+    { t: "Semua kejadian", uc: "ALL", sev: "ALL" },
+    { t: "Kritis", uc: "ALL", sev: "critical" },
+    ...(usecasesQuery.data ?? []).map((u) => ({ t: u.label, uc: u.id, sev: "ALL" })),
+  ];
+  const isQuickOn = (q: { uc: string; sev: string }) =>
+    selectedUseCase === q.uc && selectedSeverity === q.sev && selectedType === "ALL" && selectedCamera === "ALL";
+
+  const subtitle = [
+    selectedUseCase !== "ALL" ? usecaseMap.get(selectedUseCase) ?? selectedUseCase : "Semua area",
+    pickedDate === today ? "hari ini" : pickedDate,
+    eventsQuery.isLoading ? "memuat…" : `${fmtNum(displayRows.length)}${eventsQuery.data?.nextCursor ? "+" : ""} kejadian`,
+  ].join(" · ");
+
+  const selectCls =
+    "h-9 w-auto max-w-full cursor-pointer appearance-none rounded-full border px-3.5 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-lime/40";
+  const pill = (on: boolean) =>
+    on ? `${selectCls} border-transparent bg-[#eaf3dc] text-forest` : `${selectCls} border-dashed border-[#cfc9b8] bg-surface text-ink-2`;
+
+  const onListKey = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (!selected) return;
+    const i = displayRows.findIndex((r) => r.id === selected.id);
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      const next = displayRows[Math.min(displayRows.length - 1, Math.max(0, i + (e.key === "ArrowDown" ? 1 : -1)))];
+      if (next) {
+        setSelectedId(next.id);
+        listRef.current?.querySelector<HTMLElement>(`[data-row="${next.id}"]`)?.focus();
+      }
+    } else if (e.key === "Enter" && selected.cameraId) {
+      router.push(`/live?cam=${encodeURIComponent(selected.cameraId)}`);
+    }
+  };
 
   return (
-    <>
-      <PageHeader
-        tag="Data Explorer"
-        title="Pusat Log Kejadian (Events Explorer)"
-        subtitle="Eksplorasi seluruh aliran kejadian AI vision lintas use-case secara generik dengan filter presisi dan bukti snapshot visual"
-        date={pickedDate}
-      >
-        <CsvLink
-          path="/api/v1/exports/events.csv"
-          params={{
-            from: day.from,
-            to: day.to,
-            useCase: selectedUseCase !== "ALL" ? selectedUseCase : undefined,
-            types: selectedType !== "ALL" ? selectedType : undefined,
-            cameraIds: selectedCamera !== "ALL" ? selectedCamera : undefined,
-            severity: selectedSeverity !== "ALL" ? selectedSeverity : undefined,
-          }}
-        />
-      </PageHeader>
+    <div className="-mx-4 -my-6 flex min-h-[calc(100vh-56px)] flex-col sm:-mx-6 lg:flex-row 2xl:-mx-8">
+      {/* Quick filters */}
+      <aside aria-label="Filter cepat" className="flex shrink-0 flex-col gap-1 border-line px-3 py-5 max-lg:border-b lg:w-[230px] lg:border-r">
+        <span className="px-2.5 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-muted uppercase">Filter cepat</span>
+        <div className="flex flex-wrap gap-1 lg:flex-col">
+          {quick.map((q) => {
+            const on = isQuickOn(q);
+            return (
+              <button
+                key={q.t}
+                type="button"
+                aria-pressed={on}
+                onClick={() => resetTo(q.uc, q.sev)}
+                className={`flex min-h-[38px] cursor-pointer items-center rounded-[9px] px-2.5 text-left text-sm transition-colors ${
+                  on ? "bg-[#eaf3dc] font-bold text-forest" : "font-medium text-ink hover:bg-surface-2"
+                }`}
+              >
+                {q.t}
+              </button>
+            );
+          })}
+        </div>
+        <span className="hidden px-2.5 pt-2.5 text-xs leading-relaxed text-muted lg:block">
+          Filter cepat hanya menyetel filter di daftar, tidak menyimpan apa pun di server.
+        </span>
+      </aside>
 
-      {/* Filter Toolbar */}
-      <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Use Case Filter */}
-        <div className="relative">
+      {/* List */}
+      <section aria-label="Daftar kejadian" className="flex min-w-0 flex-1 flex-col gap-3.5 px-4 pt-5 pb-8 sm:px-5">
+        <PageHeader title="Kejadian" subtitle={subtitle} date={pickedDate}>
+          <CsvLink
+            path="/api/v1/exports/events.csv"
+            params={{
+              from: day.from,
+              to: day.to,
+              useCase: selectedUseCase !== "ALL" ? selectedUseCase : undefined,
+              types: selectedType !== "ALL" ? selectedType : undefined,
+              cameraIds: selectedCamera !== "ALL" ? selectedCamera : undefined,
+              severity: selectedSeverity !== "ALL" ? selectedSeverity : undefined,
+            }}
+          />
+        </PageHeader>
+
+        <div className="-mt-1.5 flex flex-wrap items-center gap-1.5">
           <select
             value={selectedUseCase}
             onChange={(e) => {
@@ -130,145 +202,185 @@ export function EventsExplorerPage({ date: picked }: { date?: string } = {}) {
               setSelectedType("ALL");
             }}
             aria-label="Filter Use-Case"
-            className="w-full appearance-none rounded-2xl border border-line bg-surface py-2.5 px-4 text-xs font-semibold text-ink focus:border-lime focus:outline-none"
+            className={pill(selectedUseCase !== "ALL")}
           >
-            <option value="ALL">Semua Use-Case Analitik</option>
+            <option value="ALL">+ Use case</option>
             {(usecasesQuery.data ?? []).map((uc) => (
               <option key={uc.id} value={uc.id}>
-                {uc.label} ({uc.id})
+                Use case: {uc.label}
               </option>
             ))}
           </select>
-        </div>
-
-        {/* Event Type Filter */}
-        <div className="relative">
-          <select
-            value={selectedType}
-            onChange={(e) => handleFilterChange(setSelectedType, e.target.value)}
-            aria-label="Filter Tipe Kejadian"
-            className="w-full appearance-none rounded-2xl border border-line bg-surface py-2.5 px-4 text-xs font-semibold text-ink focus:border-lime focus:outline-none"
-          >
-            <option value="ALL">Semua Tipe Kejadian</option>
-            {availableTypes.map((t) => (
-              <option key={t.type} value={t.type}>
-                {t.type}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Camera Filter */}
-        <div className="relative">
-          <select
-            value={selectedCamera}
-            onChange={(e) => handleFilterChange(setSelectedCamera, e.target.value)}
-            aria-label="Filter Kamera CCTV"
-            className="w-full appearance-none rounded-2xl border border-line bg-surface py-2.5 px-4 text-xs font-semibold text-ink focus:border-lime focus:outline-none"
-          >
-            <option value="ALL">Semua Kamera CCTV</option>
-            {(camerasQuery.data ?? []).map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name} ({c.id})
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Severity Filter */}
-        <div className="relative">
           <select
             value={selectedSeverity}
             onChange={(e) => handleFilterChange(setSelectedSeverity, e.target.value)}
             aria-label="Filter Tingkat Keparahan"
-            className="w-full appearance-none rounded-2xl border border-line bg-surface py-2.5 px-4 text-xs font-semibold text-ink focus:border-lime focus:outline-none"
+            className={pill(selectedSeverity !== "ALL")}
           >
-            <option value="ALL">Semua Tingkat Keparahan</option>
-            <option value="info">Info</option>
-            <option value="warning">Warning</option>
-            <option value="critical">Critical</option>
+            <option value="ALL">+ Severity</option>
+            <option value="info">Severity: Info</option>
+            <option value="warning">Severity: Warning</option>
+            <option value="critical">Severity: Kritis</option>
+          </select>
+          <select
+            value={selectedCamera}
+            onChange={(e) => handleFilterChange(setSelectedCamera, e.target.value)}
+            aria-label="Filter Kamera CCTV"
+            className={pill(selectedCamera !== "ALL")}
+          >
+            <option value="ALL">+ Kamera</option>
+            {(camerasQuery.data ?? []).map((c) => (
+              <option key={c.id} value={c.id}>
+                Kamera: {c.name}
+              </option>
+            ))}
+          </select>
+          <select
+            value={selectedType}
+            onChange={(e) => handleFilterChange(setSelectedType, e.target.value)}
+            aria-label="Filter Tipe Kejadian"
+            className={pill(selectedType !== "ALL")}
+          >
+            <option value="ALL">+ Tipe</option>
+            {availableTypes.map((t) => (
+              <option key={t.type} value={t.type}>
+                Tipe: {t.type.replace(/_/g, " ")}
+              </option>
+            ))}
           </select>
         </div>
-      </div>
 
-      <Card
-        title={`Daftar Kejadian (${displayRows.length} Ditampilkan)`}
-        subtitle="Diurutkan kronologis dari waktu terbaru"
-      >
-        <Table
-          head={[
-            "Waktu",
-            "Use Case & Tipe",
-            "Kamera CCTV",
-            "Tingkat (Severity)",
-            "Data Deteksi (Generik)",
-            "Bukti Visual",
-          ]}
-          rows={displayRows.map((e) => {
-            const dataEntries = Object.entries(e.data ?? {});
-
-            return [
-              fmtLocalTime(e.time),
-
-              <div key="type" className="flex flex-col">
-                <span className="font-extrabold text-forest">{e.type.replace(/_/g, " ")}</span>
-                <span className="text-[10px] text-muted">
-                  {usecaseMap.get(e.useCase) ?? e.useCase}
-                </span>
-              </div>,
-
-              <span key="cam" className="text-xs font-semibold text-ink">
-                {e.cameraName ?? e.cameraId ?? "—"}
-              </span>,
-
-              <SeverityBadge key="sev" severity={e.severity} />,
-
-              <div key="data" className="flex flex-wrap gap-1 max-w-xs">
-                {dataEntries.length > 0 ? (
-                  dataEntries.map(([k, v]) => (
-                    <span
-                      key={k}
-                      className="rounded-md bg-surface-2 px-1.5 py-0.5 text-[10px] font-mono font-bold text-ink-2"
-                    >
-                      {k}: {typeof v === "object" ? JSON.stringify(v) : String(v)}
+        <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_1px_2px_rgba(19,36,26,0.04)]">
+          {eventsQuery.isLoading ? (
+            <p className="px-4 py-10 text-center text-sm text-muted">Memuat log kejadian…</p>
+          ) : displayRows.length === 0 ? (
+            <p className="px-4 py-10 text-center text-sm text-muted">
+              Tidak ada kejadian yang cocok dengan filter pada tanggal {pickedDate}.
+            </p>
+          ) : (
+            <div ref={listRef} role="listbox" aria-label="Kejadian" onKeyDown={onListKey}>
+              {displayRows.map((e) => {
+                const on = selected?.id === e.id;
+                const sev = e.severity.toLowerCase();
+                return (
+                  <div
+                    key={e.id}
+                    data-row={e.id}
+                    role="option"
+                    aria-selected={on}
+                    tabIndex={on ? 0 : -1}
+                    onClick={() => setSelectedId(e.id)}
+                    className={`flex cursor-pointer items-center gap-3 border-t border-line-soft px-3.5 py-[11px] first:border-t-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-lime ${
+                      on ? "bg-[#eaf3dc]" : "hover:bg-surface-2/60"
+                    }`}
+                  >
+                    <span aria-hidden className={`h-8 w-1 shrink-0 rounded-sm ${SEV_BAR[sev] ?? "bg-off"}`} />
+                    <span className="w-[62px] shrink-0 font-mono text-xs">{fmtLocalTime(e.time)}</span>
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate text-sm font-bold capitalize">{e.type.replace(/_/g, " ")}</span>
+                      <span className="truncate text-xs text-muted">
+                        {e.cameraName ?? e.cameraId ?? "—"} · {usecaseMap.get(e.useCase) ?? e.useCase}
+                      </span>
                     </span>
-                  ))
-                ) : (
-                  <span className="text-muted text-xs">—</span>
-                )}
-              </div>,
+                    <SeverityBadge severity={e.severity} />
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          {eventsQuery.data?.nextCursor && (
+            <div className="flex justify-center border-t border-line p-3">
+              <button
+                type="button"
+                disabled={eventsQuery.isFetching}
+                onClick={handleLoadMore}
+                className="inline-flex min-h-[38px] cursor-pointer items-center gap-2 rounded-[10px] border border-[#cfc9b8] bg-surface px-3.5 text-[13px] font-bold text-forest hover:bg-surface-2 disabled:opacity-50"
+              >
+                <RefreshCw aria-hidden className={`size-3.5 ${eventsQuery.isFetching ? "animate-spin" : ""}`} />
+                {eventsQuery.isFetching ? "Memuat…" : "Muat 100 berikutnya"}
+              </button>
+            </div>
+          )}
+        </div>
+        {displayRows.length > 0 && (
+          <span className="hidden text-xs text-muted lg:block">Tombol ↑ ↓ untuk pindah baris, Enter untuk membuka live.</span>
+        )}
+      </section>
 
-              <EvidenceButton
-                key="ev"
-                snapshotUrl={e.snapshotUrl}
-                clipUrl={e.clipUrl}
-                title={`${e.cameraName ?? e.cameraId ?? "CCTV"} · ${pickedDate} ${fmtLocalTime(e.time)} WIB`}
-              />,
-            ];
-          })}
-          empty={
-            eventsQuery.isLoading
-              ? "Memuat log kejadian..."
-              : displayRows.length === 0
-              ? `Tidak ada kejadian yang cocok dengan kriteria filter pada tanggal ${pickedDate}.`
-              : undefined
-          }
-        />
+      {/* Detail */}
+      <aside aria-label="Detail kejadian" className="flex shrink-0 flex-col border-line bg-surface max-lg:border-t lg:w-[360px] lg:border-l 2xl:w-[400px]">
+        {selected ? (
+          <EventDetail key={selected.id} event={selected} usecaseLabel={usecaseMap.get(selected.useCase)} date={pickedDate} />
+        ) : (
+          <p className="p-5 text-sm text-muted">Pilih kejadian untuk melihat detailnya.</p>
+        )}
+      </aside>
+    </div>
+  );
+}
 
-        {eventsQuery.data?.nextCursor && (
-          <div className="mt-6 flex justify-center border-t border-line/60 pt-4">
-            <button
-              type="button"
-              disabled={eventsQuery.isFetching}
-              onClick={handleLoadMore}
-              className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-5 py-2.5 text-xs font-black text-forest shadow-sm transition hover:border-lime hover:bg-lime/10 disabled:opacity-50"
-            >
-              <RefreshCw className={`size-3.5 ${eventsQuery.isFetching ? "animate-spin" : ""}`} />
-              {eventsQuery.isFetching ? "Memuat Halaman Berikutnya..." : "Muat Lebih Banyak (Load More)"}
-            </button>
+const SEV_BAR: Record<string, string> = { info: "bg-[#1d5fa0]", warning: "bg-warn", critical: "bg-crit" };
+
+function EventDetail({ event: e, usecaseLabel, date }: { event: EventRowDto; usecaseLabel?: string; date: string }) {
+  const [imgFailed, setImgFailed] = useState(false);
+  const entries = Object.entries(e.data ?? {});
+  const cam = e.cameraName ?? e.cameraId ?? "CCTV";
+  return (
+    <div className="lg:sticky lg:top-14">
+      <div className="relative aspect-video bg-[#1b2822]">
+        {e.snapshotUrl && !imgFailed ? (
+          // eslint-disable-next-line @next/next/no-img-element -- a session-protected JPEG from the API
+          <img src={e.snapshotUrl} alt={`Snapshot ${cam}`} onError={() => setImgFailed(true)} className="size-full object-cover" />
+        ) : (
+          <span className="absolute inset-0 grid place-items-center text-sm font-semibold text-[#b9c6be]">Tidak ada foto</span>
+        )}
+      </div>
+      <div className="flex flex-col gap-3.5 p-[18px]">
+        <div className="flex flex-col items-start gap-1.5">
+          <SeverityBadge severity={e.severity} />
+          <h2 className="text-lg font-extrabold capitalize">{e.type.replace(/_/g, " ")}</h2>
+          <span className="text-[13px] text-muted">
+            {cam} · {date}, {fmtLocalTime(e.time)} WIB
+          </span>
+        </div>
+        {entries.length > 0 && (
+          <div className="grid grid-cols-2 gap-2">
+            {entries.map(([k, v]) => (
+              <div key={k} className="flex min-w-0 flex-col rounded-[10px] bg-bg p-2.5">
+                <span className="truncate text-[11px] font-bold text-muted">{k}</span>
+                <span className="truncate text-base font-extrabold">{typeof v === "object" ? JSON.stringify(v) : String(v)}</span>
+              </div>
+            ))}
           </div>
         )}
-      </Card>
-    </>
+        <div className="flex items-center gap-2">
+          {e.cameraId && (
+            <Link
+              href={`/live?cam=${encodeURIComponent(e.cameraId)}`}
+              className="inline-flex min-h-[42px] flex-1 items-center justify-center gap-1.5 rounded-[10px] bg-forest text-[13px] font-bold text-white hover:bg-accent-hover"
+            >
+              <Video aria-hidden className="size-4" /> Buka live kamera
+            </Link>
+          )}
+          <EvidenceButton snapshotUrl={e.snapshotUrl} clipUrl={e.clipUrl} title={`${cam} · ${date} ${fmtLocalTime(e.time)} WIB`} />
+        </div>
+        <div className="flex flex-col gap-1.5 text-[13px]">
+          <span className="text-xs font-bold text-muted">Data teknis</span>
+          <Row k="Use case" v={usecaseLabel ?? e.useCase} />
+          <Row k="Tipe" v={e.type} mono />
+          <Row k="Versi config" v={e.configVersion != null ? `v${e.configVersion}` : "—"} mono />
+          <Row k="ID kejadian" v={e.id} mono />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Row({ k, v, mono }: { k: string; v: string; mono?: boolean }) {
+  return (
+    <div className="flex justify-between gap-3">
+      <span className="text-muted">{k}</span>
+      <span className={`truncate text-right ${mono ? "font-mono text-xs" : "font-semibold"}`}>{v}</span>
+    </div>
   );
 }

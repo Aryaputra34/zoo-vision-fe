@@ -202,9 +202,8 @@ export function ModelsPage() {
   return (
     <RequireRole min="MANAGER">
       <PageHeader
-        tag="AI Engine Repository"
-        title="Manajemen Model AI Vision"
-        subtitle="Repositori bobot neural network, status validasi inferensi ONNX, dan kompatibilitas kamera"
+        title="Model AI"
+        subtitle="Model deteksi yang tersedia untuk kamera, beserta status validasi dan konversinya."
       >
         {isSuperadmin && (
           <button
@@ -230,9 +229,9 @@ export function ModelsPage() {
       )}
 
       {actionError && (
-        <div role="alert" className="mb-6 rounded-2xl border border-red-300 bg-red-50 p-4 text-xs font-bold text-red-800">
+        <div role="alert" className="mb-6 rounded-2xl border border-crit/25 bg-crit-bg p-4 text-xs font-bold text-crit-ink">
           <div className="flex items-center gap-2">
-            <AlertCircle className="size-4 text-red-600" />
+            <AlertCircle className="size-4 text-crit" />
             <span>{actionError}</span>
           </div>
         </div>
@@ -246,14 +245,14 @@ export function ModelsPage() {
             subtitle="Hanya menerima format ONNX teroptimasi dengan batas maksimum 1 GiB per file"
           >
             {uploadSuccess && (
-              <div className="mb-4 inline-flex w-full items-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 p-3 text-xs font-bold text-emerald-800">
-                <CheckCircle2 className="size-4 text-emerald-600" />
+              <div className="mb-4 inline-flex w-full items-center gap-2 rounded-xl border border-good/25 bg-good-bg p-3 text-xs font-bold text-good">
+                <CheckCircle2 className="size-4 text-good" />
                 <span>Model AI berhasil diunggah dan sedang dijadwalkan untuk validasi otomatis.</span>
               </div>
             )}
 
             {uploadError && (
-              <div role="alert" className="mb-4 rounded-xl border border-red-300 bg-red-50 p-3 text-xs font-bold text-red-800">
+              <div role="alert" className="mb-4 rounded-xl border border-crit/25 bg-crit-bg p-3 text-xs font-bold text-crit-ink">
                 {uploadError}
               </div>
             )}
@@ -262,7 +261,7 @@ export function ModelsPage() {
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div className="sm:col-span-3">
                   <label htmlFor="model-file-input" className="block text-xs font-extrabold uppercase tracking-wider text-ink-2">
-                    Pilih File Model ONNX <span className="text-red-500">*</span>
+                    Pilih File Model ONNX <span className="text-crit">*</span>
                   </label>
                   <div className="mt-1.5 flex items-center gap-3">
                     <input
@@ -270,7 +269,7 @@ export function ModelsPage() {
                       type="file"
                       accept=".onnx"
                       onChange={handleFileChange}
-                      className="block w-full text-xs text-ink file:mr-4 file:rounded-xl file:border-0 file:bg-lime/20 file:px-4 file:py-2.5 file:text-xs file:font-black file:text-forest hover:file:bg-lime/30 cursor-pointer"
+                      className="block w-full text-xs text-ink file:mr-4 file:rounded-xl file:border-0 file:bg-lime/20 file:px-4 file:py-2.5 file:text-xs file:font-extrabold file:text-forest hover:file:bg-lime/30 cursor-pointer"
                     />
                   </div>
                   {selectedFile && (
@@ -327,7 +326,7 @@ export function ModelsPage() {
                 <button
                   type="submit"
                   disabled={!selectedFile || uploadMutation.isPending}
-                  className="inline-flex items-center gap-2 rounded-xl bg-forest px-5 py-2.5 text-xs font-black text-white shadow-md hover:bg-forest-dark disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-xl bg-forest px-5 py-2.5 text-xs font-extrabold text-white shadow-md hover:bg-forest-dark disabled:opacity-50"
                 >
                   <UploadCloud className="size-4" />
                   {uploadMutation.isPending ? "Mengunggah Model..." : "Unggah Model"}
@@ -378,39 +377,39 @@ export function ModelsPage() {
 
               <div key="format" className="flex flex-col gap-1">
                 <span className="font-mono text-xs font-bold text-ink">{m.format}</span>
-                <span className="rounded-md bg-zinc-100 px-1.5 py-0.5 text-[10px] font-bold text-zinc-600 w-fit">
+                <span className="rounded-md bg-off-bg px-1.5 py-0.5 text-[10px] font-bold text-muted w-fit">
                   {m.source}
                 </span>
               </div>,
 
               <div key="status" className="flex flex-col gap-1">
                 {m.status === "READY" && (
-                  <span className="inline-flex items-center gap-1 text-xs font-black text-emerald-600">
+                  <span className="inline-flex items-center gap-1 text-xs font-extrabold text-good">
                     <CheckCircle2 className="size-3.5" /> Siap Digunakan
                   </span>
                 )}
                 {m.status === "VALIDATING" && (
-                  <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-600">
+                  <span className="inline-flex items-center gap-1 text-xs font-bold text-gold-ink">
                     <RotateCw className="size-3.5 animate-spin" /> Memvalidasi...
                   </span>
                 )}
                 {m.status === "CONVERTING" && (
-                  <span className="inline-flex items-center gap-1 text-xs font-bold text-sky-600">
+                  <span className="inline-flex items-center gap-1 text-xs font-bold text-info">
                     <RotateCw className="size-3.5 animate-spin" /> Mengonversi...
                   </span>
                 )}
                 {m.status === "UPLOADED" && (
-                  <span className="inline-flex items-center gap-1 text-xs font-bold text-zinc-600">
+                  <span className="inline-flex items-center gap-1 text-xs font-bold text-muted">
                     <Clock className="size-3.5" /> Menunggu Validasi
                   </span>
                 )}
                 {m.status === "FAILED" && (
                   <div className="flex flex-col">
-                    <span className="inline-flex items-center gap-1 text-xs font-bold text-red-600">
+                    <span className="inline-flex items-center gap-1 text-xs font-bold text-crit">
                       <AlertCircle className="size-3.5" /> Gagal
                     </span>
                     {validation?.error && (
-                      <span className="text-[10px] text-red-600 line-clamp-2" title={validation.error}>
+                      <span className="text-[10px] text-crit line-clamp-2" title={validation.error}>
                         {validation.error}
                       </span>
                     )}
@@ -488,7 +487,7 @@ export function ModelsPage() {
                         setDeletingModel({ id: m.id, name: m.name });
                         setActionError(null);
                       }}
-                      className="grid size-8 place-items-center rounded-xl text-zinc-400 hover:bg-red-50 hover:text-red-600"
+                      className="grid size-8 place-items-center rounded-xl text-muted hover:bg-crit-bg hover:text-crit"
                     >
                       <Trash2 className="size-3.5" />
                     </button>
@@ -510,11 +509,11 @@ export function ModelsPage() {
       {/* Delete Model Confirmation Modal */}
       {deletingModel && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-3xl border border-line bg-surface p-6 shadow-2xl">
-            <div className="flex items-center gap-3 text-red-600">
-              <AlertTriangle className="size-6 text-red-600" />
+          <div className="w-full max-w-md rounded-2xl border border-line bg-surface p-6 shadow-2xl">
+            <div className="flex items-center gap-3 text-crit">
+              <AlertTriangle className="size-6 text-crit" />
               <div>
-                <h3 className="text-base font-black text-ink">Konfirmasi Hapus Model AI</h3>
+                <h3 className="text-base font-extrabold text-ink">Konfirmasi Hapus Model AI</h3>
                 <p className="text-xs font-semibold text-muted">ID: {deletingModel.id}</p>
               </div>
             </div>
@@ -535,7 +534,7 @@ export function ModelsPage() {
                 type="button"
                 disabled={removeMutation.isPending}
                 onClick={() => removeMutation.mutate({ id: deletingModel.id })}
-                className="rounded-xl bg-red-600 px-4 py-2 text-xs font-black text-white hover:bg-red-700 disabled:opacity-50"
+                className="rounded-xl bg-crit px-4 py-2 text-xs font-extrabold text-white hover:bg-crit disabled:opacity-50"
               >
                 {removeMutation.isPending ? "Menghapus..." : "Hapus Model"}
               </button>

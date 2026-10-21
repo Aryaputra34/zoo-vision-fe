@@ -9,10 +9,10 @@ export function CsvLink({ path, params }: { path: string; params: Record<string,
   return (
     <a
       href={`${path}?${qs}`}
-      className="inline-flex h-9 items-center gap-1.5 rounded-full border border-lime/40 bg-surface px-4 text-xs font-extrabold text-forest shadow-sm hover:border-lime hover:bg-lime/10 transition-colors"
+      className="inline-flex h-9 items-center gap-1.5 rounded-[10px] border border-white/30 bg-transparent px-3.5 text-[13px] font-bold text-white hover:bg-white/10 transition-colors"
     >
-      <Download aria-hidden className="size-3.5 text-forest" />
-      Export CSV
+      <Download aria-hidden className="size-3.5" />
+      Unduh CSV
     </a>
   );
 }
