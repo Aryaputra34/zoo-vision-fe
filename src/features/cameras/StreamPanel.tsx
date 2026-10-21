@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { AlertTriangle, HardDrive, Radio, Video } from 'lucide-react';
+import { AlertTriangle, Film, HardDrive, Radio, Video } from 'lucide-react';
 import { useCamerasStreamInfo } from '@/api/generated/cameras/cameras';
 import { ApiError } from '@/api/http';
 import { useMe } from '@/auth/AuthProvider';
@@ -138,6 +138,17 @@ export function StreamPanel({ cameraId }: StreamPanelProps) {
             </div>
           );
         })}
+      </div>
+
+      {/* Kept evidence clips of this camera */}
+      <div className="mt-3 flex items-center justify-between border-t border-line/60 pt-2 text-[11px] text-muted">
+        <div className="flex items-center gap-1.5">
+          <Film className="size-3.5 text-forest" />
+          <span>Bukti tersimpan:</span>
+        </div>
+        <span className="font-mono font-bold text-ink">
+          {data.evidenceCount} klip, {(data.evidenceBytes / 1e9).toFixed(1)} GB
+        </span>
       </div>
 
       {/* Disk info */}

@@ -38,7 +38,13 @@ function CameraEditForm({ id, camera, isSuperadmin, usecase }: CameraEditFormPro
   const [recordingEnabled, setRecordingEnabled] = useState(
     camera.recording?.stream !== undefined || false
   );
-  const [retentionDays, setRetentionDays] = useState(camera.recording?.retentionDays ?? 30);
+  // Empty = follow the site setting (sent as null).
+  const [retentionDays, setRetentionDays] = useState(
+    camera.recording?.retentionDays != null ? String(camera.recording.retentionDays) : ""
+  );
+  const [evidenceRetentionDays, setEvidenceRetentionDays] = useState(
+    camera.recording?.evidenceRetentionDays != null ? String(camera.recording.evidenceRetentionDays) : ""
+  );
   const [clipBeforeSec, setClipBeforeSec] = useState(camera.recording?.clipBeforeSec ?? 5);
   const [clipAfterSec, setClipAfterSec] = useState(camera.recording?.clipAfterSec ?? 15);
 
@@ -106,7 +112,8 @@ function CameraEditForm({ id, camera, isSuperadmin, usecase }: CameraEditFormPro
       payload.recording = {
         enabled: recordingEnabled,
         stream: inferenceStream,
-        retentionDays: Number(retentionDays),
+        retentionDays: retentionDays.trim() === "" ? null : Number(retentionDays),
+        evidenceRetentionDays: evidenceRetentionDays.trim() === "" ? null : Number(evidenceRetentionDays),
         clipBeforeSec: Number(clipBeforeSec),
         clipAfterSec: Number(clipAfterSec),
       };
@@ -353,11 +360,34 @@ function CameraEditForm({ id, camera, isSuperadmin, usecase }: CameraEditFormPro
                 disabled={!isSuperadmin}
                 type="number"
                 min={1}
-                max={365}
+                max={3650}
                 value={retentionDays}
-                onChange={(e) => setRetentionDays(Number(e.target.value))}
+                placeholder="ikut pengaturan situs"
+                onChange={(e) => setRetentionDays(e.target.value)}
                 className="mt-1.5 w-full rounded-xl border border-line bg-surface px-3 py-2 text-xs font-bold text-ink disabled:bg-surface-2 disabled:text-muted focus:border-lime focus:outline-none"
               />
+            </div>
+
+            <div>
+              <label className="block text-xs font-extrabold uppercase tracking-wider text-ink-2">
+                Retensi bukti (hari)
+              </label>
+              <input
+                disabled={!isSuperadmin}
+                type="number"
+                min={1}
+                max={3650}
+                value={evidenceRetentionDays}
+                placeholder="ikut pengaturan situs"
+                onChange={(e) => setEvidenceRetentionDays(e.target.value)}
+                className="mt-1.5 w-full rounded-xl border border-line bg-surface px-3 py-2 text-xs font-bold text-ink disabled:bg-surface-2 disabled:text-muted focus:border-lime focus:outline-none"
+              />
+              {fieldErrors["recording.evidenceRetentionDays"] && (
+                <p className="mt-1 text-[11px] font-bold text-crit">{fieldErrors["recording.evidenceRetentionDays"]}</p>
+              )}
+              <p className="mt-1 text-[11px] text-muted">
+                Menurunkan nilai ini menghapus klip bukti yang lebih lama pada pembersihan berikutnya (setiap jam).
+              </p>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
